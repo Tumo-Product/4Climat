@@ -6,7 +6,6 @@
 
 #loadingScreen {
     background: white;
-    position: fixed;
     z-index: 3;
     width: 100%;
 }

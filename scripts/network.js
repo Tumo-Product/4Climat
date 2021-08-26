@@ -1,6 +1,10 @@
 const network   = {
-    getToken        : async () => {
-        
+    idExists        : async(id) => {
+
+    },
+
+    getNewToken        : async () => {
+        return '1o1d1oasof3posfji13ojr93f';
     },
 
     getPosts        : async (id, token) => {
