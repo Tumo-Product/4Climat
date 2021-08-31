@@ -32,6 +32,10 @@ body {
     background-color: #F3F3F3;
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
 button {
     border: none;
     background-color: transparent;
@@ -44,9 +48,8 @@ input {
     font-size: 22px;
     border: none;
     background-color: transparent;
-    padding: 26px;
-    border-radius: 50px;
-    color: #232324;
+    padding: 5.2%;
+    color: #5C7CA6;    
     box-shadow: inset -2px -2px 5px 0 #FFFFFF, inset 2px 3px 3px 1px rgba(222,222,230,0.72);
 }
 
@@ -84,31 +87,302 @@ input:focus
     box-shadow: 5px 5px 5px 0 rgba(222,222,230,0.5), -3px -3px 5px 0 #FEFEFE;
 }
 
+.subContainer {
+    margin-top: 5vh;
+    width   : 900px;
+    height: 90.2%;
+}
+
+.main {
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+}
+
+#statusBar {
+    width: 100%;
+    height: 11.94%;
+    width: 100%;
+    box-shadow: 5px 5px 5px 0 rgba(222,222,230,0.5), -3px -3px 5px 0 #FEFEFE;
+    border-radius: 48.5px;
+    margin-top: 3.45%;
+    margin-bottom: 3%;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
 #mainCard {
-    width   : 62%;
-    height  : 76%;
     display : flex;
-    padding : 1.8%;
+    height: 84.236%;
 }
 
 #categories {
-    width   : 34.2%;
-    height  : 100%;
+    width   : 26%;
+    height  : 92.83%;
+    margin: 2.88%;
+    margin-right: 3.27%;
+    overflow: auto;
+    /* scroll-behavior: smooth; */
+    transition: 0.7s;
+}
+
+.category {
+    transition: 1s;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 6.9%;
+    width: 74%;
+    border-radius: 9px;
+    background-color: #F3F3F3;
+    margin-top: 10.25%;
+    margin-left: 13%;
+}
+
+.category:last-of-type {
+    margin-bottom: 10.25%;
+}
+
+.category .inside {
+    transition: 0.2s;
+    border-radius: 9px;
+    border-radius: 7px;
+    background-color: #F3F3F3;
+    box-shadow: inset -3px -3px 5px 0 #FEFEFE, inset 3px 3px 5px 0 rgba(222,222,230,0.5);
+    width: 96%;
+    height: 85%;
+    position: absolute;
+    background-color: transparent;
+}
+
+.category p {
+    color: #78A6D1;
+    font-family: FedraDemi;
+    /* font-size: 15px; */
+    font-size: 1.55vh;
+    text-align: center;
 }
 
 #posts {
-    /* background-color: rgba(128, 128, 128, 0.158); */
-    margin-left: 3.3%;
-    width: 100%;
-    height: 100%;
+    margin: 2.88%;
+    margin-left: 0;
+    display: flex;
+    flex-direction: column;
+    width: 65%;
+    height  : 92.83%;
+    position: relative;
+    transition: 0.3s;
+}
+
+.postView {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+}
+
+.postView h1 {
+    width: 71%;
+    position: absolute;
+    color: #98B2D4;
+    font-size: 6.66vh;
+    top: 6.6%;
+}
+
+.postView p {
+    width: 71%;
+    font-family: FedraBook;
+    color: #CBCBD0;
+    position: absolute;
+    font-size: 3.33vh;
+    top: 19.65%;
+}
+
+#titleInput::placeholder {
+    color: #CBCBD0;
+}
+
+#titleInput {
+    transition: 0.5s;
+    height: 11.63%;
+    width: 58.53%;
+    padding: 3%;
+    position: relative;
+    border-radius: 19px;
+    box-shadow: inset -2px -2px 4px 0 #FEFEFE, inset 2px 2px 4px 0 rgba(222,222,230,0.5);
+
+    font-family: FedraDemi;
+    font-size: 2.78vh;
+    font-weight: 500;
+    color: #98B2D4;
+}
+
+#searchbar {
+    display: flex;
+    align-items: center;
+    height: 10%;
+    transition: 0.8s;
 }
 
 #search {
-    height: 10%;
+    height: 100%;
+    width: 84.95%;
+    font-size: 2.45vh;
+    border-radius: 50px;
+    transition: 0.6s;
+}
+
+#searchBtn {
+    position: relative;
+    height: 90.6%;
+    width:  9.9%;
+
+    box-shadow: -3px -3px 3px 0 #FEFEFE, 3px 3px 3px 0 #DEDEE6;
+    margin-left: 5%;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.6s;
+}
+
+#addBtn {
+    height: 75.2%;
+    width: 8.1%;
+    position: absolute;
+    right: 1.33%;;
+
+    box-shadow: -4px -4px 5px 0 #FEFEFE, 4px 4px 5px 0 #DEDEE6;
+    margin-left: 5%;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#addBtn p {
+    font-size: 6.8vh;
+    color: #EBD730;
+}
+
+#postsView {
+    overflow: auto;
+    height: 100%;
+    width: 100%;
+    margin-top: 3.1%;
+    border-radius: 19px;
+    box-shadow: inset -3px -3px 4px 0 #FEFEFE, inset 3px 3px 4px 0 rgba(222,222,230,0.5);
+    flex-shrink: 1;
+    transition: 0.6s;
+}
+
+.post {
+    width: 90.94%;
+    /* height: 31%; */
+    height: 19.05vh;
+    margin-left: 4.5%;
+    margin-top: 4.5%;
+    border-radius: 19px;
+    box-shadow: 5px 5px 5px 0 rgba(222,222,230,0.5), -3px -3px 5px 0 #FEFEFE;
+    display: flex;
+    align-items: center;
+}
+
+.post:last-of-type {
+    margin-bottom: 4.5%;
+}
+
+.content {
+    height: 86.65%;
+    margin-left: 3.5%;
+    width: 64%;
+}
+
+.spanDiv {
+    display: flex;
+}
+
+.title {
+    font-size: 2.79vh;
+    color: #EBD986;
     width: 100%;
 }
 
+.date {
+    font-family: FedraBook;
+    color: #CBCBD0;
+    font-size: 1.67vh;
+}
 
+.postCategory {
+    font-size: 1.67vh;
+    color: #78A6D1;
+    margin-left: 3%;
+}
+
+.description {
+    width: 100%;
+    height: 59.4%;
+    color: #5C7CA6;
+    font-family: FedraBook;
+    /* font-size: 12px; */
+    font-size: 1.31vh;
+    font-weight: 300;
+    margin-top: 2.25%;
+    overflow: hidden;
+}
+
+.picture {
+    width: 29.3%;
+    height: 90.13%;
+    border-radius: 15px;
+    box-shadow: 2px 2px 2px 0 rgba(222,222,230,0.5), -2px -2px 2px 0 #FEFEFE;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1%;
+    margin-left: 2%;
+}
+
+.picture img {
+    border-radius: 9px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.inside {
+    width: 85%;
+    height: 85%;
+    border-radius: 100%;
+    box-shadow: -1px 1px 1px 0 rgba(254,254,254,0.48);
+    pointer-events: none;
+    position: absolute;
+}
+
+.insetShadow {
+    box-shadow: inset -3px -3px 5px 0 #FEFEFE, inset 3px 3px 5px 0 rgba(222,222,230,0.5) !important;
+}
+
+.outsideShadow {
+    box-shadow: 5px 5px 5px 0 rgba(222,222,230,0.5), -3px -3px 5px 0 #FEFEFE !important;
+}
+
+.insetShadow .inside {
+    opacity: 1;
+}
+
+.outsideShadow .inside {
+    opacity: 0;
+}
+
+.insetShadow p {
+    opacity: 0.3;
+    /* font-size: 13px; */
+    font-size: 1.55vh;
+}
 
 /* VVVVV Debug login screen VVVVVV */
 

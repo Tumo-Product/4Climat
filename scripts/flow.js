@@ -1,5 +1,9 @@
 let categories, posts;
 
+const timeout = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 const onLoad = async () => {
     posts       = await network.getPosts();
     categories  = await network.getCategories();
@@ -7,14 +11,23 @@ const onLoad = async () => {
     for (let i = 0; i < posts.length; i++) {
         let src = parser.getMapLink(posts[i].longitude, posts[i].latitude, "us");
         // view.makeMap(src, ".card");
+        view.addPost(posts[i].title, posts[i].date, categories[posts[i].categoryId], posts[i].description, posts[i].photos[0]);
     }
 
+    for (let i = 0; i < categories.length; i++) {
+        view.addCategory(i, categories[i]);
+    }
+
+    view.scrollToMiddle("#categories");
+    view.resize();
     view.toggleLoader();
 }
 
-const login = async () => {
-    view.toggleLoader();
+const toggleCategory = async (index) => {
+    view.toggleCategory(index);
+}
 
+const login = async () => {
     let id = $("#id").val();
 
     if (id === "" || !network.idExists(id)) {
@@ -28,6 +41,10 @@ const login = async () => {
     }
 
     view.toggleLoader();
+}
+
+const addPost = async () => {
+    await view.setupPostView();
 }
 
 $(onLoad);
