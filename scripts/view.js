@@ -21,9 +21,9 @@ const view      = {
 
         view.categories.push(false);
     },
-    addPost         : (title, date, category, description, img) => {
+    addPost         : (index, title, date, category, description, img) => {
         $("#postsView").append(`
-        <div class="post">
+        <div onclick="openPost(${index})" id="p_${index}" class="post">
             <div class="content">
                 <p class="title">${title}</p>
                 <div class="spanDiv">
@@ -37,6 +37,36 @@ const view      = {
             </div>
         </div>`);
     },
+    openPost        : async (index, postCategories, mapSrc) => {
+        let marginTop   = parseFloat($(`#p_${index}`).css("margin-top"));
+        let postHeight  = parseFloat($(`#p_${index}`).height());
+        let scrollPos   = postHeight * index;
+        if (index != 0) scrollPos += index * marginTop;
+
+        $(`#p_${index} .picture`).css("height", $(`#p_${index} .picture`).height());
+        $("#postsView").css("overflow", "hidden");
+        $(`#p_${index}`).addClass("openedPost");
+        $("#postsView").scrollTop(scrollPos);
+
+        $(`#p_${index} .date`).clone().prependTo(`#p_${index}`);
+        $(`#p_${index} .spanDiv`).empty();
+
+
+        $(`#p_${index} .description`).before(`
+            <div class="imgMapView">
+                <div class="mapContainer"></div>
+            </div>
+        `);
+
+        view.makeMap(mapSrc, ".mapContainer");
+        
+        await timeout(400);
+
+        for (let i = 0; i < postCategories.length; i++) {
+            $(`#p_${index} .spanDiv`).append(`<span class="card">${postCategories[i]}</span>`);   
+        }
+    },
+
     setupPostView   : async () => {
         $("#addBtn").attr("onclick", "");
 
@@ -60,23 +90,28 @@ const view      = {
             <h1>Title for this page</h1>
             <p>Explanatory title for this page</p>
             <input id="titleInput" placeholder="Write your title here …">
-            <div class="leftButton"></div>
-            <div class="rightButton"></div>
+            <div class="leftButton button disabled"></div>
+            <div class="rightButton button disabled"></div>
         `);
         
-        $(".leftButton").append (`<div class="button"><div class="inside"></div><img src="icons/left.svg"></div>`);
-        $(".rightButton").append(`<div class="button"><div class="inside"></div><img src="icons/right.svg"></div>`);
+        $(".leftButton").append (`<div class="inside"></div><img src="icons/arrow.svg">`);
+        $(".rightButton").append(`<div class="inside"></div><img src="icons/arrow.svg">`);
+
+        $("#titleInput").on('input', function() {
+            if (parser.isTitleCorrect($(this).val())) {
+                if (!$(".rightButton").attr("class").includes("disabled")) {
+                    $(".rightButton").addClass("disabled");
+                }
+            } else {
+                $(".rightButton").removeClass("disabled");
+            }
+        });
     },
     toggleCategory  : (index) => {
-        if (view.categories[index]) {
-            $(`#c_${index}`).removeClass("outsideShadow");
-            $(`#c_${index}`).addClass   ("insetShadow");
-            $(`#c_${index} p`).animate  ({ fontSize: "-=2" }, 200);
-        } else {
-            $(`#c_${index}`).removeClass("insetShadow");
-            $(`#c_${index}`).addClass   ("outsideShadow");
-            $(`#c_${index} p`).animate  ({ fontSize: "+=2" }, 200);
-        }
+        $(`#c_${index}`).removeClass(view.categories[index] ? "outsideShadow"   : "insetShadow");
+        $(`#c_${index}`).addClass   (view.categories[index] ? "insetShadow"     : "outsideShadow");
+        let font = view.categories[index] ? "-=2" : "+=2";
+        $(`#c_${index} p`).animate  ({ fontSize: font }, 200);
 
         view.categories[index] = !view.categories[index];
     },

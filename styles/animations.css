@@ -1,4 +1,4 @@
-.postView h1, .postView p {
+.postView h1, .postView p, .postView .button {
     animation: showText 1s linear;
 }
 
@@ -13,5 +13,70 @@
 
     100% {
         opacity: 1;
+    }
+}
+
+.openedPost .picture {
+    margin-bottom: 30%;
+    /* height: 0 !important; */
+    width: 0 !important;
+    padding: 0;
+    opacity: 0;
+}
+
+.openedPost {
+    height: 56vh;
+}
+
+.openedPost .content {
+    width: 93%;
+}
+
+.openedPost .spanDiv {
+    opacity: 0;
+}
+
+.openedPost .title {
+    font-size: 4.44vh;
+    animation: enlargeTitle 1s linear;
+}
+
+.openedPost .description {
+    font-size: 1.44vh;
+    animation: enlargeDescription 1s linear;
+}
+
+.openedPost .date {
+    font-family: FedraDemi;
+    position: absolute;
+    top: 2.27%;
+    margin-left: 4%;
+}
+
+@keyframes enlargeTitle {
+    0% {
+        font-size: 2.77vh;
+    }
+
+    70% { 
+        font-size: 4.44vh;
+    }
+
+    100% {
+        font-size: 4.44vh;
+    }
+}
+
+@keyframes enlargeDescription {
+    0% {
+        font-size: 1.33vh;
+    }
+
+    70% { 
+        font-size: 1.44vh;
+    }
+
+    100% {
+        font-size: 1.44vh;
     }
 }

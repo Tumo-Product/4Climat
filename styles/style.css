@@ -76,10 +76,15 @@ input:focus
     position: fixed;
 }
 
+.mapContainer {
+    height: 34.38%;
+    width: 32.7%;
+}
+
 .map {
-    width   : 400px;
-    height  : 400px;
-    border  : none;
+    border: none;
+    width: 90%;
+    height: 90%;
 }
 
 .card {
@@ -127,6 +132,7 @@ input:focus
 }
 
 .category {
+    cursor: pointer;
     transition: 1s;
     position: relative;
     display: flex;
@@ -151,7 +157,7 @@ input:focus
     background-color: #F3F3F3;
     box-shadow: inset -3px -3px 5px 0 #FEFEFE, inset 3px 3px 5px 0 rgba(222,222,230,0.5);
     width: 96%;
-    height: 85%;
+    height: 89%;
     position: absolute;
     background-color: transparent;
 }
@@ -253,6 +259,7 @@ input:focus
     width: 8.1%;
     position: absolute;
     right: 1.33%;;
+    cursor: pointer;
 
     box-shadow: -4px -4px 5px 0 #FEFEFE, 4px 4px 5px 0 #DEDEE6;
     margin-left: 5%;
@@ -276,12 +283,53 @@ input:focus
     box-shadow: inset -3px -3px 4px 0 #FEFEFE, inset 3px 3px 4px 0 rgba(222,222,230,0.5);
     flex-shrink: 1;
     transition: 0.6s;
+    scroll-behavior: smooth;
+}
+
+.button {
+    box-shadow: 2px -1px 2px 0 #FEFEFE, -1px 2px 2px 0 #DEDEE6;
+    border-radius: 100%;
+    position: absolute;
+
+    width: 6.83%;
+    height: 9.1%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.button img {
+    width: 50%;
+    height: 50%;
+}
+
+.leftButton {
+    left: 2.12%;
+}
+
+.rightButton {
+    transform: scaleX(-1) rotate(360deg);
+    right: 2.12%;
+}
+
+.disabled {
+    cursor: unset;
+    pointer-events: none;
+}
+
+.disabled img {
+    filter: grayscale(100%);
+    opacity: 0.3;
 }
 
 .post {
+    position: relative;
+    transition: 0.5s;
     width: 90.94%;
     /* height: 31%; */
     height: 19.05vh;
+    cursor: pointer;
     margin-left: 4.5%;
     margin-top: 4.5%;
     border-radius: 19px;
@@ -295,6 +343,8 @@ input:focus
 }
 
 .content {
+    position: relative;
+    transition: 0.65s;
     height: 86.65%;
     margin-left: 3.5%;
     width: 64%;
@@ -302,10 +352,11 @@ input:focus
 
 .spanDiv {
     display: flex;
+    transition: 0.5s;
 }
 
 .title {
-    font-size: 2.79vh;
+    font-size: 2.77vh;
     color: #EBD986;
     width: 100%;
 }
@@ -313,7 +364,7 @@ input:focus
 .date {
     font-family: FedraBook;
     color: #CBCBD0;
-    font-size: 1.67vh;
+    font-size: 1.66vh;
 }
 
 .postCategory {
@@ -328,13 +379,14 @@ input:focus
     color: #5C7CA6;
     font-family: FedraBook;
     /* font-size: 12px; */
-    font-size: 1.31vh;
+    font-size: 1.33vh;
     font-weight: 300;
     margin-top: 2.25%;
     overflow: hidden;
 }
 
 .picture {
+    transition: 0.5s;
     width: 29.3%;
     height: 90.13%;
     border-radius: 15px;

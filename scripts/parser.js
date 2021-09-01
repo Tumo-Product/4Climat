@@ -9,5 +9,8 @@ const parser = {
         coords          = { longitude: parseFloat(coords[0]), latitude: parseFloat(coords[1]) };
 
         return coords;
+    },
+    isTitleCorrect    : (title) => {
+        return title.includes("   ") || title.includes(".") || title.length < 5;
     }
 }

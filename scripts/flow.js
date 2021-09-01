@@ -11,7 +11,7 @@ const onLoad = async () => {
     for (let i = 0; i < posts.length; i++) {
         let src = parser.getMapLink(posts[i].longitude, posts[i].latitude, "us");
         // view.makeMap(src, ".card");
-        view.addPost(posts[i].title, posts[i].date, categories[posts[i].categoryId], posts[i].description, posts[i].photos[0]);
+        view.addPost(i, posts[i].title, posts[i].date, posts[i].categories[0], posts[i].description, posts[i].photos[0]);
     }
 
     for (let i = 0; i < categories.length; i++) {
@@ -43,8 +43,14 @@ const login = async () => {
     view.toggleLoader();
 }
 
-const addPost = async () => {
-    await view.setupPostView();
+const addPost = async (index) => {
+    await view.setupPostView(index);
+}
+
+const openPost = async (i) => {
+    let postCategories  = posts[i].categories;
+    let mapSrc          = parser.getMapLink(posts[i].longitude, posts[i].latitude);
+    view.openPost(i, postCategories, mapSrc);
 }
 
 $(onLoad);
