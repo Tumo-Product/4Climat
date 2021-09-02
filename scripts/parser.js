@@ -11,6 +11,6 @@ const parser = {
         return coords;
     },
     isTitleCorrect    : (title) => {
-        return title.includes("   ") || title.includes(".") || title.length < 5;
+        return title.includes("   ") || title.length < 5;
     }
 }

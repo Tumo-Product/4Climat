@@ -16,9 +16,12 @@
     }
 }
 
+.smooth {
+    transition: 0.5s;
+}
+
 .openedPost .picture {
     margin-bottom: 30%;
-    /* height: 0 !important; */
     width: 0 !important;
     padding: 0;
     opacity: 0;
@@ -26,14 +29,11 @@
 
 .openedPost {
     height: 56vh;
+    cursor: unset;
 }
 
 .openedPost .content {
     width: 93%;
-}
-
-.openedPost .spanDiv {
-    opacity: 0;
 }
 
 .openedPost .title {
@@ -44,13 +44,44 @@
 .openedPost .description {
     font-size: 1.44vh;
     animation: enlargeDescription 1s linear;
+    height: 38%;
 }
 
-.openedPost .date {
+.openedDate {
     font-family: FedraDemi;
     position: absolute;
     top: 2.27%;
     margin-left: 4%;
+    opacity: 1;
+    animation: appear 0.5s linear;
+}
+
+.openCategories {
+    animation: appear 0.5s linear;
+}
+
+.imgMapView {
+    animation: stretchMapView 0.5s linear;
+}
+
+@keyframes stretchMapView {
+    from {
+        height: 0;
+    }
+
+    to {
+        height: 40%;
+    }
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes enlargeTitle {
@@ -58,7 +89,7 @@
         font-size: 2.77vh;
     }
 
-    70% { 
+    40% { 
         font-size: 4.44vh;
     }
 

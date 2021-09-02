@@ -48,9 +48,8 @@ const addPost = async (index) => {
 }
 
 const openPost = async (i) => {
-    let postCategories  = posts[i].categories;
     let mapSrc          = parser.getMapLink(posts[i].longitude, posts[i].latitude);
-    view.openPost(i, postCategories, mapSrc);
+    view.openPost(i, posts[i].categories, posts[i].photos, mapSrc);
 }
 
 $(onLoad);

@@ -1,8 +1,10 @@
 const view      = {
     loaderOpen  : true,
+    currImage   : 0,
     maxSize     : {width: 900, height: 684},
     window      : {width: 0, height: 0},
     categories  : [],
+    offset      : -1,
 
     toggleLoader    : () => {
         view.loaderOpen = !view.loaderOpen;
@@ -11,7 +13,7 @@ const view      = {
         else                    $("#loadingScreen").hide();
     },
     makeMap         : (src, parent) => {
-        $(parent).append(`<iframe class="map" src="${src}"></iframe>`);
+        $(parent).append(`<div class="mapCrop"><iframe class="map" src="${src}"></iframe></div>`);
     },
     addCategory     : (index, text) => {
         $("#categories").append(`
@@ -37,7 +39,9 @@ const view      = {
             </div>
         </div>`);
     },
-    openPost        : async (index, postCategories, mapSrc) => {
+    openPost        : async (index, categories, photos, mapSrc) => {
+        $(`#p_${index}`).attr("onclick", "");
+        
         let marginTop   = parseFloat($(`#p_${index}`).css("margin-top"));
         let postHeight  = parseFloat($(`#p_${index}`).height());
         let scrollPos   = postHeight * index;
@@ -48,25 +52,60 @@ const view      = {
         $(`#p_${index}`).addClass("openedPost");
         $("#postsView").scrollTop(scrollPos);
 
-        $(`#p_${index} .date`).clone().prependTo(`#p_${index}`);
-        $(`#p_${index} .spanDiv`).empty();
-
-
         $(`#p_${index} .description`).before(`
             <div class="imgMapView">
+                <img onclick="view.scrollPhoto(-1)" class="leftImgBtn"    src="icons/thin_arrow.svg">
+                <div class="imageView"></div>
+                <img onclick="view.scrollPhoto(1)" class="rightImgBtn"   src="icons/thin_arrow.svg">
                 <div class="mapContainer"></div>
             </div>
         `);
 
         view.makeMap(mapSrc, ".mapContainer");
-        
-        await timeout(400);
+        $(".map").contents().find(".place-card").hide();
 
-        for (let i = 0; i < postCategories.length; i++) {
-            $(`#p_${index} .spanDiv`).append(`<span class="card">${postCategories[i]}</span>`);   
+        $(`#p_${index} .date`).clone().prependTo(`#p_${index}`);
+        $(`#p_${index} .spanDiv`).empty();
+        $(`#p_${index} .date`).addClass("openedDate");
+
+        $(`#p_${index} .spanDiv`).addClass("openCategories");
+        for (let i = 0; i < categories.length; i++) {
+            $(`#p_${index} .spanDiv`).append(`<span class="card">${categories[i]}</span>`);
+        }
+
+        $(`#p_${index} .imageView`).append(`<div id="img_${0}" class="image"><img src="${photos[0]}"></div>`);
+        await timeout(700);
+
+        let left    = parseFloat($(`#img_${0}`).css("left"));
+        let width   = parseFloat($(`#img_${0}`).css("width"));
+        view.offset = left + width;
+
+        for (let i = 1; i < photos.length; i++) {
+            $(`#p_${index} .imageView`).append(`<div id="img_${i}" class="image"><img src="${photos[i]}"></div>`);
+
+            let left    = parseFloat($(`#img_${i}`).css("left")) * 2;
+            let width   = parseFloat($(`#img_${i}`).css("width"));
+
+            $(`#img_${i}`).css("left", (left + width) * i);
+        }
+
+        await timeout(100);
+        $(".image").addClass("smooth");
+    },
+    scrollPhoto     : async (dir) => {
+        let scroll = false;
+
+        if ((dir > 0 && view.currImage + 1 != $(".image").length) || (dir < 0 && view.currImage - 1 != -1)) {
+            scroll = true;
+        }
+
+        if (scroll) {
+            $(".image").each(function(i) {
+                $(this).css("left", dir > 0 ? `-=${view.offset}` : `+=${view.offset}`);
+            })
+            view.currImage += dir;
         }
     },
-
     setupPostView   : async () => {
         $("#addBtn").attr("onclick", "");
 
@@ -119,10 +158,10 @@ const view      = {
         $(elem).scrollTop($(elem).width() / 2);
     },
     resize          : () => {
-        $(".subContainer").css("width", parseFloat($(".subContainer").height()) * 1.1);
+        $(".subContainer").css("width", parseFloat($(".subContainer").height()) * 1.11);
 
         $(window).resize(function() {
-            $(".subContainer").css("width", parseFloat($(".subContainer").height()) * 1.1);
+            $(".subContainer").css("width", parseFloat($(".subContainer").height()) * 1.11);
         });
     },
 }
