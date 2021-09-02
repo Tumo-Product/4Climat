@@ -52,6 +52,7 @@ const view      = {
         $(`#p_${index}`).addClass("openedPost");
         $("#postsView").scrollTop(scrollPos);
 
+        await timeout(300);
         $(`#p_${index} .description`).before(`
             <div class="imgMapView">
                 <img onclick="view.scrollPhoto(-1)" class="leftImgBtn"    src="icons/thin_arrow.svg">
@@ -60,6 +61,8 @@ const view      = {
                 <div class="mapContainer"></div>
             </div>
         `);
+
+        $(`#p_${index} .description`).css("opacity", 0);
 
         view.makeMap(mapSrc, ".mapContainer");
         $(".map").contents().find(".place-card").hide();
@@ -75,6 +78,7 @@ const view      = {
 
         $(`#p_${index} .imageView`).append(`<div id="img_${0}" class="image"><img src="${photos[0]}"></div>`);
         await timeout(700);
+        $(`#p_${index} .description`).css("opacity", 1);
 
         let left    = parseFloat($(`#img_${0}`).css("left"));
         let width   = parseFloat($(`#img_${0}`).css("width"));
