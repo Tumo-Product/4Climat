@@ -5,7 +5,7 @@ const view      = {
     window      : {width: 0, height: 0},
     categories  : [],
     offset      : -1,
-    dropDownOpen: false,
+    dropdownOpen: false,
 
     toggleLoader    : () => {
         view.loaderOpen = !view.loaderOpen;
@@ -157,43 +157,56 @@ const view      = {
 
         $(".postView").append(`
             <div class="categorySelector">
-                <div class="selector"><p>Choose categories...</p></div>
+                <div class="selector">
+                    <p class="chooseCategories">Choose categories...</p>
+                    <div class="categoriesInPost"></div>
+                </div>
                 <div class="dropdown" onclick="toggleDropdown()">&#11167;</div>
             </div>
             <div class="categories hidden"></div>
         `);
 
         for (let i = 0; i < categories.length; i++) {
-            $(".categories").append(`
-                <div id="pc_${i}" class="addPostCategory">
-                    <p>${categories[i]}</p>
-                    <span onclick="view.addCategoryToPost(${i})" class="addCategory">+</span>
-                </div>`
-            );
+            view.appendPostCategory(i, ".categories")
         }
     },
-    toggleDropdown  : () => { // Change icons
-        if (view.dropDownOpen) {
+    toggleDropdown  : () => { // TODO: Change icons
+        if (!view.dropdownOpen) {
             $(".categories").removeClass("hidden");
             $(".categories").css("overflow", "auto");
         } else {
             $(".categories").addClass("hidden");
         }
 
-        view.dropDownOpen = !view.dropDownOpen;
+        view.dropdownOpen = !view.dropdownOpen;
     },
     addCategoryToPost   : async (i) => {
-        if ($(".categories .addPostCategory").length == 0) {
-            $(".selector p").css("opacity", 0);
-
-            await timeout(600);
+        if ($(".selector .addPostCategory").length == 0) {
+            $(".chooseCategories").css("opacity", 0);
         }
 
+        $(`#pc_${i}`).css("width", $(`#pc_${i}`).width());
+        await timeout(10);
         $(`#pc_${i}`).addClass("closeCategory");
         await timeout(600);
-        let clone = $(`#pc_${i}`).clone();
+        $(".chooseCategories").remove();
         $(`#pc_${i}`).remove();
-        console.log(clone);
+        $(".categoriesInPost").css("display", "flex");
+
+        let ctg = view.appendPostCategory(i, ".categoriesInPost");
+        // let marginRight = ;
+        // let val = ctg.width() + ctg.;
+        $(".categoriesInPost").css("width", `+=${val}`);
+    },
+    appendPostCategory  : (i, parent) => {
+        let element = $(parent).append(`
+            <div id="pc_${i}" class="addPostCategory">
+                <p>${categories[i]}</p>
+                <span onclick="view.addCategoryToPost(${i})" class="addCategory">+</span>
+            </div>`
+        );
+
+        return element;
     },
     toggleCategory  : (index) => {
         $(`#c_${index}`).removeClass(view.categories[index] ? "outsideShadow"   : "insetShadow");

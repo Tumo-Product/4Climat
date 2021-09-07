@@ -1,4 +1,4 @@
-.postView h1, .postView p, .postView .button {
+.postView .postTitle, .postView .postStageExpl, .postView .button {
     animation: showText 1s linear;
 }
 
@@ -74,7 +74,8 @@
     display: flex;
 }
 
-.categorySelector p {
+.chooseCategories {
+    animation: showText 1s linear;
     left: 6%;
     top: 25%;
     position: absolute;
@@ -90,6 +91,9 @@
     white-space: nowrap;
     border-radius: 19px;
     box-shadow: 3px 3px 2px 0 rgba(222,222,230,0.5), -3px -3px 2px 0 #FEFEFE;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
 }
 
 .selector p {
@@ -139,13 +143,24 @@
     margin: 0;
 }
 
+.categoriesInPost {
+    height: 4.88vh;
+    width: max-content;
+    display: hidden;
+
+    position: absolute;
+    left: 4.15%;
+    display: flex;
+    gap: 1vh;
+}
+
 .addPostCategory {
     overflow: hidden;
-    transition: 0.5s;
+    transition: 0.6s;
     padding-left: 4%;
     border-radius: 6px;
-    /* width: 44.25%; */
     padding-right: 0.7vh;
+    /* width: 44.25%; */
     width: fit-content;
     height: 4.88vh;
     box-shadow: 3px 3px 4px 0 rgba(222,222,230,0.5), -3px -3px 4px 0 #FEFEFE;
