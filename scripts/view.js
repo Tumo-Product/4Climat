@@ -5,6 +5,7 @@ const view      = {
     window      : {width: 0, height: 0},
     categories  : [],
     offset      : -1,
+    dropDownOpen: false,
 
     toggleLoader    : () => {
         view.loaderOpen = !view.loaderOpen;
@@ -110,31 +111,28 @@ const view      = {
             view.currImage += dir;
         }
     },
-    setupPostView   : async () => {
+    setupPostTitleView   : async () => {
         $("#addBtn").attr("onclick", "");
 
+        // Slide categories down and remove them.
         $(".category").eq(0).css("margin-top", $("#categories").prop("scrollHeight") + 100);
         $("#categories").css("scroll-behavior", "smooth");
         $("#categories").scrollTop(0);
 
-        $("#search").css("width", 0);
-        $("#postsView").css("margin-top", "50%");
-        $("#postsView").css("height", 0);
-        $("#searchbar").css("opacity", 0);
-        $("#searchBtn").css("opacity", 0);
+        // Widen categories to make it main post adding space.
+        $("#mainCard").addClass("cardPostView");
         await timeout(600);
         $("#posts").css({ "width": 0, margin: 0 });
-        $("#categories").css("width", "100%");
         $(".category").remove();
 
         $("#categories").addClass("postView");
 
         $(".postView").append(`
-            <h1>Title for this page</h1>
-            <p>Explanatory title for this page</p>
+            <h1 class="postTitle">Title for this page</h1>
+            <p class="postStageExpl">Explanatory title for this page</p>
             <input id="titleInput" placeholder="Write your title here …">
             <div class="leftButton button disabled"></div>
-            <div class="rightButton button disabled"></div>
+            <div onclick="addPost(1)" class="rightButton button disabled"></div>
         `);
         
         $(".leftButton").append (`<div class="inside"></div><img src="icons/arrow.svg">`);
@@ -149,6 +147,53 @@ const view      = {
                 $(".rightButton").removeClass("disabled");
             }
         });
+    },
+    setupPostCategoryView   : async () => {
+        $("#titleInput").addClass("closed");
+        $(".rightButton").attr("onclick", "");
+        $(".rightButton").addClass("disabled");
+        await timeout(600);
+        $("#titleInput").remove();
+
+        $(".postView").append(`
+            <div class="categorySelector">
+                <div class="selector"><p>Choose categories...</p></div>
+                <div class="dropdown" onclick="toggleDropdown()">&#11167;</div>
+            </div>
+            <div class="categories hidden"></div>
+        `);
+
+        for (let i = 0; i < categories.length; i++) {
+            $(".categories").append(`
+                <div id="pc_${i}" class="addPostCategory">
+                    <p>${categories[i]}</p>
+                    <span onclick="view.addCategoryToPost(${i})" class="addCategory">+</span>
+                </div>`
+            );
+        }
+    },
+    toggleDropdown  : () => { // Change icons
+        if (view.dropDownOpen) {
+            $(".categories").removeClass("hidden");
+            $(".categories").css("overflow", "auto");
+        } else {
+            $(".categories").addClass("hidden");
+        }
+
+        view.dropDownOpen = !view.dropDownOpen;
+    },
+    addCategoryToPost   : async (i) => {
+        if ($(".categories .addPostCategory").length == 0) {
+            $(".selector p").css("opacity", 0);
+
+            await timeout(600);
+        }
+
+        $(`#pc_${i}`).addClass("closeCategory");
+        await timeout(600);
+        let clone = $(`#pc_${i}`).clone();
+        $(`#pc_${i}`).remove();
+        console.log(clone);
     },
     toggleCategory  : (index) => {
         $(`#c_${index}`).removeClass(view.categories[index] ? "outsideShadow"   : "insetShadow");

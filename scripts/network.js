@@ -13,24 +13,11 @@ const network   = {
 
     getCategories   : async () => {
         return [
-            "Reuse",
-            "Recycle",
-            "Reduce",
-            "Reuse",
-            "Recycle",
-            "Reduce",
-            "Reuse",
-            "Recycle",
-            "Reduce",
-            "Reuse",
-            "Recycle",
-            "Reduce",
-            "Reuse",
-            "Recycle",
-            "Reduce",
-            "Reuse",
-            "Recycle",
-            "Reduce"
+            "Category 1",
+            "Category 2",
+            "Category 3 ………………………",
+            "Category 4",
+            "Category 5 ………………………",
         ];
     }
 }
@@ -40,8 +27,8 @@ const network   = {
 const userPosts = [
     {
         categories  : [
-            "Recycle",
-            "Reuse"
+            "Category 1",
+            "Category 2"
         ],
         latitude: 44.4937761,
         longitude: 40.1979479,
@@ -55,7 +42,7 @@ const userPosts = [
     },
     {
         categories  : [
-            "Reduce"
+            "Category 3 ………………………"
         ],
         longitude   : 44.4325385,
         latitude    : 40.2122591,
@@ -68,7 +55,7 @@ const userPosts = [
     },
     {
         categories  : [
-            "Reduce"
+            "Category 4"
         ],
         longitude   : 44.4325385,
         latitude    : 40.2122591,
@@ -81,7 +68,7 @@ const userPosts = [
     },
     {
         categories  : [
-            "Reduce"
+            "Category 4"
         ],
         longitude   : 44.4325385,
         latitude    : 40.2122591,
@@ -94,7 +81,7 @@ const userPosts = [
     },
     {
         categories  : [
-            "Reduce"
+            "Category 4"
         ],
         longitude   : 44.4325385,
         latitude    : 40.2122591,
@@ -107,7 +94,7 @@ const userPosts = [
     },
     {
         categories  : [
-            "Reduce"
+            "Category 4"
         ],
         longitude   : 44.4325385,
         latitude    : 40.2122591,
@@ -120,7 +107,7 @@ const userPosts = [
     },
     {
         categories  : [
-            "Reduce"
+            "Category 4"
         ],
         longitude   : 44.4325385,
         latitude    : 40.2122591,
@@ -133,7 +120,7 @@ const userPosts = [
     },
     {
         categories  : [
-            "Reduce"
+            "Category 4"
         ],
         longitude   : 44.4325385,
         latitude    : 40.2122591,

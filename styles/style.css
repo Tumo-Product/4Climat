@@ -105,8 +105,8 @@ input:focus
 
 .map {
     position: relative;
-    height: 300px;
-    width: 300px;
+    height: 50vh;
+    width: 50vh;
 }
 
 .imageView {
@@ -188,6 +188,8 @@ input:focus
     transition: 0.7s;
 }
 
+
+
 .category {
     cursor: pointer;
     transition: 1s;
@@ -236,50 +238,6 @@ input:focus
     height  : 92.83%;
     position: relative;
     transition: 0.3s;
-}
-
-.postView {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    position: relative;
-}
-
-.postView h1 {
-    width: 71%;
-    position: absolute;
-    color: #98B2D4;
-    font-size: 6.66vh;
-    top: 6.6%;
-}
-
-.postView p {
-    width: 71%;
-    font-family: FedraBook;
-    color: #CBCBD0;
-    position: absolute;
-    font-size: 3.33vh;
-    top: 19.65%;
-}
-
-#titleInput::placeholder {
-    color: #CBCBD0;
-}
-
-#titleInput {
-    transition: 0.5s;
-    height: 11.63%;
-    width: 58.53%;
-    padding: 3%;
-    position: relative;
-    border-radius: 19px;
-    box-shadow: inset -2px -2px 4px 0 #FEFEFE, inset 2px 2px 4px 0 rgba(222,222,230,0.5);
-
-    font-family: FedraDemi;
-    font-size: 2.78vh;
-    font-weight: 500;
-    color: #98B2D4;
 }
 
 #searchbar {
@@ -384,7 +342,6 @@ input:focus
     position: relative;
     transition: 0.5s;
     width: 90.94%;
-    /* height: 31%; */
     height: 19.05vh;
     cursor: pointer;
     margin-left: 4.5%;
@@ -404,7 +361,7 @@ input:focus
     transition: 0.65s;
     height: 86.65%;
     margin-left: 3.5%;
-    width: 64%;
+    width: 62%;
 }
 
 .spanDiv {
@@ -513,7 +470,6 @@ input:focus
 
 .insetShadow p {
     opacity: 0.3;
-    /* font-size: 13px; */
     font-size: 1.55vh;
 }
 

@@ -1,0 +1,174 @@
+.postView h1, .postView p, .postView .button {
+    animation: showText 1s linear;
+}
+
+.cardPostView #search {
+    width: 0;
+}
+
+.cardPostView #searchbar {
+    opacity: 0;
+}
+
+.cardPostView #postsView {
+    margin-top: 50%;
+    height: 0;
+}
+
+.closed {
+    width: 0 !important;
+    padding: 0 !important;
+}
+
+.postView {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+    width: 100% !important;
+}
+
+.postTitle {
+    width: 71%;
+    position: absolute;
+    color: #98B2D4;
+    font-size: 6.66vh;
+    top: 6.6%;
+}
+
+.postStageExpl {
+    width: 71%;
+    font-family: FedraBook;
+    color: #CBCBD0;
+    position: absolute;
+    font-size: 3.33vh;
+    top: 19.65%;
+}
+
+#titleInput::placeholder {
+    color: #CBCBD0;
+}
+
+#titleInput {
+    transition: 0.5s;
+    height: 11.63%;
+    width: 58.53%;
+    padding: 3%;
+    position: relative;
+    border-radius: 19px;
+    box-shadow: inset -2px -2px 4px 0 #FEFEFE, inset 2px 2px 4px 0 rgba(222,222,230,0.5);
+
+    font-family: FedraDemi;
+    font-size: 2.78vh;
+    font-weight: 500;
+    color: #98B2D4;
+}
+
+.categorySelector {
+    position: absolute;
+
+    height: 11.63%;
+    width: 58.53%;
+    animation: openCategorySelector 0.4s linear;
+    display: flex;
+}
+
+.categorySelector p {
+    left: 6%;
+    top: 25%;
+    position: absolute;
+    color: #CDCDD3;
+    font-family: FedraDemi;
+    font-size: 2.78vh;
+    font-weight: 500;
+}
+
+.selector {
+    height: 100%;
+    width: 82.2%;
+    white-space: nowrap;
+    border-radius: 19px;
+    box-shadow: 3px 3px 2px 0 rgba(222,222,230,0.5), -3px -3px 2px 0 #FEFEFE;
+}
+
+.selector p {
+    transition: 0.5s;
+}
+
+.dropdown {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 15%;
+    height: 100%;
+    color: #EBD730;
+    margin-left: 2.8%;
+    font-size: 3vh;
+    border-radius: 19px;
+    box-shadow: 3px 3px 2px 0 rgba(222,222,230,0.5), -3px -3px 2px 0 #FEFEFE;
+    cursor: pointer;
+}
+
+.categories {
+    transition: 0.7s;
+    position: absolute;
+    top: 57.23%;
+    right: 31%;
+    width: 48.17%;
+    height: 26.1vh;
+    /* max-height: 26.1vh;
+    height: fit-content; */
+    padding: 1.9vh;
+    border-radius: 19px;
+    box-shadow: inset -2px -2px 4px 0 #FEFEFE, inset 2px 2px 4px 0 rgba(222,222,230,0.5);
+
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1vh;
+}
+
+.row {
+    width: 100%;   
+    display: flex;
+    margin-top: 1vh;
+}
+
+.row:first-of-type {
+    margin: 0;
+}
+
+.addPostCategory {
+    overflow: hidden;
+    transition: 0.5s;
+    padding-left: 4%;
+    border-radius: 6px;
+    /* width: 44.25%; */
+    padding-right: 0.7vh;
+    width: fit-content;
+    height: 4.88vh;
+    box-shadow: 3px 3px 4px 0 rgba(222,222,230,0.5), -3px -3px 4px 0 #FEFEFE;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.addPostCategory p {
+    color: #78A6D1;
+    font-weight: 500;
+    font-size: 2.77vh;
+    margin-right: 0.68vh;
+    min-width: 15.66vh;
+}
+
+.addPostCategory span {
+    color: #6CB769;
+    cursor: pointer;
+}
+
+.hidden {
+    height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}

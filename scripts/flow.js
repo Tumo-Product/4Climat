@@ -43,12 +43,25 @@ const login = async () => {
     view.toggleLoader();
 }
 
-const addPost = async (index) => {
-    await view.setupPostView(index);
+const addPost = async (stage) => {
+    switch (stage) {
+        case 0:
+            await view.setupPostTitleView();
+            break;
+        case 1:
+            await view.setupPostCategoryView(categories);
+            break;
+        default:
+            break;
+    }
+}
+
+const toggleDropdown = async () => {
+    view.toggleDropdown();
 }
 
 const openPost = async (i) => {
-    let mapSrc          = parser.getMapLink(posts[i].longitude, posts[i].latitude);
+    let mapSrc = parser.getMapLink(posts[i].longitude, posts[i].latitude);
     view.openPost(i, posts[i].categories, posts[i].photos, mapSrc);
 }
 
