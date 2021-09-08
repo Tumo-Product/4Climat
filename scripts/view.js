@@ -5,7 +5,6 @@ const view      = {
     window      : {width: 0, height: 0},
     categories  : [],
     offset      : -1,
-    dropdownOpen: false,
 
     toggleLoader    : () => {
         view.loaderOpen = !view.loaderOpen;
@@ -110,103 +109,6 @@ const view      = {
             })
             view.currImage += dir;
         }
-    },
-    setupPostTitleView   : async () => {
-        $("#addBtn").attr("onclick", "");
-
-        // Slide categories down and remove them.
-        $(".category").eq(0).css("margin-top", $("#categories").prop("scrollHeight") + 100);
-        $("#categories").css("scroll-behavior", "smooth");
-        $("#categories").scrollTop(0);
-
-        // Widen categories to make it main post adding space.
-        $("#mainCard").addClass("cardPostView");
-        await timeout(600);
-        $("#posts").css({ "width": 0, margin: 0 });
-        $(".category").remove();
-
-        $("#categories").addClass("postView");
-
-        $(".postView").append(`
-            <h1 class="postTitle">Title for this page</h1>
-            <p class="postStageExpl">Explanatory title for this page</p>
-            <input id="titleInput" placeholder="Write your title here …">
-            <div class="leftButton button disabled"></div>
-            <div onclick="addPost(1)" class="rightButton button disabled"></div>
-        `);
-        
-        $(".leftButton").append (`<div class="inside"></div><img src="icons/arrow.svg">`);
-        $(".rightButton").append(`<div class="inside"></div><img src="icons/arrow.svg">`);
-
-        $("#titleInput").on('input', function() {
-            if (parser.isTitleCorrect($(this).val())) {
-                if (!$(".rightButton").attr("class").includes("disabled")) {
-                    $(".rightButton").addClass("disabled");
-                }
-            } else {
-                $(".rightButton").removeClass("disabled");
-            }
-        });
-    },
-    setupPostCategoryView   : async () => {
-        $("#titleInput").addClass("closed");
-        $(".rightButton").attr("onclick", "");
-        $(".rightButton").addClass("disabled");
-        await timeout(600);
-        $("#titleInput").remove();
-
-        $(".postView").append(`
-            <div class="categorySelector">
-                <div class="selector">
-                    <p class="chooseCategories">Choose categories...</p>
-                    <div class="categoriesInPost"></div>
-                </div>
-                <div class="dropdown" onclick="toggleDropdown()">&#11167;</div>
-            </div>
-            <div class="categories hidden"></div>
-        `);
-
-        for (let i = 0; i < categories.length; i++) {
-            view.appendPostCategory(i, ".categories")
-        }
-    },
-    toggleDropdown  : () => { // TODO: Change icons
-        if (!view.dropdownOpen) {
-            $(".categories").removeClass("hidden");
-            $(".categories").css("overflow", "auto");
-        } else {
-            $(".categories").addClass("hidden");
-        }
-
-        view.dropdownOpen = !view.dropdownOpen;
-    },
-    addCategoryToPost   : async (i) => {
-        if ($(".selector .addPostCategory").length == 0) {
-            $(".chooseCategories").css("opacity", 0);
-        }
-
-        $(`#pc_${i}`).css("width", $(`#pc_${i}`).width());
-        await timeout(10);
-        $(`#pc_${i}`).addClass("closeCategory");
-        await timeout(600);
-        $(".chooseCategories").remove();
-        $(`#pc_${i}`).remove();
-        $(".categoriesInPost").css("display", "flex");
-
-        let ctg = view.appendPostCategory(i, ".categoriesInPost");
-        // let marginRight = ;
-        // let val = ctg.width() + ctg.;
-        $(".categoriesInPost").css("width", `+=${val}`);
-    },
-    appendPostCategory  : (i, parent) => {
-        let element = $(parent).append(`
-            <div id="pc_${i}" class="addPostCategory">
-                <p>${categories[i]}</p>
-                <span onclick="view.addCategoryToPost(${i})" class="addCategory">+</span>
-            </div>`
-        );
-
-        return element;
     },
     toggleCategory  : (index) => {
         $(`#c_${index}`).removeClass(view.categories[index] ? "outsideShadow"   : "insetShadow");

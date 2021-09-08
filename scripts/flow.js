@@ -46,18 +46,17 @@ const login = async () => {
 const addPost = async (stage) => {
     switch (stage) {
         case 0:
-            await view.setupPostTitleView();
+            await postView.setupTitleView();
             break;
         case 1:
-            await view.setupPostCategoryView(categories);
+            await postView.setupCategoryView(categories);
+            break;
+        case 1:
+            
             break;
         default:
             break;
     }
-}
-
-const toggleDropdown = async () => {
-    view.toggleDropdown();
 }
 
 const openPost = async (i) => {

@@ -27,6 +27,7 @@
     flex-direction: column;
     position: relative;
     width: 100% !important;
+    overflow: hidden !important;
 }
 
 .postTitle {
@@ -83,9 +84,11 @@
     font-family: FedraDemi;
     font-size: 2.78vh;
     font-weight: 500;
+    transition: 0.5s;
 }
 
 .selector {
+    overflow: auto;
     height: 100%;
     width: 82.2%;
     white-space: nowrap;
@@ -93,13 +96,7 @@
     box-shadow: 3px 3px 2px 0 rgba(222,222,230,0.5), -3px -3px 2px 0 #FEFEFE;
     display: flex;
     align-items: center;
-    overflow: hidden;
 }
-
-.selector p {
-    transition: 0.5s;
-}
-
 .dropdown {
     display: flex;
     justify-content: center;
@@ -121,15 +118,14 @@
     right: 31%;
     width: 48.17%;
     height: 26.1vh;
-    /* max-height: 26.1vh;
-    height: fit-content; */
     padding: 1.9vh;
     border-radius: 19px;
     box-shadow: inset -2px -2px 4px 0 #FEFEFE, inset 2px 2px 4px 0 rgba(222,222,230,0.5);
 
-    overflow: hidden;
+    overflow: auto;
     display: flex;
     flex-wrap: wrap;
+    align-content: flex-start;
     gap: 1vh;
 }
 
@@ -144,23 +140,28 @@
 }
 
 .categoriesInPost {
-    height: 4.88vh;
+    height: 6vh;
     width: max-content;
     display: hidden;
-
-    position: absolute;
-    left: 4.15%;
+    position: relative;
+    
+    padding-left: 1vh;
+    left: 1vh;
     display: flex;
-    gap: 1vh;
+    align-items: center;
+    gap: 1.44vh;
+}
+
+.categoriesInPost .addPostCategory:last-child {
+    margin-right: 1.44vh;
 }
 
 .addPostCategory {
+    flex-shrink: 0;
     overflow: hidden;
-    transition: 0.6s;
-    padding-left: 4%;
+    padding-left: 1.33vh;
     border-radius: 6px;
     padding-right: 0.7vh;
-    /* width: 44.25%; */
     width: fit-content;
     height: 4.88vh;
     box-shadow: 3px 3px 4px 0 rgba(222,222,230,0.5), -3px -3px 4px 0 #FEFEFE;
@@ -174,12 +175,21 @@
     font-weight: 500;
     font-size: 2.77vh;
     margin-right: 0.68vh;
-    min-width: 15.66vh;
+    min-width: 15.94vh;
+    animation: showText 0.5s linear;
 }
 
-.addPostCategory span {
-    color: #6CB769;
+.addCategory, .removeCategory {
     cursor: pointer;
+    font-size: 2.55vh;
+}
+
+.addCategory {
+    color: #6CB769;
+}
+
+.removeCategory {
+    color: #E85156;
 }
 
 .hidden {
