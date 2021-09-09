@@ -1,4 +1,5 @@
 let categories, posts;
+let post, currMapLink;
 
 const timeout = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -46,16 +47,51 @@ const login = async () => {
 const addPost = async (stage) => {
     switch (stage) {
         case 0:
-            await postView.setupTitleView();
+            await postHandlers.handleTitle();
             break;
         case 1:
-            await postView.setupCategoryView(categories);
+            await postView.setupCategoryView();
             break;
-        case 1:
-            
+        case 2:
+            await postHandlers.handleMapLink();
+            break;
+        case 3:
+            await postHandlers.handleMap();
             break;
         default:
             break;
+    }
+}
+
+const postHandlers = {
+    handleTitle:  async () => {
+        let titleInput = await postView.setupTitleView();
+    
+        titleInput.on('input', function() {
+            if (parser.isTitleCorrect($(this).val())) {
+                postView.enableRightBtn();
+            } else {
+                postView.disableRightBtn();
+            }
+        });
+    },
+    handleMapLink: async () => {
+        let mapLink = await postView.setupMapLinkView();
+
+        mapLink.on('input', function() {
+            if (parser.isURLValid($(this).val())) {
+                currMapLink = $(this).val();
+                postView.enableRightBtn();
+            } else {
+                postView.disableRightBtn();
+            }
+        });
+    },
+    handleMap: async () => {
+        console.log(currMapLink);
+        let mapCoords = parser.getCoords(currMapLink);
+        let mapEmbed  = parser.getMapLink(mapCoords.longitude, mapCoords.latitude);
+        await postView.setupMapView(mapEmbed);
     }
 }
 

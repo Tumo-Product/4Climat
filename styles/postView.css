@@ -47,16 +47,17 @@
     top: 19.65%;
 }
 
-#titleInput::placeholder {
+.postInput::placeholder {
     color: #CBCBD0;
 }
 
-#titleInput {
+.postInput {
     transition: 0.5s;
     height: 11.63%;
     width: 58.53%;
     padding: 3%;
-    position: relative;
+    position: absolute;
+    top: 44.18%;
     border-radius: 19px;
     box-shadow: inset -2px -2px 4px 0 #FEFEFE, inset 2px 2px 4px 0 rgba(222,222,230,0.5);
 
@@ -66,19 +67,10 @@
     color: #98B2D4;
 }
 
-.categorySelector {
-    position: absolute;
-
-    height: 11.63%;
-    width: 58.53%;
-    animation: openCategorySelector 0.4s linear;
-    display: flex;
-}
-
 .chooseCategories {
     animation: showText 1s linear;
     left: 6%;
-    top: 25%;
+    top: 32%;
     position: absolute;
     color: #CDCDD3;
     font-family: FedraDemi;
@@ -89,20 +81,26 @@
 
 .selector {
     overflow: auto;
-    height: 100%;
-    width: 82.2%;
+    min-height: 8.677vh;
+    height: 8.677vh;
+    width: 48.17%;
     white-space: nowrap;
     border-radius: 19px;
     box-shadow: 3px 3px 2px 0 rgba(222,222,230,0.5), -3px -3px 2px 0 #FEFEFE;
     display: flex;
-    align-items: center;
+    position: absolute;
+    top: 44.2%;
+    left: 20.73%;
 }
+
 .dropdown {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 15%;
-    height: 100%;
+    position: absolute;
+    left: 67.75%;
+    width: 8.72%;
+    height: 11.63%;
     color: #EBD730;
     margin-left: 2.8%;
     font-size: 3vh;
@@ -114,7 +112,7 @@
 .categories {
     transition: 0.7s;
     position: absolute;
-    top: 57.23%;
+    top: 58%;
     right: 31%;
     width: 48.17%;
     height: 26.1vh;
@@ -140,20 +138,22 @@
 }
 
 .categoriesInPost {
-    height: 6vh;
+    align-items: flex-start;
+    height: 100%;
+    padding: 1.9vh;
     width: max-content;
     display: hidden;
     position: relative;
-    
-    padding-left: 1vh;
-    left: 1vh;
+    overflow: auto;
+
     display: flex;
-    align-items: center;
     gap: 1.44vh;
 }
 
-.categoriesInPost .addPostCategory:last-child {
-    margin-right: 1.44vh;
+.expandedCategories {
+    flex-wrap: wrap;
+    align-content: flex-start;
+    min-width: 45.5vh;
 }
 
 .addPostCategory {
@@ -182,6 +182,7 @@
 .addCategory, .removeCategory {
     cursor: pointer;
     font-size: 2.55vh;
+    transition: 0.4s;
 }
 
 .addCategory {
@@ -196,4 +197,30 @@
     height: 0;
     padding-top: 0;
     padding-bottom: 0;
+}
+
+.postMapContainer {
+    position: absolute;
+    top: 28.45%;
+    border-radius: 15px;
+    width: 79.26%;
+    height: 51.1%;
+    padding: 1%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset -3px -3px 5px 0 #FEFEFE, inset 3px 3px 5px 0 rgba(222,222,230,0.5);
+}
+
+.postMap {
+    border-radius: 9px;
+    width: 100%;
+    height: 100%;
+    box-shadow: 2px 2px 3px 0 #DEDEE6;
+}
+
+.postMap iframe {
+    width: 100%;
+    height: 100%;
+    border: none
 }
