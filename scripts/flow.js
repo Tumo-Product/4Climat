@@ -1,5 +1,5 @@
 let categories, posts;
-let post, currMapLink;
+let post = { images: [] }, currMapLink;
 
 const timeout = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -53,10 +53,13 @@ const addPost = async (stage) => {
             await postView.setupCategoryView();
             break;
         case 2:
-            await postHandlers.handleMapLink();
+            await postHandlers.handleMap();
             break;
         case 3:
-            await postHandlers.handleMap();
+            await postHandlers.handleDescription();
+            break;
+        case 4:
+            await postHandlers.handleImages();
             break;
         default:
             break;
@@ -75,24 +78,99 @@ const postHandlers = {
             }
         });
     },
-    handleMapLink: async () => {
-        let mapLink = await postView.setupMapLinkView();
+    handleMap: async () => {
+        let mapLink = await postView.setupMapView();
 
-        mapLink.on('input', function() {
+        mapLink.on("input", async function() {
             if (parser.isURLValid($(this).val())) {
                 currMapLink = $(this).val();
+                postView.enableRightBtn();
+
+                let mapCoords = parser.getCoords(currMapLink);
+                let mapEmbed  = parser.getMapLink(mapCoords.longitude, mapCoords.latitude);
+                await postView.addPostMap(mapEmbed);
+            } else {
+                postView.disableRightBtn();
+                await postView.removePostMap();
+            }
+        });
+    },
+    handleDescription: async () => {
+        let description = await postView.setupDescriptionView();
+        
+        description.on("input", async function() {
+            if (parser.isDescriptionCorrect($(this).val())) {
                 postView.enableRightBtn();
             } else {
                 postView.disableRightBtn();
             }
         });
     },
-    handleMap: async () => {
-        console.log(currMapLink);
-        let mapCoords = parser.getCoords(currMapLink);
-        let mapEmbed  = parser.getMapLink(mapCoords.longitude, mapCoords.latitude);
-        await postView.setupMapView(mapEmbed);
+    handleImages: async () => {
+        if (post.images.length == 6) return;
+        let downloadInput = await postView.setupImageView();
+
+        downloadInput.on({      // Drag and drop images.
+            'dragover dragenter': function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            },
+            'drop': async function (e) {
+                let dataTransfer = e.originalEvent.dataTransfer;
+
+                if (dataTransfer && dataTransfer.files.length) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    let file = dataTransfer.files[0];
+                    if (!file.type.includes("image")) return;
+                
+                    let fr      = new FileReader();
+                    let basedat = await (new Promise((resolve)=>{
+                        fr.readAsDataURL(file);
+                        fr.onloadend = () => {
+                            resolve(fr.result);
+                        }
+                    }));
+
+                    addImage(basedat);
+                }
+            }
+        });
     }
+}
+
+const clickDownloadInput = async () => {
+    document.getElementById("downloadInput").click();
+}
+
+const addImage = async (src) => {
+    if (post.images.length == 6) return;
+    let basedat;
+
+    if (src === undefined) { // If it's undefined that means this function is being called by the download input.
+        let input   = document.getElementById("downloadInput");
+        let file    = input.files[0];
+
+        if(file === undefined) { return; } // maybe some popup warning?
+
+        let fr      = new FileReader();
+        basedat = await (new Promise((resolve)=>{
+            fr.readAsDataURL(file);
+            fr.onloadend = () => {
+                resolve(fr.result);
+            }
+        }));
+    } else {                // If not then drag and drop is supllying it with a image.
+        basedat = src;
+    }
+
+    post.images.push(basedat);
+    postView.addImage(post.images.length - 1, basedat);
+}
+
+const removeImage = async (i) => {
+    post.images.splice(i, 1);
+    postView.removeImage(i);
 }
 
 const openPost = async (i) => {

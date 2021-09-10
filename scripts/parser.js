@@ -13,12 +13,14 @@ const parser = {
     isTitleCorrect      : (title) => {
         return !title.includes("   ") && title.length > 5;
     },
+    isDescriptionCorrect: (description) => {
+        return description.length <= 600;
+    },
     isURLValid          : (urlString) => {
         let url;
         try {
             url = new URL(urlString);
         } catch (e) {
-            console.log("Invalid URL!");
             return false;  
         }
       

@@ -32,6 +32,51 @@
     }
 }
 
+@keyframes hideChooseCategories {
+    0% {
+        opacity: 1;
+    }
+
+    99% {
+        opacity: 0 !important;
+    }
+
+    100% {
+        display: none !important;
+    }
+}
+
+.closed {
+    width: 0 !important;
+    padding: 0 !important;
+}
+
+.mapContainerOpen {
+    height: 51.1% !important;
+    padding: 1.7% !important;
+    top: 28.45% !important;
+}
+
+.mapContainerOpen .postMap {
+    opacity: 1 !important;
+}
+
+.underMapInput {
+    top: 82.57% !important;
+}
+
+.openPostDescription {
+    height: 59.11% !important;
+    padding: 3% !important;
+    top: 32% !important;
+}
+
+.openPostImages {
+    top: 32% !important;
+    height: 50.6% !important;
+    padding: 1.55vh !important;
+}
+
 .closeCategory {
     width: 0 !important;
     padding: 0 !important;

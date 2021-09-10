@@ -56,7 +56,7 @@ input::placeholder {
     color: #CBCBD0;
 }
 
-input:focus
+input:focus, textarea:focus
 {
     background-color: rgb(248, 248, 248);
     border: none !important;
@@ -141,6 +141,24 @@ input:focus
 
 .rightImgBtn {
     transform: scaleX(-1) rotate(360deg);
+}
+
+.bigBtn {
+    width: 16.22vh;
+    height: 8.11vh;
+    box-shadow: 5px 5px 5px 0 rgba(222,222,230,0.5), -3px -3px 5px 0 #FEFEFE;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 36.5px;
+    cursor: pointer;
+}
+
+.bigBtn .inside {
+    width: 15.33vh;
+    height: 7.44vh;
+    box-shadow: 1px 1px 1px 0 rgba(222,222,230,0.5);
+    border-radius: 36.5px;
 }
 
 .card {
