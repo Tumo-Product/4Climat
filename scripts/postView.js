@@ -1,14 +1,55 @@
 const postView = {
     dropdownOpen: false,
 
-    disableRightBtn : async () => {
-        $(".rightButton").addClass("disabled");
+    disableBtn : async (which) => {
+        $(`.${which}Button`).addClass("disabled");
     },
-    enableRightBtn : async () => {
-        $(".rightButton").removeClass("disabled");
+    enableBtn : async (which) => {
+        $(`.${which}Button`).removeClass("disabled");
     },
 
-    setupTitleView   : async () => {
+    closeStage      : async (stage) => {
+        $(".rightButton").addClass("disabled");
+
+        switch (stage) {
+            case 0:
+                $("#titleInput").addClass("closed");
+                await timeout(600);
+                $("#titleInput").remove();
+                break;
+            case 1:
+                $(".categories").addClass("hidden");
+                $(".selector").animate({opacity: 0}, 500);
+                $(".dropdown").animate({opacity: 0}, 500);
+                await timeout(500);
+                $(".selector").remove();
+                $(".dropdown").remove();
+                break;
+            case 2:
+                $(".postMapContainer").removeClass("mapContainerOpen");
+                $(".postInput").addClass("closed");
+                await timeout(500);
+                break;
+            case 3:
+                $(".postDescription").removeClass("openPostDescription");
+                await timeout(800);
+                break;
+            case 4:
+                $("#download").addClass("goUnder");
+                $(".postTitle").css("opacity", 0);
+                $(".postStageExpl").css("opacity", 0);
+                $(".postImages").removeClass("openPostImages");
+                await timeout(500);
+                break;
+            case 5:
+                // close final view.
+                break;
+            default:
+                break;
+        }
+    },
+
+    firstSetup      : async () => {
         $("#addBtn").attr("onclick", "");
 
         // Slide categories down and remove them.
@@ -16,7 +57,7 @@ const postView = {
         $("#categories").css("scroll-behavior", "smooth");
         $("#categories").scrollTop(0);
 
-        // Widen categories to make it main post adding space.
+        // Widen categories to make it the main post adding space.
         $("#mainCard").addClass("cardPostView");
         await timeout(600);
         $("#posts").css({ "width": 0, margin: 0 });
@@ -27,23 +68,20 @@ const postView = {
         $(".postView").append(`
             <h1 class="postTitle">Title for this page</h1>
             <p class="postStageExpl">Explanatory title for this page</p>
-            <input class="postInput" id="titleInput" placeholder="Write your title here …">
-            <div class="leftButton button disabled"></div>
-            <div onclick="addPost(1)" class="rightButton button disabled"></div>
+            <div onclick="addPost(-1)" class="leftButton button disabled"></div>
+            <div onclick="addPost(1)"  class="rightButton button disabled"></div>
         `);
         
         $(".leftButton").append (`<div class="inside"></div><img src="icons/arrow.svg">`);
         $(".rightButton").append(`<div class="inside"></div><img src="icons/arrow.svg">`);
-
+    },
+    setupTitleView  : async (title) => {
+        $(".postView").append(`<input class="postInput" id="titleInput" placeholder="Write your title here …">`);
+        $("#titleInput").val(title);
+        if (title.length !== 0) postView.enableBtn("right");
         return $("#titleInput");
     },
-    setupCategoryView   : async () => {
-        $("#titleInput").addClass("closed");
-        $(".rightButton").attr("onclick", "addPost(2)");
-        $(".rightButton").addClass("disabled");
-        await timeout(600);
-        $("#titleInput").remove();
-
+    setupCategoryView   : async (postCategories) => {
         $(".postView").append(`
             <div class="selector">
                 <p class="chooseCategories">Choose categories...</p>
@@ -54,19 +92,66 @@ const postView = {
         `);
 
         for (let i = 0; i < categories.length; i++) {
-            postView.appendCategory(i, ".categories", 1);
+            if (postCategories.includes(categories[i]));
+                postView.appendCategory(i, ".categories", 1);
+        }
+
+        for (let i = 0; i < postCategories.length; i++) {
+            // postView.appendCategory(i, ".categoriesInPost", 0, 0);
+        }
+
+        return $(".categoriesInPost");
+    },
+    addCategory   : async (i) => {
+        let ctgWidth = parseFloat($(`#pc_${i}`).css("width")) / window.innerHeight * 100;
+
+        if ($(".selector .addPostCategory").length == 0) {
+            $(".chooseCategories").addClass("hideChooseCategories");
+        }
+
+        $(`#pc_${i}`).css("width", $(`#pc_${i}`).width());
+        $(`#pc_${i}`).animate({ width: 0, padding: 0 }, 600);
+        $(`#pc_${i} p`).animate({ opacity: 0 }, 500);
+        $(`#pc_${i} span`).css("opacity", 0);
+
+        setTimeout(() => {
+            $(`.categories #pc_${i}`).remove();
+        }, 600);
+        
+        postView.appendCategory(i, ".categoriesInPost", 0, 0);
+        $(`#pc_${i}`).animate({ width: `${ctgWidth}vh` }, 500);
+        let scrollAmount = $(".categoriesInPost").prop("scrollWidth");
+        $(".categoriesInPost").animate({ scrollLeft: scrollAmount }, 1000);
+    },
+    removeCategory : async (i) => {
+        let ctgWidth = parseFloat($(`#pc_${i}`).css("width")) / window.innerHeight * 100;
+
+        $(`#pc_${i}`).css("width", $(`#pc_${i}`).width());
+        $(`#pc_${i}`).animate({ width: 0, padding: 0 }, 600);
+        $(`#pc_${i} p`).animate({ opacity: 0 }, 500);
+        $(`#pc_${i} span`).css("opacity", 0);
+        await timeout(600);
+        
+        $(`#pc_${i}`).remove();
+
+        postView.appendCategory(i, ".categories", 1, 0);
+        $(".categories").animate({ scrollTop: Number.MAX_SAFE_INTEGER }, 500);
+        $(`#pc_${i}`).animate({ width: `${ctgWidth}vh` }, 500);
+    },
+    appendCategory  : (i, parent, type, width) => {
+        $(parent).append(`<div id="pc_${i}" class="addPostCategory"><p>${categories[i]}</p></div>`);
+
+        if (type == 1) {
+            $(`#pc_${i}`).append(`<span onclick="postView.addCategory(${i})" class="addCategory">+</span>`);
+        } else {
+            $(`#pc_${i}`).append(`<span onclick="postView.removeCategory(${i})" class="removeCategory">x</span>`);
+        }
+
+        if (width !== undefined) {
+            $(`#pc_${i}`).css("width", width);
         }
     },
     setupMapView   : async (mapEmbed) => {
-        $(".rightButton").attr("onclick", "addPost(3)");
-        $(".rightButton").addClass("disabled");
-
-        $(".categories").addClass("hidden");
-        $(".selector").animate({opacity: 0}, 500);
-        $(".dropdown").animate({opacity: 0}, 500);
-        await timeout(500);
-        $(".selector").remove();
-        $(".dropdown").remove();
         $(".postView").append(`
             <div class="postMapContainer">
                 <div class="postMap"><iframe src=""></iframe></div>
@@ -88,38 +173,68 @@ const postView = {
     removePostMap   : async () => {
         $(".postMapContainer iframe").attr("src", "");
         $(".postMapContainer").removeClass("mapContainerOpen");
+        if ($(".postMapContainer").height() == 0)
+            $(".wrongLink").css("opacity", 1);
         await timeout(170); $("#linkInput").removeClass("underMapInput");
         await timeout(500);
         $(".wrongLink").css("opacity", 1);
     },
     setupDescriptionView    : async () => {
-        $(".rightButton").attr("onclick", "addPost(4)");
-        $(".rightButton").addClass("disabled");
-
-        $(".postMapContainer").removeClass("mapContainerOpen");
-        $(".postInput").addClass("closed");
-        await timeout(500);
-
         $(".postView").append(`<textarea class="postDescription" placeholder="Write your text here …">`);
         await timeout(50); $(".postDescription").addClass("openPostDescription");
 
         return $(".postDescription");
     },
     setupImageView  : async () => {
-        $(".postDescription").removeClass("openPostDescription");
-        await timeout(800);
-
         $(".postView").append(`
             <div class="postImages"></div>
             <input type="file" accept="image/*" id="downloadInput" onchange="addImage()"/>
-            <div class="bigBtn" id="download" onclick="clickDownloadInput()">
+            <div class="bigBtn" id="download">
                 <div class="inside"></div>
                 <img src="icons/download.png">
             </div>
         `);
+        
+        $("#download").click(function () {document.getElementById("downloadInput").click();});
         await timeout(50); $(".postImages").addClass("openPostImages");
 
         return $(".postImages");
+    },
+    setupPreview    : async (post, mapEmbed) => {
+        $(".postView").append(`
+        <div class="post openedPost"><span class="date openedDate"></span>
+            <div class="content">
+                <p class="title">${post.title}</p>
+                <div class="spanDiv openCategories"></div>
+                
+                <div class="imgMapView">
+                    <img onclick="view.scrollPhoto(-1)" class="leftImgBtn" src="icons/thin_arrow.svg">
+                    <div class="imageView"></div>
+                    <img onclick="view.scrollPhoto(1)" class="rightImgBtn" src="icons/thin_arrow.svg">
+                    <div class="mapContainer"><div class="mapCrop"><iframe class="map" src="${mapEmbed}"></iframe></div></div>
+                </div>
+                <p class="description">${post.description}</p>
+            </div>
+        </div>
+        `);
+
+        for (let i = 1; i < post.categories.length; i++) {
+            $(".openCategories").append(`<span class="card">${post.categories[i]}</span>`);
+        }
+
+        $(`#p_${index} .imageView`).append(`<div id="img_${0}" class="image"><img src="${photos[0]}"></div>`);
+        let left    = parseFloat($(`#img_${0}`).css("left"));
+        let width   = parseFloat($(`#img_${0}`).css("width"));
+        view.offset = left + width;
+
+        for (let i = 0; i < post.photos.length; i++) {
+            $(`.imageView`).append(`<div id="img_${i}" class="image"><img src="${post.photos[i]}"></div>`);
+
+            let left    = parseFloat($(`#img_${i}`).css("left")) * 2;
+            let width   = parseFloat($(`#img_${i}`).css("width"));
+
+            $(`#img_${i}`).css("left", (left + width) * i);
+        }
     },
     addImage    : async (i, imgSrc) => {
         $(".postImages").append(`
@@ -178,54 +293,5 @@ const postView = {
             $(".selector").css("height", "8.677vh").animate({"height": `${height}vh`}, 500);
         }
 
-    },
-    addCategory   : async (i) => {
-        let ctgWidth = parseFloat($(`#pc_${i}`).css("width")) / window.innerHeight * 100;
-
-        if ($(".selector .addPostCategory").length == 0) {
-            $(".chooseCategories").addClass("hideChooseCategories");
-        }
-
-        $(`#pc_${i}`).css("width", $(`#pc_${i}`).width());
-        $(`#pc_${i}`).animate({ width: 0, padding: 0 }, 600);
-        $(`#pc_${i} p`).animate({ opacity: 0 }, 500);
-        $(`#pc_${i} span`).css("opacity", 0);
-
-        setTimeout(() => {
-            $(`.categories #pc_${i}`).remove();
-        }, 600);
-        
-        postView.appendCategory(i, ".categoriesInPost", 0, 0);
-        $(`#pc_${i}`).animate({ width: `${ctgWidth}vh` }, 500);
-        let scrollAmount = $(".categoriesInPost").prop("scrollWidth");
-        $(".categoriesInPost").animate({ scrollLeft: scrollAmount }, 1000);
-    },
-    removeCategory : async (i) => {
-        let ctgWidth = parseFloat($(`#pc_${i}`).css("width")) / window.innerHeight * 100;
-
-        $(`#pc_${i}`).css("width", $(`#pc_${i}`).width());
-        $(`#pc_${i}`).animate({ width: 0, padding: 0 }, 600);
-        $(`#pc_${i} p`).animate({ opacity: 0 }, 500);
-        $(`#pc_${i} span`).css("opacity", 0);
-        await timeout(600);
-        
-        $(`#pc_${i}`).remove();
-
-        postView.appendCategory(i, ".categories", 1, 0);
-        $(".categories").animate({ scrollTop: Number.MAX_SAFE_INTEGER }, 500);
-        $(`#pc_${i}`).animate({ width: `${ctgWidth}vh` }, 500);
-    },
-    appendCategory  : (i, parent, type, width) => {
-        $(parent).append(`<div id="pc_${i}" class="addPostCategory"><p>${categories[i]}</p></div>`);
-
-        if (type == 1) {
-            $(`#pc_${i}`).append(`<span onclick="postView.addCategory(${i})" class="addCategory">+</span>`);
-        } else {
-            $(`#pc_${i}`).append(`<span onclick="postView.removeCategory(${i})" class="removeCategory">x</span>`);
-        }
-
-        if (width !== undefined) {
-            $(`#pc_${i}`).css("width", width);
-        }
     },
 }

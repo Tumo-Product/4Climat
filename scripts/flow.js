@@ -1,5 +1,7 @@
 let categories, posts;
-let post = { images: [] }, currMapLink;
+let postStage = -1;
+let post = { categories: [], longitude: -1, latitude: -1, title: "", date: "", description: "", photos: [] };
+let currMapLink;
 
 const timeout = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -10,8 +12,6 @@ const onLoad = async () => {
     categories  = await network.getCategories();
 
     for (let i = 0; i < posts.length; i++) {
-        let src = parser.getMapLink(posts[i].longitude, posts[i].latitude, "us");
-        // view.makeMap(src, ".card");
         view.addPost(i, posts[i].title, posts[i].date, posts[i].categories[0], posts[i].description, posts[i].photos[0]);
     }
 
@@ -44,13 +44,20 @@ const login = async () => {
     view.toggleLoader();
 }
 
-const addPost = async (stage) => {
-    switch (stage) {
+const addPost = async (dir) => {
+    if (postStage == -1) await postView.firstSetup();
+    else {
+        await postView.closeStage(postStage);
+    }
+
+    postStage += dir;
+
+    switch (postStage) {
         case 0:
             await postHandlers.handleTitle();
             break;
         case 1:
-            await postView.setupCategoryView();
+            await postHandlers.handleCategories();
             break;
         case 2:
             await postHandlers.handleMap();
@@ -61,6 +68,9 @@ const addPost = async (stage) => {
         case 4:
             await postHandlers.handleImages();
             break;
+        case 5:
+            await postHandlers.handleFinalView();
+            break;
         default:
             break;
     }
@@ -68,29 +78,41 @@ const addPost = async (stage) => {
 
 const postHandlers = {
     handleTitle:  async () => {
-        let titleInput = await postView.setupTitleView();
+        postView.disableBtn("left");
+        let titleInput = await postView.setupTitleView(post.title);
     
         titleInput.on('input', function() {
             if (parser.isTitleCorrect($(this).val())) {
-                postView.enableRightBtn();
+                postView.enableBtn("right");
+                post.title = $(this).val();
             } else {
-                postView.disableRightBtn();
+                postView.disableBtn("right");
             }
         });
     },
+    handleCategories : async() => {
+        postView.enableBtn("left");
+        await postView.setupCategoryView(post.categories);
+    },
     handleMap: async () => {
+        $(".categoriesInPost").children().each(function() {
+            post.categories.push($(this).find("p").text());
+        });
+
         let mapLink = await postView.setupMapView();
 
         mapLink.on("input", async function() {
             if (parser.isURLValid($(this).val())) {
                 currMapLink = $(this).val();
-                postView.enableRightBtn();
+                postView.enableBtn("right");
 
                 let mapCoords = parser.getCoords(currMapLink);
                 let mapEmbed  = parser.getMapLink(mapCoords.longitude, mapCoords.latitude);
+                post.longitude = mapCoords.longitude;
+                post.latitude = mapCoords.latitude;
                 await postView.addPostMap(mapEmbed);
             } else {
-                postView.disableRightBtn();
+                postView.disableBtn("right");
                 await postView.removePostMap();
             }
         });
@@ -100,14 +122,15 @@ const postHandlers = {
         
         description.on("input", async function() {
             if (parser.isDescriptionCorrect($(this).val())) {
-                postView.enableRightBtn();
+                postView.enableBtn("right");
+                post.description = $(this).val();
             } else {
-                postView.disableRightBtn();
+                postView.disableBtn("right");
             }
         });
     },
     handleImages: async () => {
-        if (post.images.length == 6) return;
+        if (post.photos.length == 6) return;
         let downloadInput = await postView.setupImageView();
 
         downloadInput.on({      // Drag and drop images.
@@ -136,15 +159,15 @@ const postHandlers = {
                 }
             }
         });
+    },
+    handleFinalView : async () => {
+        let mapEmbed  = parser.getMapLink(post.longitude, post.latitude);
+        await postView.setupPreview(post, mapEmbed);
     }
 }
 
-const clickDownloadInput = async () => {
-    document.getElementById("downloadInput").click();
-}
-
 const addImage = async (src) => {
-    if (post.images.length == 6) return;
+    if (post.photos.length == 6) return;
     let basedat;
 
     if (src === undefined) { // If it's undefined that means this function is being called by the download input.
@@ -164,13 +187,19 @@ const addImage = async (src) => {
         basedat = src;
     }
 
-    post.images.push(basedat);
-    postView.addImage(post.images.length - 1, basedat);
+    post.photos.push(basedat);
+    postView.addImage(post.photos.length - 1, basedat);
+
+    if (post.photos.length > 0) postView.enableBtn("right");
+    else                        postView.disableBtn("right");
 }
 
 const removeImage = async (i) => {
-    post.images.splice(i, 1);
+    post.photos.splice(i, 1);
     postView.removeImage(i);
+
+    if (post.photos.length > 0) postView.enableBtn("right");
+    else                        postView.disableBtn("right");
 }
 
 const openPost = async (i) => {

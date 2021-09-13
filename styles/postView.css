@@ -25,7 +25,21 @@
     overflow: hidden !important;
 }
 
+.postView .openedPost {
+    width: 79.38%;
+    height: 79.55%;
+    margin: 0 !important;
+    display: flex;
+    justify-content: center;
+}
+
+.postView .content {
+    width: 74.1%;
+    margin: 0 !important;
+}
+
 .postTitle {
+    transition: 0.5s;
     width: 71%;
     position: absolute;
     color: #98B2D4;
@@ -34,6 +48,7 @@
 }
 
 .postStageExpl {
+    transition: 0.5s;
     width: 71%;
     font-family: FedraBook;
     color: #CBCBD0;
@@ -256,6 +271,7 @@
 }
 
 .postImages {
+    overflow: hidden;
     transition: 0.5s;
     position: absolute;
     display: flex;
@@ -295,6 +311,7 @@
 }
 
 #download {
+    transition: 0.5s;
     position: absolute;
     top: 85.53%;
 }

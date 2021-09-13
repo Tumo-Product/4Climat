@@ -46,6 +46,10 @@
     }
 }
 
+.goUnder {
+    top: 110% !important;
+}
+
 .closed {
     width: 0 !important;
     padding: 0 !important;
