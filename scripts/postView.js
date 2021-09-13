@@ -222,7 +222,7 @@ const postView = {
             $(".openCategories").append(`<span class="card">${post.categories[i]}</span>`);
         }
 
-        $(`#p_${index} .imageView`).append(`<div id="img_${0}" class="image"><img src="${photos[0]}"></div>`);
+        $(`.imageView`).append(`<div id="img_${0}" class="image"><img src="${post.photos[0]}"></div>`);
         let left    = parseFloat($(`#img_${0}`).css("left"));
         let width   = parseFloat($(`#img_${0}`).css("width"));
         view.offset = left + width;
