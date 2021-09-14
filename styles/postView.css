@@ -26,6 +26,7 @@
 }
 
 .postView .openedPost {
+    overflow: hidden;
     width: 79.38%;
     height: 79.55%;
     margin: 0 !important;

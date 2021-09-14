@@ -90,6 +90,14 @@ const postHandlers = {
             }
         });
     },
+    addCategory : async (i) => {
+        post.categories.push(categories[i]);
+        postView.addCategory(i);
+    },
+    removeCategory : async (i) => {
+        post.categories.splice(post.categories.indexOf(categories[i]), 1);
+        postView.removeCategory(i);
+    },
     handleCategories : async() => {
         postView.enableBtn("left");
         await postView.setupCategoryView(post.categories);
