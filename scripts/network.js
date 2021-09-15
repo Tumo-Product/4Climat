@@ -8,7 +8,7 @@ const network   = {
     },
 
     getPosts        : async (id, token) => {
-        return userPosts;
+        return allPosts;
     },
 
     getCategories   : async () => {
@@ -24,15 +24,17 @@ const network   = {
 
 // VVVVVVVV Dummy Data VVVVVVVVV
 
-const userPosts = [
+const allPosts = [
     {
+        postId      : "",
+        userId      : "",
         categories  : [
             "Category 1",
             "Category 2"
         ],
         latitude: 44.4937761,
         longitude: 40.1979479,
-        title       : "Recycling plastic bottles",
+        title       : "Recycling plastic bottles bla bla bla bla bla bla",
         date        : "29 Sep 2021",
         description : "Have you noticed how everybody takes it for granted a bad experience is automatically, unreservedly, unremittingly bad? That nothing good could ever come from a bad childhood, for example? I’m hearing the comment more and more often that we have become a victim society. Maybe this is true? Consider… Don’t we hear these comments a lot? I was mistreated when I was a child… I was a lonely latchkey kid… My ancestors got a bad break, so I’m… I lived in a poor, disadvantaged family… I grew up in a broken home… I didn’t get the proper advantages… I was constantly criticized as a child…",
         photos      : [

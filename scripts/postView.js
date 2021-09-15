@@ -22,6 +22,9 @@ const postView = {
                 $(".selector").animate({opacity: 0}, 500);
                 $(".dropdown").animate({opacity: 0}, 500);
                 await timeout(500);
+                $(".categories").remove();
+                $(".selector").remove();
+                $(".dropdown").remove();
                 break;
             case 2:
                 $(".postMapContainer").removeClass("mapContainerOpen");
@@ -42,6 +45,8 @@ const postView = {
                 $(".postStageExpl").css("opacity", 0);
                 $(".postImages").removeClass("openPostImages");
                 await timeout(500);
+                $("#download").remove();
+                $(".postImages").remove();
                 break;
             case 5:
                 $(".openedPost").css("height", 0);
@@ -53,20 +58,37 @@ const postView = {
         }
     },
 
-    firstSetup      : async () => {
-        $("#addBtn").attr("onclick", "");
+    discardPost     : async () => {
+        $("#addBtn").attr("onclick", "addPost(1)");
+        $("#addBtn img").attr("src", "icons/plus.png");
+        $("#categories").children().each(function () {
+            if (!$(this).hasClass("category")) {
+                $(this).css("transition", "0s");
+                $(this).animate({"opacity": 0}, 500);
+                setTimeout(() => {
+                    $(this).remove();
+                }, 500);
+            }
+        });
 
-        // Slide categories down and remove them.
-        $(".category").eq(0).css("margin-top", $("#categories").prop("scrollHeight") + 100);
-        $("#categories").css("scroll-behavior", "smooth");
-        $("#categories").scrollTop(0);
+        await timeout(600);
+        $("#posts").css({ "width": "65%", margin: "2.88%", "margin-left": 0 });
+        $("#categories").removeClass("postView");
+        $("#mainCard").removeClass("cardPostView");
+        await timeout(600);
+
+        $(".category").eq(0).css("margin-top", "10.25%");
+    },
+    firstSetup      : async () => {
+        $("#addBtn").attr("onclick", "discardPost()");
+        $("#addBtn img").attr("src", "icons/X.png");
+
+        // Slide categories down.
+        $(".category").eq(0).css("margin-top", $("#categories").prop("scrollHeight") + (window.innerHeight * 0.555));
 
         // Widen categories to make it the main post adding space.
-        $("#mainCard").addClass("cardPostView");
-        await timeout(600);
+        $("#mainCard").addClass("cardPostView"); await timeout(600);
         $("#posts").css({ "width": 0, margin: 0 });
-        $(".category").remove();
-
         $("#categories").addClass("postView");
 
         $(".postView").append(`
@@ -86,30 +108,35 @@ const postView = {
         return $("#titleInput");
     },
     setupCategoryView   : async (postCategories) => {
-        if ($(".selector").length != 0) {
-            $(".selector").animate({opacity: 1}, 500);
-            $(".dropdown").animate({opacity: 1}, 500);
-            postView.enableBtn("right");
-
-            return $(".categoriesInPost");
-        }
-
         $(".postView").append(`
             <div class="selector">
                 <p class="chooseCategories">Choose categories...</p>
                 <div class="categoriesInPost"></div>
             </div>
-            <div class="dropdown" onclick="postView.toggleDropdown()">&#11167;</div>
+            <div class="dropdown" onclick="postView.toggleDropdown()">
+                <img src="icons/triangle.png">
+            </div>
             <div class="categories hidden"></div>
         `);
 
         for (let i = 0; i < categories.length; i++) {
             postView.appendCategory(categories[i], i, ".categories", 1);
+
+            if (postCategories.includes(categories[i])) {
+                await postView.addCategory(i, true);
+                await timeout(200);
+            }
+        }
+
+        if ($(".categoriesInPost").children().length != 0) {
+            let scrollAmount = $(".categoriesInPost").prop("scrollWidth");
+            $(".categoriesInPost").animate({ scrollLeft: scrollAmount }, 700);
+            postView.toggleDropdown();
         }
 
         return $(".categoriesInPost");
     },
-    addCategory   : async (i) => {
+    addCategory   : async (i, dontScroll) => {
         let ctgWidth = parseFloat($(`#pc_${i}`).css("width")) / window.innerHeight * 100;
 
         if ($(".selector .addPostCategory").length == 0) {
@@ -124,9 +151,12 @@ const postView = {
         setTimeout(() => { $(`.categories #pc_${i}`).remove(); }, 600);
         
         postView.appendCategory(categories[i], i, ".categoriesInPost", 0, 0);
+
         $(`#pc_${i}`).animate({ width: `${ctgWidth}vh` }, 500);
         let scrollAmount = $(".categoriesInPost").prop("scrollWidth");
-        $(".categoriesInPost").animate({ scrollLeft: scrollAmount }, 1000);
+        if (dontScroll !== true) {
+            $(".categoriesInPost").animate({ scrollLeft: scrollAmount }, 1000);
+        }
     },
     removeCategory : async (i) => {
         let ctgWidth = parseFloat($(`#pc_${i}`).css("width")) / window.innerHeight * 100;
@@ -147,9 +177,13 @@ const postView = {
         $(parent).append(`<div id="pc_${i}" class="addPostCategory"><p>${text}</p></div>`);
 
         if (type == 1) {
-            $(`#pc_${i}`).append(`<span onclick="postHandlers.addCategory(${i})" class="addCategory">+</span>`);
+            $(`#pc_${i}`).append(`<span onclick="postHandlers.addCategory(${i})" class="categoryIcon">
+                <img src="icons/plus.png">
+            </span>`);
         } else {
-            $(`#pc_${i}`).append(`<span onclick="postHandlers.removeCategory(${i})" class="removeCategory">x</span>`);
+            $(`#pc_${i}`).append(`<span onclick="postHandlers.removeCategory(${i})" class="categoryIcon">
+                <img src="icons/X.png">
+            </span>`);
         }
 
         if (width !== undefined) {
@@ -193,29 +227,34 @@ const postView = {
         document.getElementById("linkInput").readOnly = false;
     },
     setupDescriptionView    : async () => {
-        $(".postView").append(`<textarea class="postDescription" placeholder="Write your text here …">`);
+        if ($(".postDescription").length == 0) {
+            $(".postView").append(`<textarea class="postDescription" placeholder="Write your text here …">`);
+        } else postView.enableBtn("right");
+
         await timeout(50); $(".postDescription").addClass("openPostDescription");
 
         return $(".postDescription");
     },
-    setupImageView  : async () => {
-        if ($(".postImages").length === 0) {
-            $(".postView").append(`
-                <div class="postImages"></div>
-                <input type="file" accept="image/*" id="downloadInput" onchange="addImage()"/>
-                <div class="bigBtn" id="download">
-                    <div class="inside"></div>
-                    <img src="icons/download.png">
-                </div>`);
-            
-            $("#download").click( function () { document.getElementById("downloadInput").click(); } );
-        } else {
-            $("#download").removeClass("goUnder");
-            $(".postTitle").css("opacity", 1);
-            $(".postStageExpl").css("opacity", 1);
+    setupImageView  : async (images) => {
+        $(".postTitle").css     ("opacity", 1);
+        $(".postStageExpl").css ("opacity", 1);
+
+        $(".postView").append(`
+            <div class="postImages"></div>
+            <input type="file" accept="image/*" id="downloadInput" onchange="addImage()"/>
+            <div class="bigBtn goUnder" id="download">
+                <div class="inside"></div>
+                <img src="icons/download.png">
+        </div>`);
+        
+        $("#download").click( function () { document.getElementById("downloadInput").click(); } );
+        await timeout(50); $(".postImages").addClass("openPostImages");
+        $("#download").removeClass("goUnder");
+
+        for (let i = 0; i < images.length; i++) {
+            postView.addImage(i, images[i]);
             postView.enableBtn("right");
         }
-        await timeout(50); $(".postImages").addClass("openPostImages");
 
         return $(".postImages");
     },
@@ -237,7 +276,7 @@ const postView = {
         </div>
         `);
 
-        for (let i = 1; i < post.categories.length; i++) {
+        for (let i = 0; i < post.categories.length; i++) {
             $(".openCategories").append(`<span class="card">${post.categories[i]}</span>`);
         }
 
@@ -246,7 +285,7 @@ const postView = {
         let width   = parseFloat($(`#img_${0}`).css("width"));
         view.offset = left + width;
 
-        for (let i = 0; i < post.photos.length; i++) {
+        for (let i = 1; i < post.photos.length; i++) {
             $(`.imageView`).append(`<div id="img_${i}" class="image"><img src="${post.photos[i]}"></div>`);
 
             let left    = parseFloat($(`#img_${i}`).css("left")) * 2;
@@ -254,6 +293,9 @@ const postView = {
 
             $(`#img_${i}`).css("left", (left + width) * i);
         }
+
+        await timeout(100);
+        $(".image").addClass("smooth");
     },
     addImage    : async (i, imgSrc) => {
         $(".postImages").append(`
@@ -268,6 +310,7 @@ const postView = {
 
         $(".postImgContainer").each(function(index) {
             $(this).attr("id", `pImg_${index}`);
+            $(this).find(".remImage").attr("onclick", `removeImage(${index})`);
         })
     },
     toggleDropdown  : async () => { // TODO: Change icons
@@ -283,6 +326,7 @@ const postView = {
 
             $(".selector").height(height).animate({"height": newHeight}, 500);
             $(".categoriesInPost").removeClass("expandedCategories");
+            $(".dropdown").addClass("flipY");
 
             let scrollAmount = $(".categoriesInPost").prop("scrollWidth");
             $(".categoriesInPost").animate({ scrollLeft: scrollAmount }, 1000);
@@ -300,6 +344,7 @@ const postView = {
                 $(".rightButton").addClass("disabled");
             }
 
+            $(".dropdown").removeClass("flipY");
             $(".categories").addClass("hidden");
             $(".categoriesInPost span").css({"opacity": 0, "pointer-events": "none"});
             await timeout(500);

@@ -34,6 +34,11 @@
     justify-content: center;
 }
 
+.postView .openedPost .image {
+    left: 2.2%;
+    top: 2.95%;
+}
+
 .postView .content {
     width: 74.1%;
     margin: 0 !important;
@@ -132,12 +137,16 @@
     left: 67.75%;
     width: 8.72%;
     height: 11.63%;
-    color: #EBD730;
     margin-left: 2.8%;
     font-size: 3vh;
     border-radius: 19px;
     box-shadow: 3px 3px 2px 0 rgba(222,222,230,0.5), -3px -3px 2px 0 #FEFEFE;
     cursor: pointer;
+}
+
+.dropdown img {
+    transition: 0.5s;
+    width: 36%;
 }
 
 .categories {
@@ -210,18 +219,14 @@
     animation: showText 0.5s linear;
 }
 
-.addCategory, .removeCategory {
+.categoryIcon {
     cursor: pointer;
     font-size: 2.55vh;
     transition: 0.4s;
 }
 
-.addCategory {
-    color: #6CB769;
-}
-
-.removeCategory {
-    color: #E85156;
+.categoryIcon img {
+    width: 1.5vh;
 }
 
 .hidden {

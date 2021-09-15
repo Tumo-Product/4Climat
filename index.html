@@ -36,7 +36,9 @@
                 <div id="posts">
                     <div id="searchbar">
                         <input placeholder="Search" id="search" type="text">
-                        <button id="searchBtn"><div class="inside"></div></button>
+                        <button onclick="search()" id="searchBtn">
+                            <div class="inside"></div><img src="icons/search.png">
+                        </button>
                     </div>
     
                     <div id="postsView"></div>
@@ -44,7 +46,14 @@
             </div>
 
             <div id="statusBar">
-                <div id="addBtn" onclick="addPost(1)"><div class="inside"></div><p>+</p></div>
+                <div onclick="addPost(1)"   id="addBtn">
+                    <div class="inside"></div>
+                    <img src="icons/plus.png">
+                </div>
+                <div onclick="myPosts()"    id="postButton" class="wideBtn">
+                    <div class="inside"></div>
+                    <p>My Posts</p>
+                </div>
             </div>
         </div>
     </div>

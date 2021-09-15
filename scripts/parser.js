@@ -11,7 +11,7 @@ const parser = {
         return coords;
     },
     isTitleCorrect      : (title) => {
-        return !title.includes("   ") && title.length > 5;
+        return !title.includes("   ") && title.length > 5 && title.length <= 50;
     },
     isDescriptionCorrect: (description) => {
         return description.length <= 600;
@@ -25,5 +25,10 @@ const parser = {
         }
       
         return true;
+    },
+    getCorrectFontSize  : (length) => {
+        let fontSize = 50 / length * 2.2;
+        if (fontSize > 4.44) fontSize = 4.44;
+        return fontSize;
     }
 }

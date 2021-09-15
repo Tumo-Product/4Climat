@@ -12,7 +12,7 @@ const onLoad = async () => {
     categories  = await network.getCategories();
 
     for (let i = 0; i < posts.length; i++) {
-        view.addPost(i, posts[i].title, posts[i].date, posts[i].categories[0], posts[i].description, posts[i].photos[0]);
+        view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].photos[0]);
     }
 
     for (let i = 0; i < categories.length; i++) {
@@ -42,6 +42,11 @@ const login = async () => {
     }
 
     view.toggleLoader();
+}
+
+const discardPost = async () => {
+    postStage = -1;
+    await postView.discardPost();
 }
 
 const addPost = async (dir) => {
@@ -119,11 +124,21 @@ const postHandlers = {
                 post.longitude = mapCoords.longitude;
                 post.latitude = mapCoords.latitude;
                 await postView.addPostMap(mapEmbed);
+                currMapLink = $(this).val();
             } else {
                 postView.disableBtn("right");
                 await postView.removePostMap();
+                currMapLink = undefined;
             }
         });
+
+        if (currMapLink !== undefined) {
+            mapLink.val(currMapLink);
+            let mapCoords = parser.getCoords(currMapLink);
+            let mapEmbed  = parser.getMapLink(mapCoords.longitude, mapCoords.latitude);
+            await postView.addPostMap(mapEmbed);
+            postView.enableBtn("right");
+        }
     },
     handleDescription: async () => {
         let description = await postView.setupDescriptionView();
@@ -139,7 +154,7 @@ const postHandlers = {
     },
     handleImages: async () => {
         if (post.photos.length == 6) return;
-        let downloadInput = await postView.setupImageView();
+        let downloadInput = await postView.setupImageView(post.photos);
 
         downloadInput.on({      // Drag and drop images.
             'dragover dragenter': function (e) {
@@ -213,6 +228,57 @@ const removeImage = async (i) => {
 const openPost = async (i) => {
     let mapSrc = parser.getMapLink(posts[i].longitude, posts[i].latitude);
     view.openPost(i, posts[i].categories, posts[i].photos, mapSrc);
+}
+
+const closePost = async (i) => {
+    view.closePost(i, posts[i].categories);
+}
+
+const myPosts = async () => {
+    setTimeout(() => {
+        for (let i = 0; i < posts.length; i++) {
+            // check and add posts by this user
+        }    
+    }, 500);
+
+    await view.closePostsView();
+    view.disableCategories();
+
+    await view.openPostsView();
+}
+
+const search = async () => {
+    let query = $("#search").val();
+    let matches = [];
+
+    view.hidePosts();
+    setTimeout(() => {
+        $(".post").remove();
+
+        for (let i = 0; i < matches.length; i++) {
+            let post = posts[matches[i]];
+            view.addPost(i, post.title, post.date, post.categories, post.description, post.photos[0]);
+            view.makePostAppear(i);
+        }
+    }, 500);
+
+    for (let i = 0; i < posts.length; i++) {
+        let regexp = new RegExp(`${query}`, "i");
+        if (regexp.test(posts[i].title)) {
+            matches.push(i);
+            continue;
+        } else if (regexp.test(posts[i].description)) {
+            matches.push(i);
+            continue;
+        } else {
+            for (let c = 0; c < posts[i].categories.length; c++) {
+                if (regexp.test(posts[i].categories[c])) {
+                    matches.push(i);
+                    continue;
+                }
+            }
+        }
+    }
 }
 
 $(onLoad);
