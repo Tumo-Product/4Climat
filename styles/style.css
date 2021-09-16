@@ -65,6 +65,26 @@ input:focus, textarea:focus
     outline-style: none;
 }
 
+.popupContainer {
+    pointer-events: none;
+    opacity: 0;
+    backdrop-filter: blur(5px);
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup {
+    width: 47.33vh;
+    height: 28.55vh;
+    border-radius: 19px;
+    background-color: #F3F3F3;
+    box-shadow: 3px 3px 3px 0 rgba(222,222,230,0.5), -2px -2px 3px 0 #FEFEFE;
+}
+
 .container {
 	width   : 100%;
     height  : 100vh;
@@ -122,16 +142,18 @@ input:focus, textarea:focus
 
 .image {
     position: absolute;
-    border-radius: 9px;
     overflow: hidden;
-    width: 96%;
+    width: 100%;
     height: 94.5%;
     top: 2.75%;
-    left: 2.4%;
+    display: flex;
+    justify-content: center;
+    left: 0.1px;
 }
 
 .image img {
-    width: 100%;
+    border-radius: 9px;
+    width: 96%;
     height: 100%;
     object-fit: cover;
 }
@@ -239,9 +261,8 @@ input:focus, textarea:focus
 }
 
 .category p {
-    color: #78A6D1;
+    color: #E08689;
     font-family: FedraDemi;
-    /* font-size: 15px; */
     font-size: 1.55vh;
     text-align: center;
     line-height: 1.8vh;
@@ -455,7 +476,7 @@ input:focus, textarea:focus
 
 .title {
     font-size: 2.77vh;
-    color: #EBD986;
+    color: #99B2DD;
     width: 100%;
     white-space: nowrap;
     overflow: hidden;
@@ -470,7 +491,7 @@ input:focus, textarea:focus
 
 .postCategory {
     font-size: 1.67vh;
-    color: #78A6D1;
+    color: #E08689;    
     margin-left: 3%;
 }
 
@@ -485,7 +506,7 @@ input:focus, textarea:focus
     align-items: center;
     justify-content: center;
     font-size: 18px;
-    color: #78A6D1;
+    color: #E08689;
     box-shadow: 1px 1px 2px 0 rgba(222,222,230,0.5), -2px -2px 2px 0 #FEFEFE;
     border-radius: 6px;
     min-width: 22.8%;

@@ -1,15 +1,38 @@
 let categories, posts;
+let myPostsActive = false;
 let postStage = -1;
 let post = { categories: [], longitude: -1, latitude: -1, title: "", date: "", description: "", photos: [] };
-let currMapLink;
+let currMapLink, currUserId = 1;
 
 const timeout = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+let examplePost = [
+    {
+        categories  : [
+            "Category 1",
+            "Category 2"
+        ],
+        latitude: 44.4937761,
+        longitude: 40.1979479,
+        title       : "Recycling plastic bottles bla bla bla bla bla bla",
+        description : "Example description",
+        photos      : [
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAKCAYAAADCb8xtAAAAAXNSR0IArs4c6QAAAKBJREFUOBHN1LENwjAQheH3bgSokNiBFbIDu6ROzSJU7MAK7ICUCkbg8I8i0Vhpcy7Plvz5bD+rjddtOn5SF1lDZh6obT1sz0rdwxr35+npBflI5W5rXG9/y++GPQWdrIoEjg1jcN29k5SqNWNUeZNrjcEYawsqzcXvd1USdSwYgwjozNUqEVPkFBFQS/bXLPE0BmFKTrXCtdIzwIIJG8Yvp300Z1a2OaoAAAAASUVORK5CYII="
+        ]
+    },
+]
+
 const onLoad = async () => {
     posts       = await network.getPosts();
     categories  = await network.getCategories();
+
+    let data = await axios.put(config.generate_token, { uid: currUserId });
+    data = data.data.data;
+    console.log(data);
+    let allowed = await axios.post(config.login, {uid: data.uid, token: data.token});
+    console.log(allowed);
 
     for (let i = 0; i < posts.length; i++) {
         view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].photos[0]);
@@ -50,7 +73,10 @@ const discardPost = async () => {
 }
 
 const addPost = async (dir) => {
-    if (postStage == -1) await postView.firstSetup();
+    if (postStage == -1) {
+        await postView.firstSetup();
+        currMapLink = parser.getMapLink(post.longitude, post.latitude);
+    }
     else {
         await postView.closeStage(postStage);
     }
@@ -79,6 +105,10 @@ const addPost = async (dir) => {
         default:
             break;
     }
+}
+
+completePost = async () => {
+
 }
 
 const postHandlers = {
@@ -116,7 +146,6 @@ const postHandlers = {
 
         mapLink.on("input", async function() {
             if (parser.isURLValid($(this).val())) {
-                currMapLink = $(this).val();
                 postView.enableBtn("right");
 
                 let mapCoords = parser.getCoords(currMapLink);
@@ -128,7 +157,6 @@ const postHandlers = {
             } else {
                 postView.disableBtn("right");
                 await postView.removePostMap();
-                currMapLink = undefined;
             }
         });
 
@@ -141,7 +169,7 @@ const postHandlers = {
         }
     },
     handleDescription: async () => {
-        let description = await postView.setupDescriptionView();
+        let description = await postView.setupDescriptionView(post.description);
         
         description.on("input", async function() {
             if (parser.isDescriptionCorrect($(this).val())) {
@@ -234,17 +262,41 @@ const closePost = async (i) => {
     view.closePost(i, posts[i].categories);
 }
 
-const myPosts = async () => {
-    setTimeout(() => {
-        for (let i = 0; i < posts.length; i++) {
-            // check and add posts by this user
-        }    
-    }, 500);
+const toggleMyPosts = async () => {
+    if (!myPostsActive) {
+        setTimeout(() => {
+            for (let i = 0; i < posts.length; i++) {
+                $(".post").remove();
 
-    await view.closePostsView();
-    view.disableCategories();
+                for (let i = 0; i < posts.length; i++) {
+                    if (posts[i].userId == currUserId) {
+                        view.addPost(i, posts[i].title, posts[i].date, posts[i].categories,
+                            posts[i].description, posts[i].photos[0]);
+                    }
+                }
+            }    
+        }, 500);
 
-    await view.openPostsView();
+        await view.closePostsView();
+        view.disableCategories();
+        await view.openPostsView();
+    } else {
+        setTimeout(() => {
+            for (let i = 0; i < posts.length; i++) {
+                $(".post").remove();
+                
+                for (let i = 0; i < posts.length; i++) {
+                    view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].photos[0]);
+                }
+            }
+        }, 500);
+
+        await view.closePostsView();
+        view.enableCategories();
+        await view.openPostsView();
+    }
+
+    myPostsActive = !myPostsActive;
 }
 
 const search = async () => {

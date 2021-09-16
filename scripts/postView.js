@@ -1,5 +1,6 @@
 const postView = {
     dropdownOpen: false,
+    offset      : -1,
 
     disableBtn : async (which) => {
         $(`.${which}Button`).addClass("disabled");
@@ -18,9 +19,11 @@ const postView = {
                 $("#titleInput").remove();
                 break;
             case 1:
+                postView.dropdownOpen = false;
                 $(".categories").addClass("hidden");
-                $(".selector").animate({opacity: 0}, 500);
-                $(".dropdown").animate({opacity: 0}, 500);
+                $(".selector").css({opacity: 0});
+                $(".dropdown").css({opacity: 0});
+                $(".categories").css("opacity", 0);
                 await timeout(500);
                 $(".categories").remove();
                 $(".selector").remove();
@@ -49,8 +52,11 @@ const postView = {
                 $(".postImages").remove();
                 break;
             case 5:
+                view.currImage = 0;
                 $(".openedPost").css("height", 0);
                 await timeout(500);
+                $("#addBtn img").attr("src", "icons/X.png");
+                $("#addBtn").attr("onclick", "discardPost()");
                 $(".openedPost").remove();
                 break;
             default:
@@ -71,11 +77,12 @@ const postView = {
             }
         });
 
-        await timeout(600);
-        $("#posts").css({ "width": "65%", margin: "2.88%", "margin-left": 0 });
+        await timeout(500);
         $("#categories").removeClass("postView");
+        await timeout(500);
+        $("#posts").css({ "width": "65%", margin: "2.88%", "margin-left": 0 });
+        await timeout(200);
         $("#mainCard").removeClass("cardPostView");
-        await timeout(600);
 
         $(".category").eq(0).css("margin-top", "10.25%");
     },
@@ -118,6 +125,9 @@ const postView = {
             </div>
             <div class="categories hidden"></div>
         `);
+        await timeout(50);
+        $(".selector").css({opacity: 1});
+        $(".dropdown").animate({opacity: 1});
 
         for (let i = 0; i < categories.length; i++) {
             postView.appendCategory(categories[i], i, ".categories", 1);
@@ -131,6 +141,7 @@ const postView = {
         if ($(".categoriesInPost").children().length != 0) {
             let scrollAmount = $(".categoriesInPost").prop("scrollWidth");
             $(".categoriesInPost").animate({ scrollLeft: scrollAmount }, 700);
+            await timeout(200);
             postView.toggleDropdown();
         }
 
@@ -195,9 +206,10 @@ const postView = {
             <div class="postMapContainer">
                 <div class="postMap"><iframe src=""></iframe></div>
             </div>
-            <input type="url" class="postInput" id="linkInput" placeholder="Paste your link here …">
+            <input type="url" class="postInput closed" id="linkInput" placeholder="Paste your link here …">
             <p class="wrongLink">Wrong link</p>
-        `);
+        `); await timeout(50);
+        $("#linkInput").removeClass("closed");
 
         return $("#linkInput");
     },
@@ -226,12 +238,14 @@ const postView = {
 
         document.getElementById("linkInput").readOnly = false;
     },
-    setupDescriptionView    : async () => {
+    setupDescriptionView    : async (description) => {
         if ($(".postDescription").length == 0) {
             $(".postView").append(`<textarea class="postDescription" placeholder="Write your text here …">`);
         } else postView.enableBtn("right");
 
         await timeout(50); $(".postDescription").addClass("openPostDescription");
+        $(".postDescription").val(description);
+        if (description.length !== 0) postView.enableBtn("right");
 
         return $(".postDescription");
     },
@@ -259,6 +273,10 @@ const postView = {
         return $(".postImages");
     },
     setupPreview    : async (post, mapEmbed) => {
+        $("#addBtn img").attr("src", "icons/checkmark.svg");
+        $("#addBtn").attr("onclick", "completePost()");
+
+        view.currImage = 0;
         $(".postView").append(`
         <div class="post openedPost"><span class="date openedDate"></span>
             <div class="content">
@@ -276,22 +294,18 @@ const postView = {
         </div>
         `);
 
-        for (let i = 0; i < post.categories.length; i++) {
-            $(".openCategories").append(`<span class="card">${post.categories[i]}</span>`);
-        }
+        let titleFontSize = parser.getCorrectFontSize($(`.postView .openedPost .title`).text().length);
+        $(`.postView .openedPost .title`).css("font-size", `${titleFontSize}vh`);
+
+        $(".openCategories").append(`<span class="card">${post.categories[0]}</span>`);
 
         $(`.imageView`).append(`<div id="img_${0}" class="image"><img src="${post.photos[0]}"></div>`);
-        let left    = parseFloat($(`#img_${0}`).css("left"));
-        let width   = parseFloat($(`#img_${0}`).css("width"));
-        view.offset = left + width;
+        view.offset = parseFloat($(`#img_${0}`).css("width")) / window.innerHeight * 100;
 
         for (let i = 1; i < post.photos.length; i++) {
             $(`.imageView`).append(`<div id="img_${i}" class="image"><img src="${post.photos[i]}"></div>`);
 
-            let left    = parseFloat($(`#img_${i}`).css("left")) * 2;
-            let width   = parseFloat($(`#img_${i}`).css("width"));
-
-            $(`#img_${i}`).css("left", (left + width) * i);
+            $(`#img_${i}`).css("left", `${view.offset * i}vh`);
         }
 
         await timeout(100);

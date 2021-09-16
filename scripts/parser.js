@@ -1,5 +1,9 @@
 const parser = {
     getMapLink          : (longitude, latitude, lang) => {
+        if (longitude == undefined || latitude == undefined) {
+            return "";
+        }
+
         let language = lang === undefined ? "us" : lang;
         return `https://maps.google.com/maps?q=${longitude},${latitude}&hl=${language}&output=embed`;
     },

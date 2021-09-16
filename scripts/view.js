@@ -30,6 +30,7 @@ const view      = {
                 <p class="title">${title}</p>
                 <div class="spanDiv">
                     <span class="date">${date}</span>
+                    <span class="postCategory">${categories[0]}</span>
                 </div>
                 <p class="description">${description}</p>
             </div>
@@ -38,9 +39,8 @@ const view      = {
             </div>
         </div>`);
 
-        for (let i = 0; i < categories.length; i++) {
-            $(`#p_${index} .spanDiv`).append(`<span class="postCategory">${categories[i]}</span>`);
-        }
+        if (categories.length > 1)
+            $(`#p_${index} .spanDiv span`).last().append(" ...");
     },
     
     openPost        : async (index, categories, photos, mapSrc) => {
@@ -58,6 +58,7 @@ const view      = {
         let titleFontSize = parser.getCorrectFontSize($(`#p_${index} .title`).text().length);
         $(`#p_${index} .title`).animate({"font-size": `${titleFontSize}vh`}, 500);
 
+        $(`#p_${index} .description`).css("opacity", 0);
         await timeout(300);
         $(`#p_${index} .description`).before(`
             <div class="imgMapView">
@@ -67,8 +68,6 @@ const view      = {
                 <div class="mapContainer"></div>
             </div>
         `);
-
-        $(`#p_${index} .description`).css("opacity", 0);
 
         view.makeMap(mapSrc, ".mapContainer");
         $(".map").contents().find(".place-card").hide();
@@ -86,17 +85,11 @@ const view      = {
         await timeout(700);
         $(`#p_${index} .description`).css("opacity", 1);
 
-        let left    = parseFloat($(`#img_${0}`).css("left"));
-        let width   = parseFloat($(`#img_${0}`).css("width"));
-        view.offset = left + width;
+        view.offset = parseFloat($(`#img_${0}`).css("width")) / window.innerHeight * 100;
 
         for (let i = 1; i < photos.length; i++) {
             $(`#p_${index} .imageView`).append(`<div id="img_${i}" class="image"><img src="${photos[i]}"></div>`);
-
-            let left    = parseFloat($(`#img_${i}`).css("left")) * 2;
-            let width   = parseFloat($(`#img_${i}`).css("width"));
-
-            $(`#img_${i}`).css("left", (left + width) * i);
+            $(`#img_${i}`).css("left", `${view.offset * i}vh`);
         }
 
         await timeout(100);
@@ -108,11 +101,16 @@ const view      = {
          $(".minimize").css("opacity", 1);
     },
     closePost       : async (index, categories) => {
-        $(`#p_${index}`).removeClass("openedPost");
+        view.currImage = 0;
+        $(`#p_${index} .description`).css("opacity", 0);
         $(`#p_${index} .imgMapView`).css("height", 0);
         setTimeout(() => {
             $(".imgMapView").remove();
+            $(`#p_${index} .minimize`).remove();
         }, 500);
+
+        await timeout(370);
+        $(`#p_${index}`).removeClass("openedPost");
         $(`#p_${index} .title`).animate({ "font-size": "2.77vh" }, 500);
         $(`#p_${index} .minimize`).css({"opacity": 0, "pointer-events": "none"});
         $(".picture").css("height", "90.13%");
@@ -124,12 +122,14 @@ const view      = {
         $(`#p_${index} .spanDiv .card`).remove();
         
         $(`#p_${index} .spanDiv`).removeClass("openCategories");
-        for (let i = 0; i < categories.length; i++) {
-            $(`#p_${index} .spanDiv`).append(`<span class="postCategory">${categories[i]}</span>`);
-        }
+        $(`#p_${index} .spanDiv`).append(`<span class="postCategory">${categories[0]}</span>`);
+        if (categories.length > 1)
+            $(`#p_${index} .spanDiv span`).last().append(" ...");
 
         $("#postsView").css("overflow", "auto");
         $(`#p_${index}`).attr("onclick", `openPost(${index})`);
+        await timeout (380);
+        $(`#p_${index} .description`).css("opacity", 1);
     },
     hidePosts       : async () => {
         $(`.post`).css({transform: "scale(0)", opacity: 0});
@@ -141,6 +141,11 @@ const view      = {
     },
     scrollPhoto     : async (dir) => {
         let scroll = false;
+        $(".leftImgBtn").attr("onclick", ""); $(".rightImgBtn").attr("onclick", "");
+
+        setTimeout(() => {
+            $(".leftImgBtn").attr("onclick", "view.scrollPhoto(-1)"); $(".rightImgBtn").attr("onclick", "view.scrollPhoto(1)");
+        }, 500);
 
         if ((dir > 0 && view.currImage + 1 != $(".image").length) || (dir < 0 && view.currImage - 1 != -1)) {
             scroll = true;
@@ -148,7 +153,8 @@ const view      = {
 
         if (scroll) {
             $(".image").each(function(i) {
-                $(this).css("left", dir > 0 ? `-=${view.offset}` : `+=${view.offset}`);
+                let offset = parseFloat($(this).css("left")) / window.innerHeight * 100;
+                $(this).css("left", dir > 0 ? `${offset - view.offset}vh` : `${offset + view.offset}vh`);
             })
             view.currImage += dir;
         }
@@ -182,6 +188,10 @@ const view      = {
     disableCategories   : async () => {
         $(".category").addClass("disabledCategory");
         $(".category p").animate({fontSize: "1.77vh"}, 200);
+    },
+    enableCategories    : async () => {
+        $(".category").removeClass("disabledCategory");
+        $(".category p").animate({fontSize: "1.55vh"}, 200);
     },
     enableCategories    : async () => {
         $(".category").removeClass("disabledCategory");

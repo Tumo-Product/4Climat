@@ -11,8 +11,8 @@
 }
 
 .cardPostView #postsView {
-    margin-top: 50%;
-    height: 0;
+    margin-top: 50% !important;
+    height: 0 !important;
 }
 
 .postView {
@@ -26,6 +26,7 @@
 }
 
 .postView .openedPost {
+    position: absolute;
     overflow: hidden;
     width: 79.38%;
     height: 79.55%;
@@ -35,7 +36,6 @@
 }
 
 .postView .openedPost .image {
-    left: 2.2%;
     top: 2.95%;
 }
 
@@ -116,6 +116,8 @@
 }
 
 .selector {
+    opacity: 0;
+    transition: 0.5s;
     overflow: auto;
     min-height: 8.677vh;
     height: 8.677vh;
@@ -130,6 +132,8 @@
 }
 
 .dropdown {
+    opacity: 0;
+    transition: 0.5s;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -185,6 +189,7 @@
     display: hidden;
     position: relative;
     overflow: auto;
+    justify-content: center;
 
     display: flex;
     gap: 1.44vh;
@@ -193,7 +198,8 @@
 .expandedCategories {
     flex-wrap: wrap;
     align-content: flex-start;
-    min-width: 45.5vh;
+    min-width: 45.53vh;
+    justify-content: flex-start !important;
 }
 
 .addPostCategory {
