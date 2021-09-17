@@ -58,7 +58,6 @@ input::placeholder {
 
 input:focus, textarea:focus
 {
-    background-color: rgb(248, 248, 248);
     border: none !important;
     outline: 0;
     outline-color: transparent;
@@ -66,9 +65,12 @@ input:focus, textarea:focus
 }
 
 .popupContainer {
+    backdrop-filter: blur(5px);
+    background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(204,211,224,0.56) 100%);
+    background-color: rgba(243,243,243,0.17);
     pointer-events: none;
     opacity: 0;
-    backdrop-filter: blur(5px);
+    transition: 0.5s;
     width: 100%;
     height: 100vh;
     position: fixed;
@@ -80,9 +82,10 @@ input:focus, textarea:focus
 .popup {
     width: 47.33vh;
     height: 28.55vh;
-    border-radius: 19px;
+    border-radius: 2.11vh;
     background-color: #F3F3F3;
     box-shadow: 3px 3px 3px 0 rgba(222,222,230,0.5), -2px -2px 3px 0 #FEFEFE;
+    position: absolute;
 }
 
 .container {
@@ -108,7 +111,7 @@ input:focus, textarea:focus
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 15px;
+    border-radius: 1.667vh;
     box-shadow: inset -3px -3px 5px 0 #FEFEFE, inset 3px 3px 5px 0 rgba(222,222,230,0.5);
     margin-left: 4.5%;
 }
@@ -117,7 +120,7 @@ input:focus, textarea:focus
     border: none;
     width: 92%;
     height: 92%;
-    border-radius: 9px;
+    border-radius: 1vh;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -133,7 +136,7 @@ input:focus, textarea:focus
 .imageView {
     height: 100%;
     width: 56.45%;
-    border-radius: 15px;
+    border-radius: 1.667vh;
     box-shadow: inset -3px -3px 5px 0 #FEFEFE, inset 3px 3px 5px 0 rgba(222,222,230,0.5);
     margin: 0 1.3%;
     position: relative;
@@ -152,7 +155,7 @@ input:focus, textarea:focus
 }
 
 .image img {
-    border-radius: 9px;
+    border-radius: 1.667vh;
     width: 96%;
     height: 100%;
     object-fit: cover;
@@ -174,7 +177,7 @@ input:focus, textarea:focus
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 36.5px;
+    border-radius: 4.055vh;
     cursor: pointer;
 }
 
@@ -182,11 +185,11 @@ input:focus, textarea:focus
     width: 15.33vh;
     height: 7.44vh;
     box-shadow: 1px 1px 1px 0 rgba(222,222,230,0.5);
-    border-radius: 36.5px;
+    border-radius: 4.055vh;
 }
 
 .card {
-    border-radius: 19px;
+    border-radius: 2.111vh;
     box-shadow: 5px 5px 5px 0 rgba(222,222,230,0.5), -3px -3px 5px 0 #FEFEFE;
 }
 
@@ -206,7 +209,7 @@ input:focus, textarea:focus
     height: 11.94%;
     width: 100%;
     box-shadow: 5px 5px 5px 0 rgba(222,222,230,0.5), -3px -3px 5px 0 #FEFEFE;
-    border-radius: 48.5px;
+    border-radius: 5.388vh;
     margin-top: 3.45%;
     margin-bottom: 3%;
     display: flex;
@@ -238,7 +241,7 @@ input:focus, textarea:focus
     align-items: center;
     height: 7.9%;
     width: 74%;
-    border-radius: 9px;
+    border-radius: 1vh;
     background-color: #F3F3F3;
     margin-top: 10.25%;
     margin-left: 13%;
@@ -250,8 +253,7 @@ input:focus, textarea:focus
 
 .category .inside {
     transition: 0.2s;
-    border-radius: 9px;
-    border-radius: 7px;
+    border-radius: 1vh;
     background-color: #F3F3F3;
     box-shadow: inset -3px -3px 5px 0 #FEFEFE, inset 3px 3px 5px 0 rgba(222,222,230,0.5);
     width: 96%;
@@ -291,7 +293,7 @@ input:focus, textarea:focus
     height: 100%;
     width: 84.95%;
     font-size: 2.45vh;
-    border-radius: 50px;
+    border-radius: 5.555vh;
     transition: 0.5s;
 }
 
@@ -337,7 +339,7 @@ input:focus, textarea:focus
     width: 16.22%;
     cursor: pointer;
 
-    border-radius: 36.5px;
+    border-radius: 4.05vh;
     box-shadow: 5px 5px 5px 0 rgba(222,222,230,0.5), -3px -3px 5px 0 #FEFEFE;
     display: flex;
     justify-content: center;
@@ -351,15 +353,15 @@ input:focus, textarea:focus
 }
 
 .wideBtn .inside {
-    width: 94.5%;
+    width: 95.5%;
     height: 91.78%;
-    border-radius: 36.5px;
+    border-radius: 4.055vh;
     box-shadow: 1px 1px 1px 0 rgba(222,222,230,0.5);
 }
 
 #addBtn img {
-    width: 46.7%;
-    height: 46.7%;
+    width: 46%;
+    height: 46%;
 }
 
 #postsView {
@@ -367,7 +369,7 @@ input:focus, textarea:focus
     height: 100%;
     width: 100%;
     margin-top: 3.1%;
-    border-radius: 19px;
+    border-radius: 2.111vh;
     box-shadow: inset -3px -3px 4px 0 #FEFEFE, inset 3px 3px 4px 0 rgba(222,222,230,0.5);
     flex-shrink: 1;
     transition: 0.6s;
@@ -445,7 +447,7 @@ input:focus, textarea:focus
     cursor: pointer;
     margin-left: 4.5%;
     margin-top: 4.5%;
-    border-radius: 19px;
+    border-radius: 2.111vh;
     box-shadow: 5px 5px 5px 0 rgba(222,222,230,0.5), -3px -3px 5px 0 #FEFEFE;
     display: flex;
     align-items: center;
@@ -508,7 +510,7 @@ input:focus, textarea:focus
     font-size: 18px;
     color: #E08689;
     box-shadow: 1px 1px 2px 0 rgba(222,222,230,0.5), -2px -2px 2px 0 #FEFEFE;
-    border-radius: 6px;
+    border-radius: 0.666vh;
     min-width: 22.8%;
     width: fit-content;
     margin-right: 2%;
@@ -539,7 +541,7 @@ input:focus, textarea:focus
     transition: 0.5s;
     width: 29.3%;
     height: 90.13%;
-    border-radius: 15px;
+    border-radius: 1.666vh;
     box-shadow: 2px 2px 2px 0 rgba(222,222,230,0.5), -2px -2px 2px 0 #FEFEFE;
     display: flex;
     justify-content: center;
@@ -549,7 +551,7 @@ input:focus, textarea:focus
 }
 
 .picture img {
-    border-radius: 9px;
+    border-radius: 1vh;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -603,7 +605,7 @@ input:focus, textarea:focus
 #loginPage .card {
     width   : 450px;
     height  : 300px;
-    border-radius: 19px;
+    border-radius: 2.111vh;
     box-shadow: 5px 5px 5px 0 rgba(222,222,230,0.5), -3px -3px 5px 0 #FEFEFE;
 
     display: flex;

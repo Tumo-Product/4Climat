@@ -3,7 +3,6 @@ const view      = {
     currImage   : 0,
     maxSize     : {width: 900, height: 684},
     window      : {width: 0, height: 0},
-    categories  : [],
     offset      : -1,
 
     toggleLoader    : () => {
@@ -20,8 +19,6 @@ const view      = {
         <div id="c_${index}" class="category insetShadow" onclick="toggleCategory(${index})">
             <p>#${text}</p><div class="inside"></div>
         </div>`);
-
-        view.categories.push(false);
     },
     addPost         : (index, title, date, categories, description, img) => {
         $("#postsView").append(`
@@ -159,13 +156,11 @@ const view      = {
             view.currImage += dir;
         }
     },
-    toggleCategory  : (index) => {
-        $(`#c_${index}`).removeClass(view.categories[index] ? "outsideShadow"   : "insetShadow");
-        $(`#c_${index}`).addClass   (view.categories[index] ? "insetShadow"     : "outsideShadow");
-        let font = view.categories[index] ? "1.55vh" : "1.77vh";
+    toggleCategory  : (index, enable) => {
+        $(`#c_${index}`).removeClass(enable ? "outsideShadow"   : "insetShadow");
+        $(`#c_${index}`).addClass   (enable ? "insetShadow"     : "outsideShadow");
+        let font = enable ? "1.55vh" : "1.77vh";
         $(`#c_${index} p`).animate  ({ fontSize: font }, 200);
-
-        view.categories[index] = !view.categories[index];
     },
     scrollToMiddle  : (elem) => {
         $(elem).scrollTop($(elem).width() / 2);

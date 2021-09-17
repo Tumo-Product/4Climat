@@ -1,8 +1,9 @@
 let categories, posts;
 let myPostsActive = false;
+let categoriesStates = [];
 let postStage = -1;
 let post = { categories: [], longitude: -1, latitude: -1, title: "", date: "", description: "", photos: [] };
-let currMapLink, currUserId = 1;
+let currUserId = 1;
 
 const timeout = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -28,11 +29,13 @@ const onLoad = async () => {
     posts       = await network.getPosts();
     categories  = await network.getCategories();
 
-    let data = await axios.put(config.generate_token, { uid: currUserId });
-    data = data.data.data;
-    console.log(data);
-    let allowed = await axios.post(config.login, {uid: data.uid, token: data.token});
-    console.log(allowed);
+    // post = posts[0];
+
+    // let data = await axios.put(config.generate_token, { uid: currUserId });
+    // data = data.data.data;
+    // console.log(data);
+    // let allowed = await axios.post(config.login, {uid: data.uid, token: data.token});
+    // console.log(allowed);
 
     for (let i = 0; i < posts.length; i++) {
         view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].photos[0]);
@@ -40,6 +43,7 @@ const onLoad = async () => {
 
     for (let i = 0; i < categories.length; i++) {
         view.addCategory(i, categories[i]);
+        categoriesStates.push(false);
     }
 
     view.scrollToMiddle("#categories");
@@ -48,7 +52,45 @@ const onLoad = async () => {
 }
 
 const toggleCategory = async (index) => {
-    view.toggleCategory(index);
+    view.toggleCategory(index, categoriesStates[index]);
+    categoriesStates[index] = !categoriesStates[index];
+
+    let queries = [], matches = [];
+    for (let i = 0; i < categoriesStates.length; i++) {
+        if (categoriesStates[i] === true) {
+            queries.push(categories[i]);
+        }
+    }
+
+    view.hidePosts();
+    setTimeout(() => {
+        $(".post").remove();
+
+        for (let i = 0; i < matches.length; i++) {
+            let post = posts[matches[i]];
+            view.addPost(i, post.title, post.date, post.categories, post.description, post.photos[0]);
+            view.makePostAppear(i);
+        }
+    }, 500);
+
+    if (!categoriesStates.includes(true)) {
+        for (let i = 0; i < posts.length; i++) { matches[i] = i;}
+        return;
+    }
+    for (let q = 0; q < queries.length; q++) {
+        for (let p = 0; p < posts.length; p++) {
+            let regexp = new RegExp(`${queries[q]}`, "i");
+            
+            for (let c = 0; c < posts[p].categories.length; c++) {
+                if (regexp.test(posts[p].categories[c])) {
+                    matches.push(p);
+                    continue;
+                }
+            }
+        }
+    }
+
+    await timeout(500);
 }
 
 const login = async () => {
@@ -68,6 +110,7 @@ const login = async () => {
 }
 
 const discardPost = async () => {
+    post.mapLink = "";
     postStage = -1;
     await postView.discardPost();
 }
@@ -75,7 +118,6 @@ const discardPost = async () => {
 const addPost = async (dir) => {
     if (postStage == -1) {
         await postView.firstSetup();
-        currMapLink = parser.getMapLink(post.longitude, post.latitude);
     }
     else {
         await postView.closeStage(postStage);
@@ -108,7 +150,15 @@ const addPost = async (dir) => {
 }
 
 completePost = async () => {
+    postView.popup("complete");
+}
 
+publishPost = async () => {
+
+}
+
+saveDraft = async () => {
+    
 }
 
 const postHandlers = {
@@ -143,26 +193,26 @@ const postHandlers = {
         });
 
         let mapLink = await postView.setupMapView();
-
         mapLink.on("input", async function() {
             if (parser.isURLValid($(this).val())) {
                 postView.enableBtn("right");
 
-                let mapCoords = parser.getCoords(currMapLink);
-                let mapEmbed  = parser.getMapLink(mapCoords.longitude, mapCoords.latitude);
-                post.longitude = mapCoords.longitude;
-                post.latitude = mapCoords.latitude;
+                post.mapLink    = $(this).val();
+                let mapCoords   = parser.getCoords(post.mapLink);
+                let mapEmbed    = parser.getMapLink(mapCoords.longitude, mapCoords.latitude);
+                post.longitude  = mapCoords.longitude;
+                post.latitude   = mapCoords.latitude;
                 await postView.addPostMap(mapEmbed);
-                currMapLink = $(this).val();
             } else {
+                post.mapLink    = undefined;
                 postView.disableBtn("right");
                 await postView.removePostMap();
             }
         });
 
-        if (currMapLink !== undefined) {
-            mapLink.val(currMapLink);
-            let mapCoords = parser.getCoords(currMapLink);
+        if (post.mapLink !== undefined) {
+            mapLink.val(post.mapLink);
+            let mapCoords = parser.getCoords(post.mapLink);
             let mapEmbed  = parser.getMapLink(mapCoords.longitude, mapCoords.latitude);
             await postView.addPostMap(mapEmbed);
             postView.enableBtn("right");
@@ -196,6 +246,7 @@ const postHandlers = {
                     e.preventDefault();
                     e.stopPropagation();
                     let file = dataTransfer.files[0];
+                    console.log(dataTransfer.files[0]);
                     if (!file.type.includes("image")) return;
                 
                     let fr      = new FileReader();

@@ -9,6 +9,23 @@ const postView = {
         $(`.${which}Button`).removeClass("disabled");
     },
 
+    popup           : async (type) => {
+        if (type == "complete") {
+            $(".popup").append(`
+                <div onclick="saveDraft()" id="draftButton" class="wideBtn">
+                    <div class="inside"></div>
+                    <p>Save Draft</p>
+                </div>
+                <div onclick="publishPost()" id="publishButton" class="wideBtn">
+                    <div class="inside"></div>
+                    <p>Publish</p>
+                </div>
+            `);
+        }
+
+        $(".popupContainer").css({"opacity": 1, "pointer-events": "all"});
+    },
+
     closeStage      : async (stage) => {
         $(".rightButton").addClass("disabled");
 
@@ -44,8 +61,6 @@ const postView = {
                 break;
             case 4:
                 $("#download").addClass("goUnder");
-                $(".postTitle").css("opacity", 0);
-                $(".postStageExpl").css("opacity", 0);
                 $(".postImages").removeClass("openPostImages");
                 await timeout(500);
                 $("#download").remove();
@@ -55,7 +70,9 @@ const postView = {
                 view.currImage = 0;
                 $(".openedPost").css("height", 0);
                 await timeout(500);
-                $("#addBtn img").attr("src", "icons/X.png");
+                $(".postTitle").css("opacity", 1);
+                $(".postStageExpl").css("opacity", 1);
+                $("#addBtn img").attr("src", "icons/bigX.png");
                 $("#addBtn").attr("onclick", "discardPost()");
                 $(".openedPost").remove();
                 break;
@@ -88,7 +105,9 @@ const postView = {
     },
     firstSetup      : async () => {
         $("#addBtn").attr("onclick", "discardPost()");
-        $("#addBtn img").attr("src", "icons/X.png");
+        $("#addBtn img").attr("src", "icons/bigX.png");
+        $("#postButton").attr("onclick", "saveDraft()");
+        $("#postButton p").text("Save Draft");
 
         // Slide categories down.
         $(".category").eq(0).css("margin-top", $("#categories").prop("scrollHeight") + (window.innerHeight * 0.555));
@@ -109,7 +128,7 @@ const postView = {
         $(".rightButton").append(`<div class="inside"></div><img src="icons/arrow.svg">`);
     },
     setupTitleView  : async (title) => {
-        $(".postView").append(`<input class="postInput" id="titleInput" placeholder="Write your title here …">`);
+        $(".postView").append(`<input autocomplete="off" class="postInput" id="titleInput" placeholder="Write your title here …">`);
         $("#titleInput").val(title);
         if (title.length !== 0) postView.enableBtn("right");
         return $("#titleInput");
@@ -127,7 +146,7 @@ const postView = {
         `);
         await timeout(50);
         $(".selector").css({opacity: 1});
-        $(".dropdown").animate({opacity: 1});
+        $(".dropdown").css({opacity: 1});
 
         for (let i = 0; i < categories.length; i++) {
             postView.appendCategory(categories[i], i, ".categories", 1);
@@ -206,7 +225,7 @@ const postView = {
             <div class="postMapContainer">
                 <div class="postMap"><iframe src=""></iframe></div>
             </div>
-            <input type="url" class="postInput closed" id="linkInput" placeholder="Paste your link here …">
+            <input autocomplete="off" type="url" class="postInput closed" id="linkInput" placeholder="Paste your link here …">
             <p class="wrongLink">Wrong link</p>
         `); await timeout(50);
         $("#linkInput").removeClass("closed");
@@ -250,12 +269,9 @@ const postView = {
         return $(".postDescription");
     },
     setupImageView  : async (images) => {
-        $(".postTitle").css     ("opacity", 1);
-        $(".postStageExpl").css ("opacity", 1);
-
         $(".postView").append(`
             <div class="postImages"></div>
-            <input type="file" accept="image/*" id="downloadInput" onchange="addImage()"/>
+            <input autocomplete="off" type="file" accept="image/*" id="downloadInput" onchange="addImage()"/>
             <div class="bigBtn goUnder" id="download">
                 <div class="inside"></div>
                 <img src="icons/download.png">
@@ -275,6 +291,9 @@ const postView = {
     setupPreview    : async (post, mapEmbed) => {
         $("#addBtn img").attr("src", "icons/checkmark.svg");
         $("#addBtn").attr("onclick", "completePost()");
+        $(".postTitle").css("opacity",      0);
+        $(".postStageExpl").css("opacity",  0);
+        await timeout(400);
 
         view.currImage = 0;
         $(".postView").append(`
