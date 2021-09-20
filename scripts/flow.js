@@ -2,7 +2,7 @@ let categories, posts;
 let myPostsActive = false;
 let categoriesStates = [];
 let postStage = -1;
-let post = { categories: [], longitude: -1, latitude: -1, title: "", date: "", description: "", photos: [] };
+let post = { categories: [], longitude: -1, latitude: -1, title: "", date: "", description: "", images: [] };
 let currUserId = 1;
 
 const timeout = (ms) => {
@@ -15,12 +15,12 @@ let examplePost = [
             "Category 1",
             "Category 2"
         ],
-        latitude: 44.4937761,
-        longitude: 40.1979479,
+        latitude    : 44.4937761,
+        longitude   : 40.1979479,
         title       : "Recycling plastic bottles bla bla bla bla bla bla",
         description : "Example description",
-        photos      : [
-            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAKCAYAAADCb8xtAAAAAXNSR0IArs4c6QAAAKBJREFUOBHN1LENwjAQheH3bgSokNiBFbIDu6ROzSJU7MAK7ICUCkbg8I8i0Vhpcy7Plvz5bD+rjddtOn5SF1lDZh6obT1sz0rdwxr35+npBflI5W5rXG9/y++GPQWdrIoEjg1jcN29k5SqNWNUeZNrjcEYawsqzcXvd1USdSwYgwjozNUqEVPkFBFQS/bXLPE0BmFKTrXCtdIzwIIJG8Yvp300Z1a2OaoAAAAASUVORK5CYII="
+        images      : [
+            "Orange.png"
         ]
     },
 ]
@@ -31,20 +31,27 @@ const onLoad = async () => {
 
     // post = posts[0];
 
-    // let data = await axios.put(config.generate_token, { uid: currUserId });
-    // data = data.data.data;
-    // console.log(data);
-    // let allowed = await axios.post(config.login, {uid: data.uid, token: data.token});
-    // console.log(allowed);
+    let data    = await axios.put(config.generateToken, { uid: currUserId });
+    data        = data.data.data;
+    let allowed = await axios.post(config.login, {uid: data.uid, token: data.token});
+    console.log(data, allowed);
 
     for (let i = 0; i < posts.length; i++) {
-        view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].photos[0]);
+        view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].images[0]);
     }
 
     for (let i = 0; i < categories.length; i++) {
         view.addCategory(i, categories[i]);
         categoriesStates.push(false);
     }
+
+    $("#postsView").scroll(function() {
+        let scrollTop = parseFloat($(this).scrollTop());
+        let height = $(".post").length * ($(".post").height() + parseFloat($(".post").css("margin-top")));
+        if (scrollTop >= height) {
+            console.log($(this).scrollTop());
+        }
+    })
 
     view.scrollToMiddle("#categories");
     view.resize();
@@ -68,7 +75,7 @@ const toggleCategory = async (index) => {
 
         for (let i = 0; i < matches.length; i++) {
             let post = posts[matches[i]];
-            view.addPost(i, post.title, post.date, post.categories, post.description, post.photos[0]);
+            view.addPost(i, post.title, post.date, post.categories, post.description, post.images[0]);
             view.makePostAppear(i);
         }
     }, 500);
@@ -89,8 +96,6 @@ const toggleCategory = async (index) => {
             }
         }
     }
-
-    await timeout(500);
 }
 
 const login = async () => {
@@ -231,8 +236,8 @@ const postHandlers = {
         });
     },
     handleImages: async () => {
-        if (post.photos.length == 6) return;
-        let downloadInput = await postView.setupImageView(post.photos);
+        if (post.images.length == 6) return;
+        let downloadInput = await postView.setupImageView(post.images);
 
         downloadInput.on({      // Drag and drop images.
             'dragover dragenter': function (e) {
@@ -246,15 +251,12 @@ const postHandlers = {
                     e.preventDefault();
                     e.stopPropagation();
                     let file = dataTransfer.files[0];
-                    console.log(dataTransfer.files[0]);
                     if (!file.type.includes("image")) return;
                 
                     let fr      = new FileReader();
                     let basedat = await (new Promise((resolve)=>{
                         fr.readAsDataURL(file);
-                        fr.onloadend = () => {
-                            resolve(fr.result);
-                        }
+                        fr.onloadend = () => { resolve(fr.result); }
                     }));
 
                     addImage(basedat);
@@ -269,7 +271,7 @@ const postHandlers = {
 }
 
 const addImage = async (src) => {
-    if (post.photos.length == 6) return;
+    if (post.images.length == 6) return;
     let basedat;
 
     if (src === undefined) { // If it's undefined that means this function is being called by the download input.
@@ -289,24 +291,24 @@ const addImage = async (src) => {
         basedat = src;
     }
 
-    post.photos.push(basedat);
-    postView.addImage(post.photos.length - 1, basedat);
+    post.images.push(basedat);
+    postView.addImage(post.images.length - 1, basedat);
 
-    if (post.photos.length > 0) postView.enableBtn("right");
+    if (post.images.length > 0) postView.enableBtn("right");
     else                        postView.disableBtn("right");
 }
 
 const removeImage = async (i) => {
-    post.photos.splice(i, 1);
+    post.images.splice(i, 1);
     postView.removeImage(i);
 
-    if (post.photos.length > 0) postView.enableBtn("right");
+    if (post.images.length > 0) postView.enableBtn("right");
     else                        postView.disableBtn("right");
 }
 
 const openPost = async (i) => {
     let mapSrc = parser.getMapLink(posts[i].longitude, posts[i].latitude);
-    view.openPost(i, posts[i].categories, posts[i].photos, mapSrc);
+    view.openPost(i, posts[i].categories, posts[i].images, mapSrc);
 }
 
 const closePost = async (i) => {
@@ -322,7 +324,7 @@ const toggleMyPosts = async () => {
                 for (let i = 0; i < posts.length; i++) {
                     if (posts[i].userId == currUserId) {
                         view.addPost(i, posts[i].title, posts[i].date, posts[i].categories,
-                            posts[i].description, posts[i].photos[0]);
+                            posts[i].description, posts[i].images[0]);
                     }
                 }
             }    
@@ -337,7 +339,7 @@ const toggleMyPosts = async () => {
                 $(".post").remove();
                 
                 for (let i = 0; i < posts.length; i++) {
-                    view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].photos[0]);
+                    view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].images[0]);
                 }
             }
         }, 500);
@@ -360,7 +362,7 @@ const search = async () => {
 
         for (let i = 0; i < matches.length; i++) {
             let post = posts[matches[i]];
-            view.addPost(i, post.title, post.date, post.categories, post.description, post.photos[0]);
+            view.addPost(i, post.title, post.date, post.categories, post.description, post.images[0]);
             view.makePostAppear(i);
         }
     }, 500);

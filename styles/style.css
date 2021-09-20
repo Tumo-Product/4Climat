@@ -80,6 +80,8 @@ input:focus, textarea:focus
 }
 
 .popup {
+    display: flex;
+    justify-content: center;
     width: 47.33vh;
     height: 28.55vh;
     border-radius: 2.11vh;
@@ -155,7 +157,7 @@ input:focus, textarea:focus
 }
 
 .image img {
-    border-radius: 1.667vh;
+    border-radius: 1vh;
     width: 96%;
     height: 100%;
     object-fit: cover;
@@ -445,8 +447,8 @@ input:focus, textarea:focus
     width: 90.94%;
     height: 19.05vh;
     cursor: pointer;
-    margin-left: 4.5%;
-    margin-top: 4.5%;
+    margin-left: 2.6vh;
+    margin-top: 2.6vh;
     border-radius: 2.111vh;
     box-shadow: 5px 5px 5px 0 rgba(222,222,230,0.5), -3px -3px 5px 0 #FEFEFE;
     display: flex;

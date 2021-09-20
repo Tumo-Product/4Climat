@@ -40,12 +40,12 @@ const view      = {
             $(`#p_${index} .spanDiv span`).last().append(" ...");
     },
     
-    openPost        : async (index, categories, photos, mapSrc) => {
+    openPost        : async (index, categories, images, mapSrc) => {
         $(`#p_${index}`).attr("onclick", "");
         
         let marginTop   = parseFloat($(`#p_${index}`).css("margin-top"));
         let postHeight  = parseFloat($(`#p_${index}`).height());
-        let scrollPos   = postHeight * index + 5;
+        let scrollPos   = postHeight * index;
         if (index != 0) scrollPos += index * marginTop;
 
         $(`#p_${index} .picture`).css("height", $(`#p_${index} .picture`).height());
@@ -78,14 +78,14 @@ const view      = {
             $(`#p_${index} .spanDiv`).append(`<span class="card">${categories[i]}</span>`);
         }
 
-        $(`#p_${index} .imageView`).append(`<div id="img_${0}" class="image"><img src="${photos[0]}"></div>`);
+        $(`#p_${index} .imageView`).append(`<div id="img_${0}" class="image"><img src="${images[0]}"></div>`);
         await timeout(700);
         $(`#p_${index} .description`).css("opacity", 1);
 
         view.offset = parseFloat($(`#img_${0}`).css("width")) / window.innerHeight * 100;
 
-        for (let i = 1; i < photos.length; i++) {
-            $(`#p_${index} .imageView`).append(`<div id="img_${i}" class="image"><img src="${photos[i]}"></div>`);
+        for (let i = 1; i < images.length; i++) {
+            $(`#p_${index} .imageView`).append(`<div id="img_${i}" class="image"><img src="${images[i]}"></div>`);
             $(`#img_${i}`).css("left", `${view.offset * i}vh`);
         }
 

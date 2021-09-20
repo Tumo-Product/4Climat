@@ -318,11 +318,11 @@ const postView = {
 
         $(".openCategories").append(`<span class="card">${post.categories[0]}</span>`);
 
-        $(`.imageView`).append(`<div id="img_${0}" class="image"><img src="${post.photos[0]}"></div>`);
+        $(`.imageView`).append(`<div id="img_${0}" class="image"><img src="${post.images[0]}"></div>`);
         view.offset = parseFloat($(`#img_${0}`).css("width")) / window.innerHeight * 100;
 
-        for (let i = 1; i < post.photos.length; i++) {
-            $(`.imageView`).append(`<div id="img_${i}" class="image"><img src="${post.photos[i]}"></div>`);
+        for (let i = 1; i < post.images.length; i++) {
+            $(`.imageView`).append(`<div id="img_${i}" class="image"><img src="${post.images[i]}"></div>`);
 
             $(`#img_${i}`).css("left", `${view.offset * i}vh`);
         }
@@ -357,7 +357,7 @@ const postView = {
             let newHeight = window.innerHeight * 0.08667;
             if (height > newHeight + 1) openLate = true;
 
-            $(".selector").height(height).animate({"height": newHeight}, 500);
+            $(".selector").height(height).animate({"height": newHeight}, 100);
             $(".categoriesInPost").removeClass("expandedCategories");
             $(".dropdown").addClass("flipY");
 
@@ -389,6 +389,5 @@ const postView = {
             let height = parseFloat($(".selector").css("height")) / window.innerHeight * 100;
             $(".selector").css("height", "8.677vh").animate({"height": `${height}vh`}, 500);
         }
-
     },
 }
