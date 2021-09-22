@@ -29,6 +29,7 @@ const onLoad = async () => {
     posts       = await network.getPosts();
     categories  = await network.getCategories();
 
+    // console.log(JSON.stringify(examplePost));
     // post = posts[0];
 
     let data    = await axios.put(config.generateToken, { uid: currUserId });
@@ -55,6 +56,7 @@ const onLoad = async () => {
 
     view.scrollToMiddle("#categories");
     view.resize();
+    await timeout(100);
     view.toggleLoader();
 }
 
@@ -129,6 +131,7 @@ const addPost = async (dir) => {
     }
 
     postStage += dir;
+    $("#currentStage").text(postStage + 1);
 
     switch (postStage) {
         case 0:
@@ -159,7 +162,7 @@ completePost = async () => {
 }
 
 publishPost = async () => {
-
+    postView.postComplete();
 }
 
 saveDraft = async () => {
@@ -224,9 +227,11 @@ const postHandlers = {
         }
     },
     handleDescription: async () => {
-        let description = await postView.setupDescriptionView(post.description);
+        let description = await postView.setupDescriptionView(post.description, 600);
         
         description.on("input", async function() {
+            $("#charCount").text($(this).val().length);
+
             if (parser.isDescriptionCorrect($(this).val())) {
                 postView.enableBtn("right");
                 post.description = $(this).val();
@@ -250,16 +255,32 @@ const postHandlers = {
                 if (dataTransfer && dataTransfer.files.length) {
                     e.preventDefault();
                     e.stopPropagation();
-                    let file = dataTransfer.files[0];
-                    if (!file.type.includes("image")) return;
-                
-                    let fr      = new FileReader();
-                    let basedat = await (new Promise((resolve)=>{
-                        fr.readAsDataURL(file);
-                        fr.onloadend = () => { resolve(fr.result); }
-                    }));
+                    let files = dataTransfer.files;
+                    if(files[0] === undefined) { return; }
 
-                    addImage(basedat);
+                    let formData = new FormData();
+                    for (let i = 0; i < files.length; i++) {
+                        if (!files[i].type.includes("image")) return;
+                
+                        let fr      = new FileReader();
+                        let basedat = await (new Promise((resolve)=>{
+                            fr.readAsDataURL(files[i]);
+                            fr.onloadend = () => { resolve(fr.result); }
+                        }));
+
+                        formData.append("files", files[i]);
+                        formData.append("pid", "test");
+                        
+                        addImage(basedat);
+                    }
+
+                    let request = await axios.post(config.uploadImage, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+
+                    console.log(request);
                 }
             }
         });
@@ -276,23 +297,27 @@ const addImage = async (src) => {
 
     if (src === undefined) { // If it's undefined that means this function is being called by the download input.
         let input   = document.getElementById("downloadInput");
-        let file    = input.files[0];
+        let files   = input.files;
 
-        if(file === undefined) { return; } // maybe some popup warning?
+        if(files[0] === undefined) { return; }
 
-        let fr      = new FileReader();
-        basedat = await (new Promise((resolve)=>{
-            fr.readAsDataURL(file);
-            fr.onloadend = () => {
-                resolve(fr.result);
-            }
-        }));
+        for (let i = 0; i < files.length; i++) {
+            if (!files[i].type.includes("image")) continue;
+
+            let fr  = new FileReader();
+            basedat = await (new Promise((resolve)=>{
+                fr.readAsDataURL(files[i]);
+                fr.onloadend = () => { resolve(fr.result); }
+            }));
+
+            post.images.push(basedat);
+            postView.addImage(post.images.length - 1, basedat);
+        }
     } else {                // If not then drag and drop is supllying it with a image.
         basedat = src;
+        post.images.push(basedat);
+        postView.addImage(post.images.length - 1, basedat);
     }
-
-    post.images.push(basedat);
-    postView.addImage(post.images.length - 1, basedat);
 
     if (post.images.length > 0) postView.enableBtn("right");
     else                        postView.disableBtn("right");

@@ -1,4 +1,4 @@
-.postView .postTitle, .postView .postStageExpl, .postView .button {
+.postView .postTitle, .postView .postStageExpl, .postView .button, #stages, #chars {
     animation: showText 1s linear;
 }
 
@@ -321,6 +321,11 @@
     cursor: pointer;
 }
 
+.postView .openedPost .date {
+    left: 9.8vh;
+    margin: 0;
+}
+
 #download {
     transition: 0.5s;
     position: absolute;
@@ -341,29 +346,48 @@
     font-size: 2.222vh;
 }
 
-.popup #publishButton, .popup #draftButton {
-    position: absolute;
-    bottom: 5.447%;
-    height: 28.4%;
-    width: 34.27%;
-}
-
-.popup #draftButton {
-    left: 12.2%;
-}
-
-.popup #publishButton {
-    right: 12.2%;
-}
-
-.mainMsg {
-    position: absolute;
-    width: 96%;
-    height: 47%;
-    top: 17.1%;
-    font-size: 2.444vh;
-    color: #5C7CA6;
+#stages {
     display: flex;
     justify-content: center;
-    align-items: center;
+    position: absolute;
+    bottom: 1.777vh;
+    right: 2vh;
+    transition: 0.5s;
+    pointer-events: none;
+}
+
+#stages span {
+    color: #EAAC7F;
+    font-family: FedraDemi;
+    font-size: 2.666vh;
+}
+
+#chars {
+    position: absolute;
+    bottom: 1.9vh;
+    display: flex;
+    justify-content: center;
+}
+
+#chars span {
+    color: rgba(89,107,128,0.4);
+    font-size: 2.222vh;
+    font-family: FedraDemi;
+}
+
+#previewText {
+    color: #E86F6F;
+    transition: 0.5s;
+    position: absolute;
+    font-size: 2.444vh;
+    right: 3vh;
+    top: 2vh;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.postComplete {
+    position: absolute;
+    width: 5.555vh;
+    top: 3.555vh;
 }

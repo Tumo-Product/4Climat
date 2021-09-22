@@ -12,18 +12,35 @@ const postView = {
     popup           : async (type) => {
         if (type == "complete") {
             $(".popup").append(`
-                <div onclick="saveDraft()" id="draftButton" class="wideBtn">
+                <button onclick="saveDraft()" id="draftButton" class="wideBtn">
                     <div class="inside"></div>
                     <p>Save Draft</p>
-                </div>
-                <div onclick="publishPost()" id="publishButton" class="wideBtn">
+                </button>
+                <button onclick="publishPost()" id="publishButton" class="wideBtn">
                     <div class="inside"></div>
                     <p>Publish</p>
-                </div>
+                </button>
             `);
         }
 
         $(".popupContainer").css({"opacity": 1, "pointer-events": "all"});
+    },
+
+    postComplete    : async () => {
+        $(".popup button").css("opacity", 0);                       // Fade out and remove buttons
+        setTimeout(() => { $(".popup button").remove(); }, 500);
+
+        $(".popup .mainMsg").css("opacity", 0);
+        setTimeout(() => {
+            $(".popup .mainMsg").css("position", "initial");
+            $(".popup .mainMsg").text("Your post has been successfully published!");
+            $(".popup .mainMsg").css("opacity", 1);
+        }, 500);
+
+        await timeout(200);
+        $(".popup").append(`
+            <img class="postComplete" src="icons/checkmark.svg">
+        `);
     },
 
     closeStage      : async (stage) => {
@@ -57,21 +74,25 @@ const postView = {
                 break;
             case 3:
                 $(".postDescription").removeClass("openPostDescription");
+                $("#chars").css("opacity", 0);
                 await timeout(800);
+                $("#chars").remove();
                 break;
             case 4:
                 $("#download").addClass("goUnder");
                 $(".postImages").removeClass("openPostImages");
                 await timeout(500);
                 $("#download").remove();
+                $("#downloadInput").remove();
                 $(".postImages").remove();
                 break;
             case 5:
                 view.currImage = 0;
-                $(".openedPost").css("height", 0);
+                $(".openedPost").css({"opacity": 0, "height": 0});
                 await timeout(500);
                 $(".postTitle").css("opacity", 1);
                 $(".postStageExpl").css("opacity", 1);
+                $("#stages").css("opacity", 0);
                 $("#addBtn img").attr("src", "icons/bigX.png");
                 $("#addBtn").attr("onclick", "discardPost()");
                 $(".openedPost").remove();
@@ -120,8 +141,11 @@ const postView = {
         $(".postView").append(`
             <h1 class="postTitle">Title for this page</h1>
             <p class="postStageExpl">Explanatory title for this page</p>
-            <div onclick="addPost(-1)" class="leftButton button disabled"></div>
-            <div onclick="addPost(1)"  class="rightButton button disabled"></div>
+            <button onclick="addPost(-1)" class="leftButton button disabled"></button>
+            <button onclick="addPost(1)"  class="rightButton button disabled"></button>
+            <div id="stages">
+                <span id="currentStage">1</span> <span>/</span> <span>5</span>
+            </div>
         `);
         
         $(".leftButton").append (`<div class="inside"></div><img src="icons/arrow.svg">`);
@@ -257,9 +281,14 @@ const postView = {
 
         document.getElementById("linkInput").readOnly = false;
     },
-    setupDescriptionView    : async (description) => {
+    setupDescriptionView    : async (description, limit) => {
         if ($(".postDescription").length == 0) {
-            $(".postView").append(`<textarea class="postDescription" placeholder="Write your text here …">`);
+            $(".postView").append(`
+                <div id="chars">
+                    <span id="charCount">0</span> <span>/</span> <span>${limit}</span>
+                </div>
+                <textarea class="postDescription" placeholder="Write your text here …">
+            `);
         } else postView.enableBtn("right");
 
         await timeout(50); $(".postDescription").addClass("openPostDescription");
@@ -271,7 +300,7 @@ const postView = {
     setupImageView  : async (images) => {
         $(".postView").append(`
             <div class="postImages"></div>
-            <input autocomplete="off" type="file" accept="image/*" id="downloadInput" onchange="addImage()"/>
+            <input autocomplete="off" type="file" accept="image/*" id="downloadInput" onchange="addImage()" multiple/>
             <div class="bigBtn goUnder" id="download">
                 <div class="inside"></div>
                 <img src="icons/download.png">
@@ -291,13 +320,18 @@ const postView = {
     setupPreview    : async (post, mapEmbed) => {
         $("#addBtn img").attr("src", "icons/checkmark.svg");
         $("#addBtn").attr("onclick", "completePost()");
-        $(".postTitle").css("opacity",      0);
-        $(".postStageExpl").css("opacity",  0);
+        $(".postTitle").css("opacity", 0);
+        $(".postStageExpl").css("opacity", 0);
+        $("#stages").css("opacity",  0);
         await timeout(400);
 
         view.currImage = 0;
+        let date = new Date().toDateString();
+        date = date.substring(date.indexOf(" ") + 1, date.length); // Remove weekday
         $(".postView").append(`
-        <div class="post openedPost"><span class="date openedDate"></span>
+        <div class="post openedPost">
+            <p id="previewText">Post Preview</p>
+            <span class="date openedDate">${date}</span>
             <div class="content">
                 <p class="title">${post.title}</p>
                 <div class="spanDiv openCategories"></div>

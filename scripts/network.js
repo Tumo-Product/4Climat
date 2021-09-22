@@ -20,10 +20,14 @@ const network   = {
             "Category 5 ………………………",
         ];
     },
-    addImage        : async (file) => {
+    addImage        : async (files) => {
         let formData = new FormData();
-        formData.append("files", file);
-        formData.append("pid", "test");
+        
+        for (let i = 0; i < files.length; i++) {
+            formData.append("files", files[i]);
+            formData.append("pid", "test");
+        }
+
         let request = await axios.post(config.uploadImage, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -49,9 +53,9 @@ const allPosts = [
         date        : "29 Sep 2021",
         description : "Have you noticed how everybody takes it for granted a bad experience is automatically, unreservedly, unremittingly bad? That nothing good could ever come from a bad childhood, for example? I’m hearing the comment more and more often that we have become a victim society. Maybe this is true? Consider… Don’t we hear these comments a lot? I was mistreated when I was a child… I was a lonely latchkey kid… My ancestors got a bad break, so I’m… I lived in a poor, disadvantaged family… I grew up in a broken home… I didn’t get the proper advantages… I was constantly criticized as a child…",
         images      : [
-            `https://www.pixsy.com/wp-content/uploads/2021/04/ben-sweet-2LowviVHZ-E-unsplash-1.jpeg`,
-            `https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171__340.jpg`,
-            `https://www.pixsy.com/wp-content/uploads/2021/04/ben-sweet-2LowviVHZ-E-unsplash-1.jpeg`,
+            `images/1.jpeg`,
+            `images/2.jpeg`,
+            `images/3.jpeg`,
         ],
         mapLink     : "https://www.google.com/maps/place/Haypost/@40.1851133,44.5057693,20z/data=!4m5!3m4!1s0x406abd02e04e1d49:0x3ddb3c7640fddd71!8m2!3d40.1848816!4d44.5055428"
     },
@@ -66,7 +70,7 @@ const allPosts = [
         date        : "28 Sep 2021",
         description : "Have you noticed how everybody takes it for granted a bad experience is automatically, unreservedly, unremittingly bad? That nothing good could ever come from a bad childhood, for example? I’m hearing the comment more and more often that we have become a victim society. Maybe this is true? Consider… Don’t we hear these comments a lot? I was mistreated when I was a child… I was a lonely latchkey kid… My ancestors got a bad break, so I’m… I lived in a poor, disadvantaged family… I grew up in a broken home… I didn’t get the proper advantages… I was constantly criticized as a child…",
         images      : [
-            `https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171__340.jpg`
+            `images/2.jpeg`
         ],
     },
     {
@@ -79,7 +83,7 @@ const allPosts = [
         date        : "28 Sep 2021",
         description : "Have you noticed how everybody takes it for granted a bad experience is automatically, unreservedly, unremittingly bad? That nothing good could ever come from a bad childhood, for example? I’m hearing the comment more and more often that we have become a victim society. Maybe this is true? Consider… Don’t we hear these comments a lot? I was mistreated when I was a child… I was a lonely latchkey kid… My ancestors got a bad break, so I’m… I lived in a poor, disadvantaged family… I grew up in a broken home… I didn’t get the proper advantages… I was constantly criticized as a child…",
         images      : [
-            `https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171__340.jpg`
+            `images/3.jpeg`
         ],
     },
     {
@@ -92,7 +96,7 @@ const allPosts = [
         date        : "28 Sep 2021",
         description : "Have you noticed how everybody takes it for granted a bad experience is automatically, unreservedly, unremittingly bad? That nothing good could ever come from a bad childhood, for example? I’m hearing the comment more and more often that we have become a victim society. Maybe this is true? Consider… Don’t we hear these comments a lot? I was mistreated when I was a child… I was a lonely latchkey kid… My ancestors got a bad break, so I’m… I lived in a poor, disadvantaged family… I grew up in a broken home… I didn’t get the proper advantages… I was constantly criticized as a child…",
         images      : [
-            `https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171__340.jpg`
+            `images/1.jpeg`
         ],
     },
     {
@@ -105,7 +109,7 @@ const allPosts = [
         date        : "28 Sep 2021",
         description : "Have you noticed how everybody takes it for granted a bad experience is automatically, unreservedly, unremittingly bad? That nothing good could ever come from a bad childhood, for example? I’m hearing the comment more and more often that we have become a victim society. Maybe this is true? Consider… Don’t we hear these comments a lot? I was mistreated when I was a child… I was a lonely latchkey kid… My ancestors got a bad break, so I’m… I lived in a poor, disadvantaged family… I grew up in a broken home… I didn’t get the proper advantages… I was constantly criticized as a child…",
         images      : [
-            `https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171__340.jpg`
+            `images/2.jpeg`
         ],
     },
     {
@@ -118,7 +122,7 @@ const allPosts = [
         date        : "28 Sep 2021",
         description : "Have you noticed how everybody takes it for granted a bad experience is automatically, unreservedly, unremittingly bad? That nothing good could ever come from a bad childhood, for example? I’m hearing the comment more and more often that we have become a victim society. Maybe this is true? Consider… Don’t we hear these comments a lot? I was mistreated when I was a child… I was a lonely latchkey kid… My ancestors got a bad break, so I’m… I lived in a poor, disadvantaged family… I grew up in a broken home… I didn’t get the proper advantages… I was constantly criticized as a child…",
         images      : [
-            `https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171__340.jpg`
+            `images/3.jpeg`
         ],
     },
     {
@@ -131,7 +135,7 @@ const allPosts = [
         date        : "28 Sep 2021",
         description : "Have you noticed how everybody takes it for granted a bad experience is automatically, unreservedly, unremittingly bad? That nothing good could ever come from a bad childhood, for example? I’m hearing the comment more and more often that we have become a victim society. Maybe this is true? Consider… Don’t we hear these comments a lot? I was mistreated when I was a child… I was a lonely latchkey kid… My ancestors got a bad break, so I’m… I lived in a poor, disadvantaged family… I grew up in a broken home… I didn’t get the proper advantages… I was constantly criticized as a child…",
         images      : [
-            `https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171__340.jpg`
+            `images/1.jpeg`
         ],
     },
     {
@@ -144,7 +148,7 @@ const allPosts = [
         date        : "28 Sep 2021",
         description : "Have you noticed how everybody takes it for granted a bad experience is automatically, unreservedly, unremittingly bad? That nothing good could ever come from a bad childhood, for example? I’m hearing the comment more and more often that we have become a victim society. Maybe this is true? Consider… Don’t we hear these comments a lot? I was mistreated when I was a child… I was a lonely latchkey kid… My ancestors got a bad break, so I’m… I lived in a poor, disadvantaged family… I grew up in a broken home… I didn’t get the proper advantages… I was constantly criticized as a child…",
         images      : [
-            `https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171__340.jpg`
+            `images/2.jpeg`
         ],
     },
 ]

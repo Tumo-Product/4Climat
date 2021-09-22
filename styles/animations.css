@@ -142,8 +142,8 @@
 
 .openedDate {
     font-family: FedraDemi;
+    top: 2vh;
     position: absolute;
-    top: 2.27%;
     margin-left: 4%;
     opacity: 1;
     animation: appear 0.5s linear;
@@ -216,5 +216,23 @@
 
     100% {
         font-size: 1.44vh;
+    }
+}
+
+.postComplete {
+    animation: checkmarkAppear 0.2s ease-in;
+}
+
+@keyframes checkmarkAppear {
+    0% {
+        opacity: 0;
+        top: 6.5vh;
+        transform: rotate(90deg);
+    }
+
+    100% {
+        opacity: 1;
+        top: 3.555vh;
+        transform: rotate(0deg);
     }
 }
