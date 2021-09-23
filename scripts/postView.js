@@ -4,9 +4,12 @@ const postView = {
 
     disableBtn : async (which) => {
         $(`.${which}Button`).addClass("disabled");
+        $(`.${which}Button`).prop("disabled", true);
+
     },
     enableBtn : async (which) => {
         $(`.${which}Button`).removeClass("disabled");
+        $(`.${which}Button`).prop("disabled", false);
     },
 
     popup           : async (type) => {
@@ -141,8 +144,8 @@ const postView = {
         $(".postView").append(`
             <h1 class="postTitle">Title for this page</h1>
             <p class="postStageExpl">Explanatory title for this page</p>
-            <button onclick="addPost(-1)" class="leftButton button disabled"></button>
-            <button onclick="addPost(1)"  class="rightButton button disabled"></button>
+            <button onclick="addPost(-1)" class="leftButton button disabled"  disabled></button>
+            <button onclick="addPost(1)"  class="rightButton button disabled" disabled></button>
             <div id="stages">
                 <span id="currentStage">1</span> <span>/</span> <span>5</span>
             </div>
@@ -319,7 +322,7 @@ const postView = {
     },
     setupPreview    : async (post, mapEmbed) => {
         $("#addBtn img").attr("src", "icons/checkmark.svg");
-        $("#addBtn").attr("onclick", "completePost()");
+        $("#addBtn").attr("onclick", `postView.popup('complete');`);
         $(".postTitle").css("opacity", 0);
         $(".postStageExpl").css("opacity", 0);
         $("#stages").css("opacity",  0);

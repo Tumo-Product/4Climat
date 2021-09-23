@@ -1,41 +1,36 @@
-let categories, posts;
-let myPostsActive = false;
-let categoriesStates = [];
-let postStage = -1;
-let post = { categories: [], longitude: -1, latitude: -1, title: "", date: "", description: "", images: [] };
-let currUserId = 1;
+let categories, posts   = [];
+let data;
+let post                = { categories: [], longitude: -1, latitude: -1, title: "",  description: "", images: [] };
+let currUid             = 1;
+let postStage           = -1;
+let filesToAdd          = [];
+let myPostsActive       = false;
+let categoriesStates    = [];
 
 const timeout = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-let examplePost = [
-    {
-        categories  : [
-            "Category 1",
-            "Category 2"
-        ],
-        latitude    : 44.4937761,
-        longitude   : 40.1979479,
-        title       : "Recycling plastic bottles bla bla bla bla bla bla",
-        description : "Example description",
-        images      : [
-            "Orange.png"
-        ]
-    },
-]
-
 const onLoad = async () => {
-    posts       = await network.getPosts();
+    data    = await network.getPosts();
+    data    = data.data.data;
+    for (let p = 0; p < data.length; p++) {
+        posts[p]        = data[p].post;
+        posts[p].date   = data[p].date.substring(data[p].date.indexOf(" ") + 1); // cut weekday from date
+
+        let images = await network.getImages(data[p].pid, posts[p].images);
+        console.log(images);
+    }
+    
     categories  = await network.getCategories();
 
     // console.log(JSON.stringify(examplePost));
     // post = posts[0];
 
-    let data    = await axios.put(config.generateToken, { uid: currUserId });
-    data        = data.data.data;
-    let allowed = await axios.post(config.login, {uid: data.uid, token: data.token});
-    console.log(data, allowed);
+    let token    = await axios.put(config.generateToken, { uid: currUid });
+    token        = token.data.data;
+    let allowed = await axios.post(config.login, {uid: token.uid, token: token.token});
+    console.log(token, allowed);
 
     for (let i = 0; i < posts.length; i++) {
         view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].images[0]);
@@ -163,6 +158,7 @@ completePost = async () => {
 
 publishPost = async () => {
     postView.postComplete();
+    await network.createPost(post, filesToAdd, 'published');
 }
 
 saveDraft = async () => {
@@ -257,30 +253,11 @@ const postHandlers = {
                     e.stopPropagation();
                     let files = dataTransfer.files;
                     if(files[0] === undefined) { return; }
-
-                    let formData = new FormData();
                     for (let i = 0; i < files.length; i++) {
-                        if (!files[i].type.includes("image")) return;
-                
-                        let fr      = new FileReader();
-                        let basedat = await (new Promise((resolve)=>{
-                            fr.readAsDataURL(files[i]);
-                            fr.onloadend = () => { resolve(fr.result); }
-                        }));
-
-                        formData.append("files", files[i]);
-                        formData.append("pid", "test");
-                        
-                        addImage(basedat);
+                        if (!files[i].type.includes("image")) { files = []; break; }
                     }
-
-                    let request = await axios.post(config.uploadImage, formData, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    });
-
-                    console.log(request);
+                    
+                    addImage(files);
                 }
             }
         });
@@ -291,31 +268,27 @@ const postHandlers = {
     }
 }
 
-const addImage = async (src) => {
+const addImage = async (dragFiles) => {
     if (post.images.length == 6) return;
     let basedat;
 
-    if (src === undefined) { // If it's undefined that means this function is being called by the download input.
-        let input   = document.getElementById("downloadInput");
-        let files   = input.files;
+    let input   = document.getElementById("downloadInput");
+    let files   = input.files;
+    if (dragFiles !== undefined) files = dragFiles;
 
-        if(files[0] === undefined) { return; }
+    if(files[0] === undefined) { return; }
 
-        for (let i = 0; i < files.length; i++) {
-            if (!files[i].type.includes("image")) continue;
+    for (let i = 0; i < files.length; i++) {
+        if (!files[i].type.includes("image")) continue;
 
-            let fr  = new FileReader();
-            basedat = await (new Promise((resolve)=>{
-                fr.readAsDataURL(files[i]);
-                fr.onloadend = () => { resolve(fr.result); }
-            }));
+        let fr  = new FileReader();
+        basedat = await (new Promise((resolve)=>{
+            fr.readAsDataURL(files[i]);
+            fr.onloadend = () => { resolve(fr.result); }
+        }));
 
-            post.images.push(basedat);
-            postView.addImage(post.images.length - 1, basedat);
-        }
-    } else {                // If not then drag and drop is supllying it with a image.
-        basedat = src;
         post.images.push(basedat);
+        filesToAdd.push(files[i]);
         postView.addImage(post.images.length - 1, basedat);
     }
 
@@ -325,6 +298,7 @@ const addImage = async (src) => {
 
 const removeImage = async (i) => {
     post.images.splice(i, 1);
+    filesToAdd.splice(i, 1);
     postView.removeImage(i);
 
     if (post.images.length > 0) postView.enableBtn("right");
@@ -347,7 +321,7 @@ const toggleMyPosts = async () => {
                 $(".post").remove();
 
                 for (let i = 0; i < posts.length; i++) {
-                    if (posts[i].userId == currUserId) {
+                    if (posts[i].userId == currUid) {
                         view.addPost(i, posts[i].title, posts[i].date, posts[i].categories,
                             posts[i].description, posts[i].images[0]);
                     }

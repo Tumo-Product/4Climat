@@ -4,10 +4,55 @@ const network   = {
     },
 
     getNewToken        : async () => {
-        return '1o1d1oasof3posfji13ojr93f';
+        
+    },
+
+    createPost         : async (post, files, status) => {
+        let imageNames = [];
+        for (let i = 0; i < filesToAdd.length; i++) {
+            let type = filesToAdd[i].type.substring(filesToAdd[i].type.indexOf('/') + 1);
+            imageNames.push(generateHash(i) + `.${type}`);
+        }
+
+        post.images         = imageNames;
+        let postString      = JSON.stringify(post);
+        let renamedFiles    = await network.renameFiles(files, imageNames);
+        let request         = await axios.post(config.createPost, {uid: currUid, post: postString, status: status});
+        
+        console.log(request);
+        await network.addImages(renamedFiles, request.data.data.pid);
+    },
+
+    renameFiles         : async (files, fileNames) => {
+        let finalFiles = [];
+
+        for (let i = 0; i < files.length; i++) {
+            let blob = files[i].slice(0, files[i].size, files[i].type);
+            finalFiles.push(new File([blob], fileNames[i], {type: files[0].type}));
+        }
+
+        return finalFiles;
+    },
+
+    addImages       : async (files, pid) => {
+        let formData = new FormData();
+        formData.append("pid", pid);
+
+        for (let i = 0; i < files.length; i++) {
+            formData.append("files", files[i]);
+        }
+
+        let request = await axios.post(config.uploadImages, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        console.log(request);
     },
 
     getPosts        : async (id, token) => {
+        return await axios.post(config.listPosts);
         return allPosts;
     },
 
@@ -20,20 +65,9 @@ const network   = {
             "Category 5 ………………………",
         ];
     },
-    addImage        : async (files) => {
-        let formData = new FormData();
-        
-        for (let i = 0; i < files.length; i++) {
-            formData.append("files", files[i]);
-            formData.append("pid", "test");
-        }
 
-        let request = await axios.post(config.uploadImage, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        });
-        console.log(request, file);
+    getImages      : async (pid, images) => {
+        return await axios.post(config.getImages, {pid: pid, images: images, type: "small"});
     }
 }
 
