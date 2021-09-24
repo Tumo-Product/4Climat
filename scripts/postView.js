@@ -12,17 +12,50 @@ const postView = {
         $(`.${which}Button`).prop("disabled", false);
     },
 
+    enableDraftBtn : async () => {
+        $("#postButton").removeClass("disabledBtn");
+        $("#postButton").attr("disabled", false);
+    },
+
+    disableDraftBtn : async () => {
+        $("#postButton").addClass("disabledBtn");
+        $("#postButton").attr("disabled", true);
+    },
+
     popup           : async (type) => {
         if (type == "complete") {
-            $(".popup").append(`
-                <button onclick="saveDraft()" id="draftButton" class="wideBtn">
-                    <div class="inside"></div>
-                    <p>Save Draft</p>
-                </button>
-                <button onclick="publishPost()" id="publishButton" class="wideBtn">
-                    <div class="inside"></div>
-                    <p>Publish</p>
-                </button>
+            $(".popupContainer").append(`
+                <div class="popup">
+                    <div class="minimize" onclick="view.closePopupContainer()">
+                        <div class="inside"></div><img src="icons/X.png">
+                    </div>
+                    <p class="mainMsg">Do you want to publish or save this post?</p>
+                    <button onclick="saveDraft()" id="draftButton" class="wideBtn">
+                        <div class="inside"></div>
+                        <p>Save Draft</p>
+                    </button>
+                    <button onclick="publishPost()" id="publishButton" class="wideBtn">
+                        <div class="inside"></div>
+                        <p>Publish</p>
+                    </button>
+                </div>
+            `);
+        } else {
+            $(".popupContainer").append(`
+                <div class="popup">
+                    <div class="minimize" onclick="view.closePopupContainer()">
+                        <div class="inside"></div><img src="icons/X.png">
+                    </div>
+                    <p class="mainMsg">Are you want sure you want to draft this post?</p>
+                    <button onclick="discardPost()" id="draftButton" class="wideBtn">
+                        <div class="inside"></div>
+                        <p>Discard</p>
+                    </button>
+                    <button onclick="saveDraft()" id="publishButton" class="wideBtn">
+                        <div class="inside"></div>
+                        <p>Save draft</p>
+                    </button>
+                </div>
             `);
         }
 
@@ -44,6 +77,9 @@ const postView = {
         $(".popup").append(`
             <img class="postComplete" src="icons/checkmark.svg">
         `);
+        
+        await timeout(1500);
+        view.closePopupContainer();
     },
 
     closeStage      : async (stage) => {
@@ -108,6 +144,9 @@ const postView = {
     discardPost     : async () => {
         $("#addBtn").attr("onclick", "addPost(1)");
         $("#addBtn img").attr("src", "icons/plus.png");
+        $("#postButton").attr("onclick", "toggleMyPosts()");
+        $("#postButton p").text("My posts");
+
         $("#categories").children().each(function () {
             if (!$(this).hasClass("category")) {
                 $(this).css("transition", "0s");
@@ -128,9 +167,10 @@ const postView = {
         $(".category").eq(0).css("margin-top", "10.25%");
     },
     firstSetup      : async () => {
+        postView.disableDraftBtn();
+        $("#postButton").attr("onclick", `postView.popup('draft');`);
         $("#addBtn").attr("onclick", "discardPost()");
         $("#addBtn img").attr("src", "icons/bigX.png");
-        $("#postButton").attr("onclick", "saveDraft()");
         $("#postButton p").text("Save Draft");
 
         // Slide categories down.

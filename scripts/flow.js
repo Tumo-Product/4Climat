@@ -1,7 +1,7 @@
 let categories, posts   = [];
 let data;
 let post                = { categories: [], longitude: -1, latitude: -1, title: "",  description: "", images: [] };
-let currUid             = 1;
+let currUid             = "1";
 let postStage           = -1;
 let filesToAdd          = [];
 let myPostsActive       = false;
@@ -12,47 +12,52 @@ const timeout = (ms) => {
 }
 
 const onLoad = async () => {
-    data    = await network.getPosts();
-    data    = data.data.data;
-    for (let p = 0; p < data.length; p++) {
-        posts[p]        = data[p].post;
-        posts[p].date   = data[p].date.substring(data[p].date.indexOf(" ") + 1); // cut weekday from date
-
-        let images = await network.getImages(data[p].pid, posts[p].images);
-        console.log(images);
-    }
-    
     categories  = await network.getCategories();
-
-    // console.log(JSON.stringify(examplePost));
-    // post = posts[0];
-
-    let token    = await axios.put(config.generateToken, { uid: currUid });
-    token        = token.data.data;
+    let token   = await axios.put(config.generateToken, { uid: currUid });
+    token       = token.data.data;
     let allowed = await axios.post(config.login, {uid: token.uid, token: token.token});
     console.log(token, allowed);
 
-    for (let i = 0; i < posts.length; i++) {
-        view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].images[0]);
-    }
+    await fillPosts();
 
     for (let i = 0; i < categories.length; i++) {
         view.addCategory(i, categories[i]);
         categoriesStates.push(false);
     }
-
-    $("#postsView").scroll(function() {
-        let scrollTop = parseFloat($(this).scrollTop());
-        let height = $(".post").length * ($(".post").height() + parseFloat($(".post").css("margin-top")));
-        if (scrollTop >= height) {
-            console.log($(this).scrollTop());
-        }
-    })
+    
+    $(".popupContainer").click(function (e) {
+        if (e.target !== this) return;
+        view.closePopupContainer()
+    });
 
     view.scrollToMiddle("#categories");
     view.resize();
     await timeout(100);
     view.toggleLoader();
+}
+
+const fillPosts = async (userPosts) => {
+    data = undefined; posts = []; // reset
+    $(".post").remove();
+
+    if (userPosts === true) {
+        data = await network.getUserPosts(currUid);
+    } else {
+        data = await network.getPosts();
+    }
+    data    = data.data.data;
+    for (let p = 0; p < data.length; p++) {
+        posts[p]        = data[p].post;
+        posts[p].date   = data[p].date.substring(data[p].date.indexOf(" ") + 1); // cut weekday from date
+
+        let images = await network.getImages(data[p].pid, posts[p].images, "small");
+        data[p].images = posts[p].images;
+        posts[p].images = images;
+    }
+
+    for (let i = 0; i < posts.length; i++) {
+        view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].images[0]);
+    }
 }
 
 const toggleCategory = async (index) => {
@@ -111,12 +116,6 @@ const login = async () => {
     view.toggleLoader();
 }
 
-const discardPost = async () => {
-    post.mapLink = "";
-    postStage = -1;
-    await postView.discardPost();
-}
-
 const addPost = async (dir) => {
     if (postStage == -1) {
         await postView.firstSetup();
@@ -152,17 +151,31 @@ const addPost = async (dir) => {
     }
 }
 
-completePost = async () => {
-    postView.popup("complete");
-}
-
-publishPost = async () => {
-    postView.postComplete();
+const publishPost = async () => {
     await network.createPost(post, filesToAdd, 'published');
+    await postView.postComplete();
+    await discardPost();
 }
 
-saveDraft = async () => {
-    
+const saveDraft = async () => {
+    await network.createPost(post, filesToAdd, 'draft');
+    await postView.postComplete();
+    await discardPost();
+}
+
+const discardPost = async () => {
+    view.closePopupContainer();
+    post = { categories: [], longitude: -1, latitude: -1, title: "",  description: "", mapLink: undefined, images: [] };
+    postStage = -1; filesToAdd = [];
+    await fillPosts();
+    await postView.discardPost();
+}
+
+const openImage = async (i, imageIndex) => {
+    let pid     = data[i].pid;
+    view.openLoading();
+    let images  = await network.getImages(pid, [data[i].images[imageIndex]], "standard");
+    view.openImage(images[0]);
 }
 
 const postHandlers = {
@@ -174,8 +187,10 @@ const postHandlers = {
             if (parser.isTitleCorrect($(this).val())) {
                 postView.enableBtn("right");
                 post.title = $(this).val();
+                postView.enableDraftBtn();
             } else {
                 postView.disableBtn("right");
+                postView.disableDraftBtn();
             }
         });
     },
@@ -196,8 +211,8 @@ const postHandlers = {
             post.categories.push($(this).find("p").text());
         });
 
-        let mapLink = await postView.setupMapView();
-        mapLink.on("input", async function() {
+        let mapInput = await postView.setupMapView();
+        mapInput.on("input", async function() {
             if (parser.isURLValid($(this).val())) {
                 postView.enableBtn("right");
 
@@ -215,7 +230,7 @@ const postHandlers = {
         });
 
         if (post.mapLink !== undefined) {
-            mapLink.val(post.mapLink);
+            mapInput.val(post.mapLink);
             let mapCoords = parser.getCoords(post.mapLink);
             let mapEmbed  = parser.getMapLink(mapCoords.longitude, mapCoords.latitude);
             await postView.addPostMap(mapEmbed);
@@ -307,7 +322,12 @@ const removeImage = async (i) => {
 
 const openPost = async (i) => {
     let mapSrc = parser.getMapLink(posts[i].longitude, posts[i].latitude);
-    view.openPost(i, posts[i].categories, posts[i].images, mapSrc);
+    await view.openPost(i, posts[i].categories, posts[i].images, mapSrc);
+
+    $(`#p_${i} .image`).unbind();
+    $(`#p_${i} .image`).click(function () {
+        openImage(i, $(this).index());
+    });
 }
 
 const closePost = async (i) => {
@@ -316,35 +336,14 @@ const closePost = async (i) => {
 
 const toggleMyPosts = async () => {
     if (!myPostsActive) {
-        setTimeout(() => {
-            for (let i = 0; i < posts.length; i++) {
-                $(".post").remove();
-
-                for (let i = 0; i < posts.length; i++) {
-                    if (posts[i].userId == currUid) {
-                        view.addPost(i, posts[i].title, posts[i].date, posts[i].categories,
-                            posts[i].description, posts[i].images[0]);
-                    }
-                }
-            }    
-        }, 500);
-
         await view.closePostsView();
         view.disableCategories();
+        await fillPosts(true);
         await view.openPostsView();
     } else {
-        setTimeout(() => {
-            for (let i = 0; i < posts.length; i++) {
-                $(".post").remove();
-                
-                for (let i = 0; i < posts.length; i++) {
-                    view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].images[0]);
-                }
-            }
-        }, 500);
-
         await view.closePostsView();
         view.enableCategories();
+        await fillPosts();
         await view.openPostsView();
     }
 

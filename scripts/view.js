@@ -21,6 +21,11 @@ const view      = {
         </div>`);
     },
     addPost         : (index, title, date, categories, description, img) => {
+        if (title === "") title = "N/A";
+        if (categories.length === 0) categories = ["N/A"];
+        if (description === "") description = "N/A";
+        if (img === undefined) img = "images/notAval.png";
+
         $("#postsView").append(`
         <div onclick="openPost(${index})" id="p_${index}" class="post">
             <div class="content">
@@ -39,19 +44,49 @@ const view      = {
         if (categories.length > 1)
             $(`#p_${index} .spanDiv span`).last().append(" ...");
     },
-    
+
+    openLoading     : async () => {
+        $(".popupContainer").append(`
+            <div class="stage">
+                <div class="dot-bricks"></div>
+            </div>
+        `);
+        $(".popupContainer").css({"opacity": 1, "pointer-events": "all"});
+        $(".popupContainer").addClass("loading");
+    },
+
+    openImage       : async (image) => {
+        $(".popupContainer").empty(); await timeout(50);
+        $(".popupContainer").removeClass("loading");
+        
+        $(".popupContainer").append(`
+            <div class="card" id="imagePopup" style="opacity: 0">
+                <img src="${image}">
+            </div>
+        `); await timeout(50);
+        $("#imagePopup").css("opacity", 1);
+    },
+
+    closePopupContainer      : async () => {
+        $(".popupContainer").css({"opacity": 0, "pointer-events": "none"}); await timeout(500);
+        $(".popupContainer").empty();
+    },
+
     openPost        : async (index, categories, images, mapSrc) => {
+        if (categories.length === 0) categories = ["N/A"];
+        if (images.length === 0) images = ["images/notAval.png"];
         $(`#p_${index}`).attr("onclick", "");
         
         let marginTop   = parseFloat($(`#p_${index}`).css("margin-top"));
         let postHeight  = parseFloat($(`#p_${index}`).height());
         let scrollPos   = postHeight * index;
-        if (index != 0) scrollPos += index * marginTop;
+        scrollPos += index * marginTop;
 
         $(`#p_${index} .picture`).css("height", $(`#p_${index} .picture`).height());
         $("#postsView").css("overflow", "hidden");
         $(`#p_${index}`).addClass("openedPost");
-        $("#postsView").animate({scrollTop: scrollPos}, 500);
+        if ($(`#p_${index}`).index() != 0)
+            $("#postsView").animate({scrollTop: scrollPos}, 500);
         let titleFontSize = parser.getCorrectFontSize($(`#p_${index} .title`).text().length);
         $(`#p_${index} .title`).animate({"font-size": `${titleFontSize}vh`}, 500);
 
@@ -98,6 +133,7 @@ const view      = {
          $(".minimize").css("opacity", 1);
     },
     closePost       : async (index, categories) => {
+        if (categories.length == 0) categories = ["N/A"];
         view.currImage = 0;
         $(`#p_${index} .description`).css("opacity", 0);
         $(`#p_${index} .imgMapView`).css("height", 0);

@@ -142,7 +142,7 @@
 
 .openedDate {
     font-family: FedraDemi;
-    top: 2vh;
+    top: 1.8vh;
     position: absolute;
     margin-left: 4%;
     opacity: 1;
@@ -235,4 +235,8 @@
         top: 3.555vh;
         transform: rotate(0deg);
     }
+}
+
+.loading {
+    background-color: rgba(0, 0, 0, 0.253) !important;
 }

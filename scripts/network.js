@@ -18,9 +18,10 @@ const network   = {
         let postString      = JSON.stringify(post);
         let renamedFiles    = await network.renameFiles(files, imageNames);
         let request         = await axios.post(config.createPost, {uid: currUid, post: postString, status: status});
-        
         console.log(request);
-        await network.addImages(renamedFiles, request.data.data.pid);
+        
+        if (files.length !== 0)
+            await network.addImages(renamedFiles, request.data.data.pid);
     },
 
     renameFiles         : async (files, fileNames) => {
@@ -47,12 +48,15 @@ const network   = {
                 'Content-Type': 'multipart/form-data'
             }
         });
-
-        console.log(request);
     },
 
-    getPosts        : async (id, token) => {
+    getPosts        : async () => {
         return await axios.post(config.listPosts);
+        return allPosts;
+    },
+
+    getUserPosts        : async (uid) => {
+        return await axios.post(config.userListPosts, {uid: uid});
         return allPosts;
     },
 
@@ -66,8 +70,15 @@ const network   = {
         ];
     },
 
-    getImages      : async (pid, images) => {
-        return await axios.post(config.getImages, {pid: pid, images: images, type: "small"});
+    getImages      : async (pid, images, size) => {
+        let imagesData = await axios.post(config.getImages, {pid: pid, images: JSON.stringify(images), type: size});
+        if (imagesData.data.data === null) return [];
+
+        let currImages = imagesData.data.data.images;
+        for (let i = 0; i < currImages.length; i++) {
+            currImages[i] = "data:image/*;base64," + currImages[i];
+        }
+        return currImages;
     }
 }
 
