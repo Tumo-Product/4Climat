@@ -194,11 +194,11 @@ const discardPost = async () => {
     await postView.discardPost();
 }
 
-const openImage = async (i, imageIndex) => {
+const openImage = async (i) => {
     let pid     = data[i].pid;
     view.openLoading();
-    let images  = await network.getImages(pid, [data[i].images[imageIndex]], "standard");
-    view.openImage(images[0]);
+    let images  = await network.getImages(pid, data[i].images, "standard");
+    view.openImage(images);
 }
 
 const postHandlers = {
@@ -349,7 +349,7 @@ const openPost = async (i) => {
 
     $(`#p_${i} .image`).unbind();
     $(`#p_${i} .image`).click(function () {
-        openImage(i, $(this).index());
+        openImage(i);
     });
 }
 

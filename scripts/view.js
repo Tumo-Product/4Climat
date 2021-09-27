@@ -4,6 +4,7 @@ const view      = {
     maxSize     : {width: 900, height: 684},
     window      : {width: 0, height: 0},
     offset      : -1,
+    currPopupImg: 0,
 
     toggleLoader    : () => {
         view.loaderOpen = !view.loaderOpen;
@@ -55,21 +56,42 @@ const view      = {
         $(".popupContainer").addClass("loading");
     },
 
-    openImage       : async (image) => {
+    openImage       : async (images) => {
         $(".popupContainer").empty(); await timeout(50);
         $(".popupContainer").removeClass("loading");
         
         $(".popupContainer").append(`
-            <div class="card" id="imagePopup" style="opacity: 0">
-                <img src="${image}">
-            </div>
-        `); await timeout(50);
-        $("#imagePopup").css("opacity", 1);
+            <img class="bigArrow" id="rightBigArrow" onclick="view.scrollImages(1)" src="icons/bigArrow.png">
+            <img class="bigArrow" id="leftBigArrow"  onclick="view.scrollImages(-1)" src="icons/bigArrow.png">
+        `);
+        
+        for (let i = 0; i < images.length; i++) {
+            $(".popupContainer").append(`
+                <div class="card imagePopup right" id="bigImg_${i}">
+                    <img src="${images[i]}">
+                </div>
+            `);
+        } await timeout(50);
+        $("#bigImg_0").removeClass("right");
+    },
+    scrollImages    : async (dir) => {
+        let oldImgIndex = view.currPopupImg;
+        if (oldImgIndex + dir < 0 || oldImgIndex + dir == $(".imagePopup").length) return;
+        view.currPopupImg += dir;
+
+        if (dir > 0) {
+            $(`#bigImg_${oldImgIndex}`).addClass("left");
+            $(`#bigImg_${view.currPopupImg}`).removeClass("right");
+        } else {
+            $(`#bigImg_${oldImgIndex}`).addClass("right");
+            $(`#bigImg_${view.currPopupImg}`).removeClass("left");
+        }
     },
 
     closePopupContainer      : async () => {
         $(".popupContainer").css({"opacity": 0, "pointer-events": "none"}); await timeout(500);
         $(".popupContainer").empty();
+        view.currPopupImg = 0;
     },
 
     openPost        : async (index, categories, images, mapSrc) => {
