@@ -1,24 +1,30 @@
+let data, userData;
 let categories, posts   = [];
-let data;
 let post                = { categories: [], longitude: -1, latitude: -1, title: "",  description: "", images: [] };
 let currUid             = "1";
 let postStage           = -1;
 let filesToAdd          = [];
 let myPostsActive       = false;
 let categoriesStates    = [];
+let postIndex           = 0;
+let postClosed          = true;
 
 const timeout = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 const onLoad = async () => {
+    userData = await network.getUserPosts(currUid);
+    data = await network.getPosts();
+    data = data.data.data; userData = userData.data.data;
+
     categories  = await network.getCategories();
     let token   = await axios.put(config.generateToken, { uid: currUid });
     token       = token.data.data;
     let allowed = await axios.post(config.login, {uid: token.uid, token: token.token});
     console.log(token, allowed);
 
-    await fillPosts();
+    await addPosts();
 
     for (let i = 0; i < categories.length; i++) {
         view.addCategory(i, categories[i]);
@@ -30,34 +36,52 @@ const onLoad = async () => {
         view.closePopupContainer()
     });
 
+    // $('#postsView').on('scroll', async function(e) {
+    //     if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight && postClosed) {
+    //         if ($(".stage").length == 0) {
+    //             $("#postsView").append(`
+    //                 <div class="stage">
+    //                     <div class="dot-bricks"></div>
+    //                 </div>`
+    //             );
+    //             $("#postsView").animate({scrollTop: $(this)[0].scrollHeight}, 1000);
+    //             e.preventDefault();
+
+    //             await addPosts();
+    //             $(".stage").remove();
+    //         }
+    //     }
+    // })
+
     view.scrollToMiddle("#categories");
     view.resize();
     await timeout(100);
     view.toggleLoader();
 }
 
-const fillPosts = async (userPosts) => {
-    data = undefined; posts = []; // reset
+const resetPosts = async () => {
+    posts = []; // reset
     $(".post").remove();
+}
 
-    if (userPosts === true) {
-        data = await network.getUserPosts(currUid);
-    } else {
-        data = await network.getPosts();
-    }
-    data    = data.data.data;
-    for (let p = 0; p < data.length; p++) {
-        posts[p]        = data[p].post;
-        posts[p].date   = data[p].date.substring(data[p].date.indexOf(" ") + 1); // cut weekday from date
+const addPosts = async (userPosts) => {
+    let dat = userPosts === true ? userData : data;
+    let length = 10;
+    if (length > data.length) length = data.length;
+    for (let p = postIndex; p < dat.length; p++) {
+        posts[p]        = dat[p].post;
+        posts[p].date   = dat[p].date.substring(dat[p].date.indexOf(" ") + 1); // cut weekday from date
 
-        let images = await network.getImages(data[p].pid, posts[p].images, "small");
-        data[p].images = posts[p].images;
+        let images = await network.getImages(dat[p].pid, posts[p].images, "small");
+        dat[p].images   = posts[p].images;
         posts[p].images = images;
     }
 
     for (let i = 0; i < posts.length; i++) {
         view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].images[0]);
     }
+
+    postIndex = $(".post").length;
 }
 
 const toggleCategory = async (index) => {
@@ -167,7 +191,6 @@ const discardPost = async () => {
     view.closePopupContainer();
     post = { categories: [], longitude: -1, latitude: -1, title: "",  description: "", mapLink: undefined, images: [] };
     postStage = -1; filesToAdd = [];
-    await fillPosts();
     await postView.discardPost();
 }
 
@@ -335,15 +358,18 @@ const closePost = async (i) => {
 }
 
 const toggleMyPosts = async () => {
+    postIndex = 0;
     if (!myPostsActive) {
         await view.closePostsView();
         view.disableCategories();
-        await fillPosts(true);
+        resetPosts();
+        await addPosts(true);
         await view.openPostsView();
     } else {
         await view.closePostsView();
         view.enableCategories();
-        await fillPosts();
+        resetPosts();
+        await addPosts();
         await view.openPostsView();
     }
 

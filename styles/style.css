@@ -751,3 +751,17 @@ button:active p, button:active img {
 .popupContainer .minimize img {
     width: 1.5vh;
 }
+
+#postsView .stage {
+    width: initial;
+    transform: scale(1.2);
+    padding: 3vh;
+}
+
+#mapName {
+    font-weight: normal;
+    position: absolute;
+    left: 3.333vh;
+    font-size: 5vh;
+    color: #EAAC7F;
+}

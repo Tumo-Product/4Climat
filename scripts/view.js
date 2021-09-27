@@ -73,6 +73,7 @@ const view      = {
     },
 
     openPost        : async (index, categories, images, mapSrc) => {
+        postClosed = false;
         if (categories.length === 0) categories = ["N/A"];
         if (images.length === 0) images = ["images/notAval.png"];
         $(`#p_${index}`).attr("onclick", "");
@@ -131,6 +132,7 @@ const view      = {
         </div>`);
         await timeout(100);
          $(".minimize").css("opacity", 1);
+         postClosed = true;
     },
     closePost       : async (index, categories) => {
         if (categories.length == 0) categories = ["N/A"];
