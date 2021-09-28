@@ -22,46 +22,6 @@ const postView = {
         $("#postButton").attr("disabled", true);
     },
 
-    popup           : async (type) => {
-        if (type == "complete") {
-            $(".popupContainer").append(`
-                <div class="popup">
-                    <div class="minimize" onclick="view.closePopupContainer()">
-                        <div class="inside"></div><img src="icons/X.png">
-                    </div>
-                    <p class="mainMsg">Do you want to publish or save this post?</p>
-                    <button onclick="saveDraft()" id="draftButton" class="wideBtn">
-                        <div class="inside"></div>
-                        <p>Save Draft</p>
-                    </button>
-                    <button onclick="publishPost()" id="publishButton" class="wideBtn">
-                        <div class="inside"></div>
-                        <p>Publish</p>
-                    </button>
-                </div>
-            `);
-        } else {
-            $(".popupContainer").append(`
-                <div class="popup">
-                    <div class="minimize" onclick="view.closePopupContainer()">
-                        <div class="inside"></div><img src="icons/X.png">
-                    </div>
-                    <p class="mainMsg">Are you want sure you want to draft this post?</p>
-                    <button onclick="discardPost()" id="draftButton" class="wideBtn">
-                        <div class="inside"></div>
-                        <p>Discard</p>
-                    </button>
-                    <button onclick="saveDraft()" id="publishButton" class="wideBtn">
-                        <div class="inside"></div>
-                        <p>Save draft</p>
-                    </button>
-                </div>
-            `);
-        }
-
-        $(".popupContainer").css({"opacity": 1, "pointer-events": "all"});
-    },
-
     postComplete    : async () => {
         $(".popup button").css("opacity", 0);                       // Fade out and remove buttons
         setTimeout(() => { $(".popup button").remove(); }, 500);
@@ -168,10 +128,17 @@ const postView = {
     },
     firstSetup      : async () => {
         postView.disableDraftBtn();
-        $("#postButton").attr("onclick", `postView.popup('draft');`);
+
+        if (editing) {
+            $("#postButton p").text("Edit");
+            $("#postButton").attr("onclick", "popups.createPopup('edit')");
+        } else {
+            $("#postButton").attr("onclick", `popups.createPopup('draft');`);
+            $("#postButton p").text("Save Draft");    
+        }
+
         $("#addBtn").attr("onclick", "discardPost()");
         $("#addBtn img").attr("src", "icons/bigX.png");
-        $("#postButton p").text("Save Draft");
 
         // Slide categories down.
         $(".category").eq(0).css("margin-top", $("#categories").prop("scrollHeight") + (window.innerHeight * 0.555));
@@ -362,7 +329,7 @@ const postView = {
     },
     setupPreview    : async (post, mapEmbed) => {
         $("#addBtn img").attr("src", "icons/checkmark.svg");
-        $("#addBtn").attr("onclick", `postView.popup('complete');`);
+        $("#addBtn").attr("onclick", `popups.createPopup('complete');`);
         $(".postTitle").css("opacity", 0);
         $(".postStageExpl").css("opacity", 0);
         $("#stages").css("opacity",  0);
@@ -411,7 +378,7 @@ const postView = {
         $(".postImages").append(`
             <div id="pImg_${i}" class="postImgContainer">
                 <img src="${imgSrc}">
-                <img src="icons/X.png" class="remImage" onclick="removeImage(${i})">
+                <img src="icons/whiteX.png" class="remImage" onclick="removeImage(${i})">
             </div>
         `);
     },

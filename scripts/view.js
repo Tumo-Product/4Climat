@@ -12,14 +12,22 @@ const view      = {
         if (view.loaderOpen)    $("#loadingScreen").show();
         else                    $("#loadingScreen").hide();
     },
+    enableEditButton: (func) => {
+        $("#postButton p").text("Edit");
+        $("#postButton").attr("onclick", func);
+    },
+    disableEditButton: () => {
+        $("#postButton p").text("My Posts");
+        $("#postButton").attr("onclick", "toggleMyPosts()");
+    },
     makeMap         : (src, parent) => {
         $(parent).append(`<div class="mapCrop"><iframe class="map" src="${src}"></iframe></div>`);
     },
     addCategory     : (index, text) => {
         $("#categories").append(`
-        <div id="c_${index}" class="category insetShadow" onclick="toggleCategory(${index})">
+        <button id="c_${index}" class="category insetShadow" onclick="toggleCategory(${index})">
             <p>#${text}</p><div class="inside"></div>
-        </div>`);
+        </button>`);
     },
     addPost         : (index, title, date, categories, description, img) => {
         if (title === "") title = "N/A";
@@ -56,7 +64,7 @@ const view      = {
         $(".popupContainer").addClass("loading");
     },
 
-    openImage       : async (images) => {
+    openImage       : async (images, imgIndex) => {
         $(".popupContainer").empty(); await timeout(50);
         $(".popupContainer").removeClass("loading");
         
@@ -67,12 +75,23 @@ const view      = {
         
         for (let i = 0; i < images.length; i++) {
             $(".popupContainer").append(`
-                <div class="card imagePopup right" id="bigImg_${i}">
+                <div class="card imagePopup" id="bigImg_${i}">
                     <img src="${images[i]}">
                 </div>
             `);
-        } await timeout(50);
-        $("#bigImg_0").removeClass("right");
+        }
+
+        $(".imagePopup").each(function(i) {
+            if (i < imgIndex) {
+                $(this).addClass("left");
+            } else if (i > imgIndex) {
+                $(this).addClass("right");
+            } else {
+                $(this).css({opacity: 0});
+            }
+        })
+        view.currPopupImg = imgIndex; await timeout(50);
+        $(`#bigImg_${imgIndex}`).css("opacity", 1);
     },
     scrollImages    : async (dir) => {
         let oldImgIndex = view.currPopupImg;
@@ -95,7 +114,7 @@ const view      = {
     },
 
     openPost        : async (index, categories, images, mapSrc) => {
-        postClosed = false;
+        postOpen = index;
         if (categories.length === 0) categories = ["N/A"];
         if (images.length === 0) images = ["images/notAval.png"];
         $(`#p_${index}`).attr("onclick", "");
@@ -136,14 +155,14 @@ const view      = {
             $(`#p_${index} .spanDiv`).append(`<span class="card">${categories[i]}</span>`);
         }
 
-        $(`#p_${index} .imageView`).append(`<div id="img_${0}" class="image"><img src="${images[0]}"></div>`);
+        $(`#p_${index} .imageView`).append(`<div id="img_${0}" onclick="openImage(${index}, 0)" class="image"><img src="${images[0]}"></div>`);
         await timeout(700);
         $(`#p_${index} .description`).css("opacity", 1);
 
         view.offset = parseFloat($(`#img_${0}`).css("width")) / window.innerHeight * 100;
 
         for (let i = 1; i < images.length; i++) {
-            $(`#p_${index} .imageView`).append(`<div id="img_${i}" class="image"><img src="${images[i]}"></div>`);
+            $(`#p_${index} .imageView`).append(`<div id="img_${i}" onclick="openImage(${index}, ${i})" class="image"><img src="${images[i]}"></div>`);
             $(`#img_${i}`).css("left", `${view.offset * i}vh`);
         }
 
@@ -153,8 +172,7 @@ const view      = {
             <div class="inside"></div><img src="icons/minimize.png">
         </div>`);
         await timeout(100);
-         $(".minimize").css("opacity", 1);
-         postClosed = true;
+        $(".minimize").css("opacity", 1);
     },
     closePost       : async (index, categories) => {
         if (categories.length == 0) categories = ["N/A"];
@@ -187,6 +205,7 @@ const view      = {
         $(`#p_${index}`).attr("onclick", `openPost(${index})`);
         await timeout (380);
         $(`#p_${index} .description`).css("opacity", 1);
+        postOpen = -1;
     },
     hidePosts       : async () => {
         $(`.post`).css({transform: "scale(0)", opacity: 0});
@@ -204,7 +223,7 @@ const view      = {
             $(".leftImgBtn").attr("onclick", "view.scrollPhoto(-1)"); $(".rightImgBtn").attr("onclick", "view.scrollPhoto(1)");
         }, 500);
 
-        if ((dir > 0 && view.currImage + 1 != $(".image").length) || (dir < 0 && view.currImage - 1 != -1)) {
+        if ((dir > 0 && view.currImage + 1 < $(".image").length) || (dir < 0 && view.currImage - 1 > -1)) {
             scroll = true;
         }
 
@@ -241,14 +260,12 @@ const view      = {
         await timeout(500);
     },
     disableCategories   : async () => {
+        $(".category").attr("disabled", true);
         $(".category").addClass("disabledCategory");
         $(".category p").animate({fontSize: "1.77vh"}, 200);
     },
     enableCategories    : async () => {
-        $(".category").removeClass("disabledCategory");
-        $(".category p").animate({fontSize: "1.55vh"}, 200);
-    },
-    enableCategories    : async () => {
+        $(".category").attr("disabled", false);
         $(".category").removeClass("disabledCategory");
         $(".category p").animate({fontSize: "1.55vh"}, 200);
     }

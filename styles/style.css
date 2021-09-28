@@ -598,6 +598,8 @@ button:active p, button:active img {
 }
 
 .disabledCategory {
+    pointer-events: none !important;
+    cursor: initial !important;
     box-shadow: 5px 5px 5px 0 rgba(222,222,230,0.5), -3px -3px 5px 0 #FEFEFE !important;
 }
 
@@ -676,6 +678,12 @@ button:active p, button:active img {
 
 #loginPage button p {
     font-size: 18px;
+}
+
+.confirm {
+    font-family: FedraBold!important;
+    color: #8DC894 !important;
+    font-size: 2.222vh !important;
 }
 
 .popup #publishButton, .popup #draftButton {

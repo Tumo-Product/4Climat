@@ -340,12 +340,6 @@
     width: 25%;
 }
 
-#publishButton p {
-    font-family: FedraBold;
-    color: #8DC894;
-    font-size: 2.222vh;
-}
-
 #stages {
     display: flex;
     justify-content: center;
