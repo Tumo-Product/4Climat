@@ -137,8 +137,7 @@ const postView = {
             $("#postButton p").text("Save Draft");    
         }
 
-        $("#addBtn").attr("onclick", "discardPost()");
-        $("#addBtn img").attr("src", "icons/bigX.png");
+        $("#addBtn").attr("onclick", "");
 
         // Slide categories down.
         $(".category").eq(0).css("margin-top", $("#categories").prop("scrollHeight") + (window.innerHeight * 0.555));
@@ -161,6 +160,8 @@ const postView = {
         $(".leftButton").append (`<div class="inside"></div><img src="icons/arrow.svg">`);
         $(".rightButton").append(`<div class="inside"></div><img src="icons/arrow.svg">`);
         $(".category").remove();
+        $("#addBtn").attr("onclick", "discardPost()");
+        $("#addBtn img").attr("src", "icons/bigX.png");
     },
     setupTitleView  : async (title) => {
         $(".postView").append(`<input autocomplete="off" class="postInput" id="titleInput" placeholder="Write your title here …">`);
