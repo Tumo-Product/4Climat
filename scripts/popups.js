@@ -32,7 +32,7 @@ const popups = {
                     <p>Save draft</p>
                 </button>
             `);
-        } else {
+        } else if (type == "edit") {
             $(".popup").append(`
                 <p class="mainMsg">Do you want to edit your draft or delete it?</p>
                 <button onclick="deletePost()" id="draftButton" class="wideBtn">
@@ -42,6 +42,18 @@ const popups = {
                 <button onclick="updatePost('draft')" id="publishButton" class="wideBtn">
                     <div class="inside"></div>
                     <p>Edit</p>
+                </button>
+            `);
+        } else {
+            $(".popup").append(`
+                <p class="mainMsg">Are you sure you want to publish your draft or delete it?</p>
+                <button onclick="deletePost()" id="draftButton" class="wideBtn">
+                    <div class="inside"></div>
+                    <p>Delete</p>
+                </button>
+                <button onclick="updatePost('published')" id="publishButton" class="wideBtn">
+                    <div class="inside"></div>
+                    <p class="confirm">Publish</p>
                 </button>
             `);
         }

@@ -22,14 +22,14 @@ const postView = {
         $("#postButton").attr("disabled", true);
     },
 
-    postComplete    : async () => {
+    postComplete    : async (msg) => {
         $(".popup button").css("opacity", 0);                       // Fade out and remove buttons
         setTimeout(() => { $(".popup button").remove(); }, 500);
 
         $(".popup .mainMsg").css("opacity", 0);
         setTimeout(() => {
             $(".popup .mainMsg").css("position", "initial");
-            $(".popup .mainMsg").text("Your post has been successfully published!");
+            $(".popup .mainMsg").text(msg);
             $(".popup .mainMsg").css("opacity", 1);
         }, 500);
 
@@ -329,7 +329,11 @@ const postView = {
     },
     setupPreview    : async (post, mapEmbed) => {
         $("#addBtn img").attr("src", "icons/checkmark.svg");
-        $("#addBtn").attr("onclick", `popups.createPopup('complete');`);
+        if (!editing) {
+            $("#addBtn").attr("onclick", `popups.createPopup('complete');`);
+        } else {
+            $("#addBtn").attr("onclick", `popups.createPopup('publishDraft');`);
+        }
         $(".postTitle").css("opacity", 0);
         $(".postStageExpl").css("opacity", 0);
         $("#stages").css("opacity",  0);

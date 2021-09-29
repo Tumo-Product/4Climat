@@ -186,26 +186,27 @@ const addPost = async (dir) => {
 
 const publishPost = async () => {
     await network.createPost(post, filesToAdd, 'published');
-    await postView.postComplete();
+    await postView.postComplete("Your post has been successfully published!");
     await discardPost();
 }
 
 const saveDraft = async () => {
     await network.createPost(post, filesToAdd, 'draft');
-    await postView.postComplete();
+    await postView.postComplete("Your draft has been saved");
     await discardPost();
 }
 
 const updatePost = async (status) => {
     await network.updatePost(userData[postOpen].pid, post, filesToAdd, imagesToRemove, status);
-    await postView.postComplete();
+    let msg = status === "draft" ? "Your draft has been updated" : "Your draft has been publushed";
+    await postView.postComplete(msg);
     await discardPost();
 }
 
 const deletePost = async () => {
     imagesToRemove = userData[postOpen].imageNames;
     await network.deletePost(userData[postOpen].pid, imagesToRemove);
-    await postView.postComplete();
+    await postView.postComplete("Your draft has been deleted!");
     await discardPost();
 }
 

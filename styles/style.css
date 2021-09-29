@@ -704,7 +704,7 @@ button:active p, button:active img {
 .mainMsg {
     transition: 0.5s;
     position: absolute;
-    width: 96%;
+    width: 90%;
     height: 47%;
     top: 17.1%;
     font-size: 2.444vh;
