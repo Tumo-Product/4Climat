@@ -794,6 +794,7 @@ button:active p, button:active img {
     color: #828282;
     font-family: FedraBold;
     position: absolute;
+    font-size: 1.777vh;
     top: 2vh;
     left: 30vh;
     transition: 0.3s;
