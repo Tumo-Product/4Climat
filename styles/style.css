@@ -789,3 +789,21 @@ button:active p, button:active img {
     font-size: 5vh;
     color: #EAAC7F;
 }
+
+.statusText {
+    color: #828282;
+    font-family: FedraBold;
+    position: absolute;
+    top: 2vh;
+    left: 30vh;
+    transition: 0.3s;
+}
+
+.openedPost .statusText {
+    top: 1.8vh;
+    left: 46% !important;
+}
+
+.draft .title {
+    width: 80% !important;
+}

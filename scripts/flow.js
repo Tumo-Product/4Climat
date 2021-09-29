@@ -22,12 +22,7 @@ const onLoad = async () => {
     for (let i = 0; i < data.length; i++)       { data[i].imageNames        = data[i].post.images;      }
     for (let i = 0; i < userData.length; i++)   { userData[i].imageNames    = userData[i].post.images;  }
 
-    categories  = await network.getCategories();
-    let token   = await axios.put(config.generateToken, { uid: currUid });
-    token       = token.data.data;
-    let allowed = await axios.post(config.login, {uid: token.uid, token: token.token});
-    console.log(token, allowed);
-
+    network.getNewToken();
     await addPosts();
 
     for (let i = 0; i < categories.length; i++) {
@@ -39,7 +34,11 @@ const onLoad = async () => {
         if (e.target !== this) return;
         view.closePopupContainer()
     });
-
+    $("#search").keyup(function(event) {
+        if (event.key === "Enter") {
+            document.getElementById("searchBtn").click();
+        }
+    });
     $('#postsView').on('scroll', async function(e) {
         if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight && postOpen != -1) {
             let length = myPostsActive === true ? userData.length : data.length;
@@ -56,7 +55,7 @@ const onLoad = async () => {
                 $(".stage").remove();
             }
         }
-    })
+    });
 
     view.scrollToMiddle("#categories");
     view.resize();
@@ -85,7 +84,7 @@ const addPosts = async (userPosts) => {
 
     if (postCount != length) {
         for (let i = 0; i < posts.length; i++) {
-            view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].images[0]);
+            view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].images[0], dat[i].status);
         }
     }
 
@@ -204,18 +203,22 @@ const updatePost = async (status) => {
 }
 
 const deletePost = async () => {
-
+    imagesToRemove = userData[postOpen].imageNames;
+    await network.deletePost(userData[postOpen].pid, imagesToRemove);
+    await postView.postComplete();
+    await discardPost();
 }
 
 const discardPost = async () => {
     $("#postsView").css("overflow", "auto");
-    await addPosts(myPostsActive);
+    // await addPosts(myPostsActive);
     postView.enableDraftBtn();
     view.closePopupContainer();
     post = { categories: [], longitude: -1, latitude: -1, title: "",  description: "", mapLink: undefined, images: [] };
     postStage = -1; postOpen = -1;
     imagesToRemove = []; filesToAdd = [];
     await postView.discardPost();
+    location.reload();
 }
 
 const openImage = async (i, imgIndex) => {
@@ -361,23 +364,23 @@ const addImage = async (dragFiles) => {
 
         post.images.push(basedat);
         filesToAdd.push(files[i]);
-        postView.addImage(post.images.length - 1, basedat);
+        postView.addImage(filesToAdd.length - 1, basedat, "new");
     }
 
     if (post.images.length > 0) postView.enableBtn("right");
     else postView.disableBtn("right");
 }
 
-const removeImage = async (i) => {
+const removeImage = async (i, type) => {
     post.images.splice(i, 1);
-    filesToAdd.splice(i, 1);
-    postView.removeImage(i);
-
-    if (postImageNames[i] !== undefined) {
+    if (type == "new") {
+        filesToAdd.splice(i, 1);
+    } else if (postImageNames[i] !== undefined) {
         imagesToRemove.push(postImageNames[i]);
         postImageNames.splice(i, 1);
     }
 
+    postView.removeImage(i);
     if (post.images.length > 0) postView.enableBtn("right");
     else                        postView.disableBtn("right");
 }

@@ -29,14 +29,14 @@ const view      = {
             <p>#${text}</p><div class="inside"></div>
         </button>`);
     },
-    addPost         : (index, title, date, categories, description, img) => {
+    addPost         : (index, title, date, categories, description, img, status) => {
         if (title === "") title = "N/A";
         if (categories.length === 0) categories = ["N/A"];
         if (description === "") description = "N/A";
         if (img === undefined) img = "images/notAval.png";
 
         $("#postsView").append(`
-        <div onclick="openPost(${index})" id="p_${index}" class="post">
+        <div onclick="openPost(${index})" id="p_${index}" class="post ${status}">
             <div class="content">
                 <p class="title">${title}</p>
                 <div class="spanDiv">
@@ -50,8 +50,12 @@ const view      = {
             </div>
         </div>`);
 
-        if (categories.length > 1)
+        if (categories.length > 1) {
             $(`#p_${index} .spanDiv span`).last().append(" ...");
+        }
+        if (status === "draft") {
+            $(`#p_${index}`).append(`<p class="statusText">Draft</p>`);
+        }
     },
 
     openLoading     : async () => {
@@ -113,7 +117,7 @@ const view      = {
         view.currPopupImg = 0;
     },
 
-    openPost        : async (index, categories, images, mapSrc) => {
+    openPost        : async (index, categories, images, mapSrc, status) => {
         postOpen = index;
         if (categories.length === 0) categories = ["N/A"];
         if (images.length === 0) images = ["images/notAval.png"];
@@ -127,12 +131,14 @@ const view      = {
         $(`#p_${index} .picture`).css("height", $(`#p_${index} .picture`).height());
         $("#postsView").css("overflow", "hidden");
         $(`#p_${index}`).addClass("openedPost");
-        if ($(`#p_${index}`).index() != 0)
+        if ($(`#p_${index}`).index() != 0) {
             $("#postsView").animate({scrollTop: scrollPos}, 500);
+        }
         let titleFontSize = parser.getCorrectFontSize($(`#p_${index} .title`).text().length);
         $(`#p_${index} .title`).animate({"font-size": `${titleFontSize}vh`}, 500);
 
         $(`#p_${index} .description`).css("opacity", 0);
+        $(`#p_${index} .statusText`).css("opacity", 0);
         await timeout(300);
         $(`#p_${index} .description`).before(`
             <div class="imgMapView">
@@ -158,6 +164,7 @@ const view      = {
         $(`#p_${index} .imageView`).append(`<div id="img_${0}" onclick="openImage(${index}, 0)" class="image"><img src="${images[0]}"></div>`);
         await timeout(700);
         $(`#p_${index} .description`).css("opacity", 1);
+        $(`#p_${index} .statusText`).css("opacity", 1);
 
         view.offset = parseFloat($(`#img_${0}`).css("width")) / window.innerHeight * 100;
 
@@ -178,6 +185,7 @@ const view      = {
         if (categories.length == 0) categories = ["N/A"];
         view.currImage = 0;
         $(`#p_${index} .description`).css("opacity", 0);
+        $(`#p_${index} .statusText`).css("opacity", 0);
         $(`#p_${index} .imgMapView`).css("height", 0);
         setTimeout(() => {
             $(".imgMapView").remove();
@@ -205,6 +213,7 @@ const view      = {
         $(`#p_${index}`).attr("onclick", `openPost(${index})`);
         await timeout (380);
         $(`#p_${index} .description`).css("opacity", 1);
+        $(`#p_${index} .statusText`).css("opacity", 1);
         postOpen = -1;
     },
     hidePosts       : async () => {

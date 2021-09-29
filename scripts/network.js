@@ -1,10 +1,18 @@
 const network   = {
-    idExists            : async(id) => {
-
+    getNewToken         : async () => {
+        categories  = await network.getCategories();
+        let token   = await axios.put(config.generateToken, { uid: currUid });
+        token       = token.data.data;
+        let allowed = await axios.post(config.login, {uid: token.uid, token: token.token});
+        console.log(token, allowed);
     },
 
-    getNewToken         : async () => {
-        
+    deletePost          : async (pid, images) => {
+        if (images.length > 0) {
+            await network.removeImages(images, pid);
+        }
+
+        let request = await axios.post(config.removePost, {uid: currUid, pid: pid});
     },
 
     updatePost          : async (pid, post, files, filesToRemove, status) => {

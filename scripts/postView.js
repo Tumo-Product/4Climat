@@ -321,7 +321,7 @@ const postView = {
         $("#download").removeClass("goUnder");
 
         for (let i = 0; i < images.length; i++) {
-            postView.addImage(i, images[i]);
+            postView.addImage(i, images[i], "existing");
             postView.enableBtn("right");
         }
 
@@ -374,21 +374,26 @@ const postView = {
         await timeout(100);
         $(".image").addClass("smooth");
     },
-    addImage    : async (i, imgSrc) => {
+    addImage    : async (i, imgSrc, type) => {
+        console.log(type);
         $(".postImages").append(`
-            <div id="pImg_${i}" class="postImgContainer">
+            <div id="pImg_${i}" class="${type} postImgContainer">
                 <img src="${imgSrc}">
-                <img src="icons/whiteX.png" class="remImage" onclick="removeImage(${i})">
+                <img src="icons/whiteX.png" class="remImage" onclick="removeImage(${i}, '${type}')">
             </div>
         `);
     },
     removeImage : async (i) => {
         $(`#pImg_${i}`).remove();
-
-        $(".postImgContainer").each(function(index) {
-            $(this).attr("id", `pImg_${index}`);
-            $(this).find(".remImage").attr("onclick", `removeImage(${index})`);
-        })
+        
+        // Reset indexes.
+        let types = ["existing", "new"];
+        for (let i = 0; i < types.length; i++) {
+            $(`.${types[i]}`).each(function(index) {
+                $(this).attr("id", `pImg_${index}`);
+                $(this).find(".remImage").attr("onclick", `removeImage(${index}, '${types[i]}')`);
+            })
+        }
     },
     toggleDropdown  : async () => { // TODO: Change icons
         let openLate = false;

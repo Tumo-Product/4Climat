@@ -9,5 +9,6 @@ const config = {
     removeImages    : "4climat/images/delete",
     getImages       : "4climat/images/get_images",
     createPost      : "4climat/posts/create",
-    updatePost      : "4climat/posts/update"
+    updatePost      : "4climat/posts/update",
+    removePost      : "4climat/posts/removepost"
 }
