@@ -160,6 +160,7 @@ const postView = {
         
         $(".leftButton").append (`<div class="inside"></div><img src="icons/arrow.svg">`);
         $(".rightButton").append(`<div class="inside"></div><img src="icons/arrow.svg">`);
+        $(".category").remove();
     },
     setupTitleView  : async (title) => {
         $(".postView").append(`<input autocomplete="off" class="postInput" id="titleInput" placeholder="Write your title here …">`);
