@@ -35,25 +35,49 @@ const popups = {
         } else if (type == "edit") {
             $(".popup").append(`
                 <p class="mainMsg">Do you want to edit your draft or delete it?</p>
-                <button onclick="deletePost()" id="draftButton" class="wideBtn">
+                <button onclick="view.closePopupContainer()" id="draftButton" class="wideBtn">
                     <div class="inside"></div>
-                    <p>Delete</p>
+                    <p>Cancel</p>
                 </button>
                 <button onclick="updatePost('draft')" id="publishButton" class="wideBtn">
                     <div class="inside"></div>
                     <p>Edit</p>
                 </button>
             `);
-        } else {
+        } else if (type == "publishDraft") {
             $(".popup").append(`
                 <p class="mainMsg">Are you sure you want to publish your draft or delete it?</p>
                 <button onclick="deletePost()" id="draftButton" class="wideBtn">
                     <div class="inside"></div>
                     <p>Delete</p>
                 </button>
-                <button onclick="updatePost('published')" id="publishButton" class="wideBtn">
+                <button onclick="updatePost('moderation')" id="publishButton" class="wideBtn">
                     <div class="inside"></div>
                     <p class="confirm">Publish</p>
+                </button>
+            `);
+        } else if (type == "discard") {
+            $(".popup").append(`
+                <p class="mainMsg">Do you want to discard your or delete your post?</p>
+                <button onclick="deletePost()" id="draftButton" class="wideBtn">
+                    <div class="inside"></div>
+                    <p>Delete</p>
+                </button>
+                <button onclick="discardPost()" id="publishButton" class="wideBtn">
+                    <div class="inside"></div>
+                    <p>Discard</p>
+                </button>
+            `);
+        } else if (type == "approve") {
+            $(".popup").append(`
+                <p class="mainMsg">Do you want to approve this post?</p>
+                <button onclick="view.closePopupContainer()" id="draftButton" class="wideBtn">
+                    <div class="inside"></div>
+                    <p>Cancel</p>
+                </button>
+                <button onclick="approve()" id="publishButton" class="wideBtn">
+                    <div class="inside"></div>
+                    <p>Approve</p>
                 </button>
             `);
         }

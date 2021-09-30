@@ -11,25 +11,57 @@ let postCount           = 0;
 let postOpen            = -1;
 let postImageNames = [], imagesToRemove = [];
 
+const mod = parser.isMod();
+
 const timeout = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const onLoad = async () => {
+const dataInit = async () => {
     userData = await network.getUserPosts(currUid);
     data = await network.getPosts();
     data = data.data.data; userData = userData.data.data;
+
+    let publishedData = [];
+    let underModeration = [];
+    for (let i = data.length - 1; i >= 0; i--) {
+        if (data[i].status === "published") {
+            publishedData.push(data[i]);
+        } else if (data[i].status === "moderation") {
+            underModeration.push(data[i]);
+        }
+    }
+
+    if (!mod) {
+        data = publishedData;
+    } else {
+        data = underModeration;
+        view.setupModView();
+    }
+}
+
+const onLoad = async () => {
+    await dataInit();
     for (let i = 0; i < data.length; i++)       { data[i].imageNames        = data[i].post.images;      }
     for (let i = 0; i < userData.length; i++)   { userData[i].imageNames    = userData[i].post.images;  }
 
     network.getNewToken();
-    await addPosts();
+    await addPosts("published");
 
     for (let i = 0; i < categories.length; i++) {
         view.addCategory(i, categories[i]);
         categoriesStates.push(false);
     }
     
+    await handleInitialEvents();
+
+    view.scrollToMiddle("#categories");
+    view.resize();
+    await timeout(100);
+    view.toggleLoader();
+}
+
+const handleInitialEvents = async () => {
     $(".popupContainer").click(function (e) {
         if (e.target !== this) return;
         view.closePopupContainer()
@@ -40,27 +72,23 @@ const onLoad = async () => {
         }
     });
     $('#postsView').on('scroll', async function(e) {
-        if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight && postOpen != -1) {
+        if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight && postOpen == -1) {
             let length = myPostsActive === true ? userData.length : data.length;
-            if ($(".stage").length == 0 && !loading && postCount != length) {
+
+            if ($(".stage").length == 0 && !loading && postCount + 1 == length) {
                 loading = true;
                 $("#postsView").append(`
                     <div class="stage">
                         <div class="dot-bricks"></div>
                     </div>`
                 );
-                await timeout(2000);
-                await addPosts(myPostsActive);
+                await timeout (2000);
+                await addPosts(myPostsActive ? "user" : "published");
                 loading = false;
                 $(".stage").remove();
             }
         }
     });
-
-    view.scrollToMiddle("#categories");
-    view.resize();
-    await timeout(100);
-    view.toggleLoader();
 }
 
 const resetPosts = async () => {
@@ -69,23 +97,20 @@ const resetPosts = async () => {
     $(".post").remove();
 }
 
-const addPosts = async (userPosts) => {
-    let dat = userPosts === true ? userData : data;
-    let length = 10;
+const addPosts = async (type) => {
+    let dat     = type === "user" ? userData : data;
+    let length  = 10;
     
-    if (length > dat.length) length = dat.length;
-    for (let p = postCount; p < length; p++) {
+    for (let p = postCount; p < postCount + length; p++) {
+        if (dat[p] === undefined) break;
         posts[p]        = dat[p].post;
-        posts[p].date   = dat[p].date.substring(dat[p].date.indexOf(" ") + 1); // cut weekday from date
-
+        posts[p].date   = dat[p].date.substring(dat[p].date.indexOf(" ") + 1);               // cut weekday from date
         let images      = await network.getImages(dat[p].pid, dat[p].imageNames, "small");
         posts[p].images = images;
     }
 
-    if (postCount != length) {
-        for (let i = 0; i < posts.length; i++) {
-            view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].images[0], dat[i].status);
-        }
+    for (let i = postCount; i < posts.length; i++) {
+        view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].images[0], dat[i].status);
     }
 
     postCount = $(".post").length;
@@ -184,9 +209,18 @@ const addPost = async (dir) => {
     }
 }
 
+const approve = async () => {
+    data[postOpen].post.images = data[postOpen].imageNames;
+    await network.approvePost(data[postOpen].pid, data[postOpen].post, data[postOpen].imageNames);
+    await postView.postComplete("This post has been approved!");
+    closePost(postOpen);
+    view.hidePosts(postOpen);
+    data.splice(postOpen, 1);
+}
+
 const publishPost = async () => {
-    await network.createPost(post, filesToAdd, 'published');
-    await postView.postComplete("Your post has been successfully published!");
+    await network.createPost(post, filesToAdd, 'moderation');
+    await postView.postComplete("Your post is waiting to approved by a moderator");
     await discardPost();
 }
 
@@ -198,7 +232,7 @@ const saveDraft = async () => {
 
 const updatePost = async (status) => {
     await network.updatePost(userData[postOpen].pid, post, filesToAdd, imagesToRemove, status);
-    let msg = status === "draft" ? "Your draft has been updated" : "Your draft has been publushed";
+    let msg = status === "draft" ? "Your draft has been updated" : "Your post is waiting to approved by a moderator!";
     await postView.postComplete(msg);
     await discardPost();
 }
@@ -212,12 +246,8 @@ const deletePost = async () => {
 
 const discardPost = async () => {
     $("#postsView").css("overflow", "auto");
-    // await addPosts(myPostsActive);
     postView.enableDraftBtn();
     view.closePopupContainer();
-    post = { categories: [], longitude: -1, latitude: -1, title: "",  description: "", mapLink: undefined, images: [] };
-    postStage = -1; postOpen = -1;
-    imagesToRemove = []; filesToAdd = [];
     await postView.discardPost();
     location.reload();
 }
@@ -391,12 +421,14 @@ const openPost = async (i) => {
     if (userData[i].status === "draft" && myPostsActive) {
         view.enableEditButton("editPost()");
     }
-    await view.openPost(i, posts[i].categories, posts[i].images, mapSrc);
+    await view.openPost(i, posts[i].categories, posts[i].images, mapSrc, posts[i].mapLink);
+    if (mod) view.enableApproveBtn();
 }
 
 const closePost = async (i) => {
     view.disableEditButton();
     view.closePost(i, posts[i].categories);
+    if (mod) view.disableApproveBtn();
 }
 
 const editPost = async () => {
@@ -407,18 +439,21 @@ const editPost = async () => {
 }
 
 const toggleMyPosts = async () => {
+    $("#postsView").css("overflow", "auto");
     postCount = 0; postOpen = -1;
     if (!myPostsActive) {
+        $("#postButton p").text("All Posts");
         await view.closePostsView();
         view.disableCategories();
         resetPosts();
-        await addPosts(true);
+        await addPosts("user");
         await view.openPostsView();
     } else {
+        $("#postButton p").text("My Posts");
         await view.closePostsView();
         view.enableCategories();
         resetPosts();
-        await addPosts();
+        await addPosts("published");
         await view.openPostsView();
     }
 

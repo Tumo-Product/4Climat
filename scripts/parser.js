@@ -18,7 +18,7 @@ const parser = {
         return !title.includes("   ") && title.length > 5 && title.length <= 50;
     },
     isDescriptionCorrect: (description) => {
-        return description.length <= 600 && description.length >= 20;
+        return description.length <= 600 && description.length >= 200;
     },
     isURLValid          : (urlString) => {
         let url;
@@ -34,5 +34,10 @@ const parser = {
         let fontSize = 50 / length * 2.2;
         if (fontSize > 4.44) fontSize = 4.44;
         return fontSize;
+    },
+    isMod               : () => {
+        let url = new URL(document.location.href);
+        let isMod = url.searchParams.get("isMod");
+        return isMod == 1 ? true : false;
     }
 }

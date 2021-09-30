@@ -377,11 +377,21 @@
     right: 3vh;
     top: 2vh;
     pointer-events: none;
-    opacity: 0;
 }
 
 .postComplete {
     position: absolute;
     width: 5.555vh;
     top: 3.555vh;
+}
+
+.imageText {
+    position: absolute;
+    top: 13.333vh;
+    left: 25%;
+    width: 50%;
+    text-align: center;
+    font-family: FedraDemi;
+    font-size: 2.777vh;
+    color: #CBCBD0;
 }

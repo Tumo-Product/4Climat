@@ -134,7 +134,7 @@
     width: 93%;
 }
 
-.openedPost .description {
+.openedDescription {
     font-size: 1.44vh;
     animation: enlargeDescription 1s linear;
     height: 38%;

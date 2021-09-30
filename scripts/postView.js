@@ -1,6 +1,7 @@
 const postView = {
-    dropdownOpen: false,
-    offset      : -1,
+    dropdownOpen    : false,
+    offset          : -1,
+    categoriesInPost: 0,
 
     disableBtn : async (which) => {
         $(`.${which}Button`).addClass("disabled");
@@ -76,6 +77,7 @@ const postView = {
                 $("#chars").css("opacity", 0);
                 await timeout(800);
                 $("#chars").remove();
+                $(".postDescription").remove();
                 break;
             case 4:
                 $("#download").addClass("goUnder");
@@ -91,9 +93,10 @@ const postView = {
                 await timeout(500);
                 $(".postTitle").css("opacity", 1);
                 $(".postStageExpl").css("opacity", 1);
-                $("#stages").css("opacity", 0);
+                $("#stages").css("opacity", 1);
                 $("#addBtn img").attr("src", "icons/bigX.png");
-                $("#addBtn").attr("onclick", "discardPost()");
+                if (editing)    $("#addBtn").attr("onclick", "popups.createPopup('discard')");
+                else            $("#addBtn").attr("onclick", "discardPost()");
                 $(".openedPost").remove();
                 break;
             default:
@@ -129,13 +132,9 @@ const postView = {
     firstSetup      : async () => {
         postView.disableDraftBtn();
 
-        if (editing) {
-            $("#postButton p").text("Edit");
-            $("#postButton").attr("onclick", "popups.createPopup('edit')");
-        } else {
-            $("#postButton").attr("onclick", `popups.createPopup('draft');`);
-            $("#postButton p").text("Save Draft");    
-        }
+        $("#postButton p").text("Save Draft");
+        if (editing) $("#postButton").attr("onclick", "popups.createPopup('edit')");
+        else $("#postButton").attr("onclick", `popups.createPopup('draft');`);
 
         $("#addBtn").attr("onclick", "");
 
@@ -160,7 +159,8 @@ const postView = {
         $(".leftButton").append (`<div class="inside"></div><img src="icons/arrow.svg">`);
         $(".rightButton").append(`<div class="inside"></div><img src="icons/arrow.svg">`);
         $(".category").remove();
-        $("#addBtn").attr("onclick", "discardPost()");
+        if (editing)    $("#addBtn").attr("onclick", "popups.createPopup('discard')");
+        else            $("#addBtn").attr("onclick", "discardPost()");
         $("#addBtn img").attr("src", "icons/bigX.png");
     },
     setupTitleView  : async (title) => {
@@ -203,6 +203,12 @@ const postView = {
         return $(".categoriesInPost");
     },
     addCategory   : async (i, dontScroll) => {
+        postView.categoriesInPost++;
+        if (postView.categoriesInPost >= 1)
+            $(".rightButton").removeClass("disabled");
+        else
+            $(".rightButton").addClass("disabled");
+
         let ctgWidth = parseFloat($(`#pc_${i}`).css("width")) / window.innerHeight * 100;
 
         if ($(".selector .addPostCategory").length == 0) {
@@ -225,6 +231,12 @@ const postView = {
         }
     },
     removeCategory : async (i) => {
+        postView.categoriesInPost--;
+        if (postView.categoriesInPost >= 1)
+            $(".rightButton").removeClass("disabled");
+        else
+            $(".rightButton").addClass("disabled");
+
         let ctgWidth = parseFloat($(`#pc_${i}`).css("width")) / window.innerHeight * 100;
 
         $(`#pc_${i}`).css("width", $(`#pc_${i}`).width());
@@ -294,14 +306,12 @@ const postView = {
         document.getElementById("linkInput").readOnly = false;
     },
     setupDescriptionView    : async (description, limit) => {
-        if ($(".postDescription").length == 0) {
-            $(".postView").append(`
-                <div id="chars">
-                    <span id="charCount">0</span> <span>/</span> <span>${limit}</span>
-                </div>
-                <textarea class="postDescription" placeholder="Write your text here …">
-            `);
-        } else postView.enableBtn("right");
+        $(".postView").append(`
+            <div id="chars">
+                <span id="charCount">0</span> <span>/</span> <span>${limit}</span>
+            </div>
+            <textarea class="postDescription" placeholder="Write your text here …">
+        `);
 
         await timeout(50); $(".postDescription").addClass("openPostDescription");
         $(".postDescription").val(description);
@@ -311,11 +321,13 @@ const postView = {
     },
     setupImageView  : async (images) => {
         $(".postView").append(`
-            <div class="postImages"></div>
+            <div class="postImages">
+                <p class="imageText">Press upload button or drag and drop images here</p>
+            </div>
             <input autocomplete="off" type="file" accept="image/*" id="downloadInput" onchange="addImage()" multiple/>
             <div class="bigBtn goUnder" id="download">
                 <div class="inside"></div>
-                <img src="icons/download.png">
+                <img src="icons/upload.png">
         </div>`);
         
         $("#download").click( function () { document.getElementById("downloadInput").click(); } );
@@ -381,7 +393,7 @@ const postView = {
         $(".image").addClass("smooth");
     },
     addImage    : async (i, imgSrc, type) => {
-        console.log(type);
+        $(".imageText").css("opacity", 0);
         $(".postImages").append(`
             <div id="pImg_${i}" class="${type} postImgContainer">
                 <img src="${imgSrc}">
@@ -406,7 +418,6 @@ const postView = {
 
         if (!postView.dropdownOpen) {   // Open
             postView.dropdownOpen = !postView.dropdownOpen;
-            $(".rightButton").addClass("disabled");
             
             let height = parseFloat($(".selector").css("height"));
             let newHeight = window.innerHeight * 0.08667;
@@ -426,11 +437,6 @@ const postView = {
             $(".selector").css("height", "8.677vh");
         } else {                        // Hide
             postView.dropdownOpen = !postView.dropdownOpen;
-            if ($(".categoriesInPost").children().length >= 1) {
-                $(".rightButton").removeClass("disabled");
-            } else {
-                $(".rightButton").addClass("disabled");
-            }
 
             $(".dropdown").removeClass("flipY");
             $(".categories").addClass("hidden");

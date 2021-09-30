@@ -32,8 +32,8 @@ const view      = {
     addPost         : (index, title, date, categories, description, img, status) => {
         if (title === "") title = "N/A";
         if (categories.length === 0) categories = ["N/A"];
-        if (description === "") description = "N/A";
-        if (img === undefined) img = "images/notAval.png";
+        if (description === "") description = "No description added";
+        if (img === undefined) img = "";
 
         $("#postsView").append(`
         <div onclick="openPost(${index})" id="p_${index}" class="post ${status}">
@@ -50,12 +50,22 @@ const view      = {
             </div>
         </div>`);
 
+        if (img === "") {
+            $(`#p_${index} img`).remove();
+            $(`#p_${index} .picture`).append("<div><p>N/A</p></div>");
+        }
+        if (description === "No description added") {
+            $(`#p_${index} .description`).addClass("draftDescription");
+        }
+
         if (categories.length > 1) {
             $(`#p_${index} .spanDiv span`).last().append(" ...");
         }
-        if (status === "draft") {
-            $(`#p_${index}`).append(`<p class="statusText">Draft</p>`);
-        }
+
+        let msg = "";
+        if (status === "draft") msg = "Draft";
+        else if (status === "moderation") msg = "Under Moderation";
+        $(`#p_${index}`).append(`<p class="statusText">${msg}</p>`);
     },
 
     openLoading     : async () => {
@@ -117,10 +127,9 @@ const view      = {
         view.currPopupImg = 0;
     },
 
-    openPost        : async (index, categories, images, mapSrc, status) => {
+    openPost        : async (index, categories, images, mapSrc, mapLink) => {
         postOpen = index;
         if (categories.length === 0) categories = ["N/A"];
-        if (images.length === 0) images = ["images/notAval.png"];
         $(`#p_${index}`).attr("onclick", "");
         
         let marginTop   = parseFloat($(`#p_${index}`).css("margin-top"));
@@ -137,6 +146,11 @@ const view      = {
         let titleFontSize = parser.getCorrectFontSize($(`#p_${index} .title`).text().length);
         $(`#p_${index} .title`).animate({"font-size": `${titleFontSize}vh`}, 500);
 
+        if ($(`#p_${index} .description`).text() == "No description added") {
+            $(`#p_${index} .description`).addClass("openedDraftDescription");
+        } else {
+            $(`#p_${index} .description`).addClass("openedDescription");
+        }
         $(`#p_${index} .description`).css("opacity", 0);
         $(`#p_${index} .statusText`).css("opacity", 0);
         await timeout(300);
@@ -148,6 +162,7 @@ const view      = {
                 <div class="mapContainer"></div>
             </div>
         `);
+        $(".mapContainer").click(function() { window.open(mapLink, "_blank"); });
 
         view.makeMap(mapSrc, ".mapContainer");
         $(".map").contents().find(".place-card").hide();
@@ -161,16 +176,24 @@ const view      = {
             $(`#p_${index} .spanDiv`).append(`<span class="card">${categories[i]}</span>`);
         }
 
-        $(`#p_${index} .imageView`).append(`<div id="img_${0}" onclick="openImage(${index}, 0)" class="image"><img src="${images[0]}"></div>`);
+        if (images.length != 0) {
+            $(`#p_${index} .imageView`).append(`<div id="img_${0}" onclick="openImage(${index}, 0)" class="image"><img src="${images[0]}"></div>`);
+        } else {
+            $(`#p_${index} .imageView`).append(`<div id="img_${0}" onclick="openImage(${index}, 0)" class="image">
+                <div><p>N/A<p></div>
+            </div>`);
+        }
         await timeout(700);
         $(`#p_${index} .description`).css("opacity", 1);
         $(`#p_${index} .statusText`).css("opacity", 1);
 
-        view.offset = parseFloat($(`#img_${0}`).css("width")) / window.innerHeight * 100;
+        if (images.length != 0) {
+            view.offset = parseFloat($(`#img_${0}`).css("width")) / window.innerHeight * 100;
 
-        for (let i = 1; i < images.length; i++) {
-            $(`#p_${index} .imageView`).append(`<div id="img_${i}" onclick="openImage(${index}, ${i})" class="image"><img src="${images[i]}"></div>`);
-            $(`#img_${i}`).css("left", `${view.offset * i}vh`);
+            for (let i = 1; i < images.length; i++) {
+                $(`#p_${index} .imageView`).append(`<div id="img_${i}" onclick="openImage(${index}, ${i})" class="image"><img src="${images[i]}"></div>`);
+                $(`#img_${i}`).css("left", `${view.offset * i}vh`);
+            }
         }
 
         await timeout(100);
@@ -194,6 +217,7 @@ const view      = {
 
         await timeout(370);
         $(`#p_${index}`).removeClass("openedPost");
+        $(`#p_${index} .description`).removeClass("openedDescription openedDraftDescription");
         $(`#p_${index} .title`).animate({ "font-size": "2.77vh" }, 500);
         $(`#p_${index} .minimize`).css({"opacity": 0, "pointer-events": "none"});
         $(".picture").css("height", "90.13%");
@@ -216,7 +240,11 @@ const view      = {
         $(`#p_${index} .statusText`).css("opacity", 1);
         postOpen = -1;
     },
-    hidePosts       : async () => {
+    hidePosts       : async (i) => {
+        if (i !== undefined) {
+            $(`#p_${i}`).css({transform: "scale(0)", opacity: 0, height: 0});
+            return;
+        }
         $(`.post`).css({transform: "scale(0)", opacity: 0});
     },
     makePostAppear  : async (i) => {
@@ -277,5 +305,22 @@ const view      = {
         $(".category").attr("disabled", false);
         $(".category").removeClass("disabledCategory");
         $(".category p").animate({fontSize: "1.55vh"}, 200);
+    },
+
+    disableApproveBtn   : async () => {
+        $("#addBtn").attr("disabled", "true");
+        $("#addBtn").addClass("disableApproveBtn");
+    },
+
+    enableApproveBtn    : async () => {
+        $("#addBtn").removeAttr("disabled");
+        $("#addBtn").removeClass("disableApproveBtn");
+    },
+
+    setupModView        : async () => {
+        $("#postButton").remove();
+        $("#addBtn img").attr("src", "icons/checkmark.svg");
+        $("#addBtn").attr("onclick", "popups.createPopup('approve')");
+        view.disableApproveBtn();
     }
 }

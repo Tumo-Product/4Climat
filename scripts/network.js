@@ -37,6 +37,13 @@ const network   = {
             await network.removeImages(filesToRemove, pid);
         }
     },
+    
+    approvePost         : async (pid, post, imageNames) => {
+        post.images = imageNames;
+        let postString      = JSON.stringify(post);
+        let request         = await axios.post(config.updatePost, {uid: currUid, pid: pid, post: postString, status: "published"});
+        console.log(request);
+    },
 
     createPost         : async (post, files, status) => {
         let imageNames = [];
