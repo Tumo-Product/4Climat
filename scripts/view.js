@@ -242,7 +242,10 @@ const view      = {
     },
     hidePosts       : async (i) => {
         if (i !== undefined) {
-            $(`#p_${i}`).css({transform: "scale(0)", opacity: 0, height: 0});
+            setTimeout(() => {
+                $(`#p_${i}`).remove();
+            }, 500);
+            $(`#p_${i}`).css({transform: "scale(0)", opacity: 0, height: 0, margin: 0});
             return;
         }
         $(`.post`).css({transform: "scale(0)", opacity: 0});
