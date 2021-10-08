@@ -1,4 +1,4 @@
-let data, userData;
+let data, userData, searchData = [];
 let categories, posts   = [];
 let loading = false, editing = false;
 let post                = { categories: [], longitude: -1, latitude: -1, title: "",  description: "", images: [] };
@@ -74,8 +74,11 @@ const handleInitialEvents = async () => {
     $('#postsView').on('scroll', async function(e) {
         if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight && postOpen == -1) {
             let length = myPostsActive === true ? userData.length : data.length;
+            if (searchData.length > 0) {
+                length = searchData.length;
+            }
 
-            if ($(".stage").length == 0 && !loading && postCount + 1 == length) {
+            if ($(".stage").length == 0 && $(".post").length > 0 && !loading && postCount < length) {
                 loading = true;
                 $("#postsView").append(`
                     <div class="stage">
@@ -83,6 +86,7 @@ const handleInitialEvents = async () => {
                     </div>`
                 );
 
+                await timeout(2000);
                 await addPosts(myPostsActive ? "user" : "published");
                 loading = false;
                 $(".stage").remove();
@@ -92,13 +96,14 @@ const handleInitialEvents = async () => {
 }
 
 const resetPosts = async () => {
-    posts       = [];
+    posts       = []; searchData = [];
     postCount   = 0;
     $(".post").remove();
 }
 
 const addPosts = async (type) => {
     let dat     = type === "user" ? userData : data;
+    if (searchData.length > 0) dat = searchData;
     let length  = 10;
     
     for (let p = postCount; p < postCount + length; p++) {
@@ -111,6 +116,7 @@ const addPosts = async (type) => {
 
     for (let i = postCount; i < posts.length; i++) {
         view.addPost(i, posts[i].title, posts[i].date, posts[i].categories, posts[i].description, posts[i].images[0], dat[i].status);
+        view.makePostAppear(i);
     }
 
     postCount = $(".post").length;
@@ -440,7 +446,8 @@ const editPost = async () => {
 }
 
 const toggleMyPosts = async () => {
-    $("#postsView").css("overflow", "auto");
+    searchData = [];
+    $("#postsView").css("overflow", "auto"); postOpen = 1;
     if (!myPostsActive) {
         $("#postButton p").text("All Posts");
         await view.closePostsView();
@@ -464,31 +471,33 @@ const toggleMyPosts = async () => {
 const search = async () => {
     let query = $("#search").val();
     let matches = [];
-    postCount = 0; postOpen = -1;
+    let dat = myPostsActive ? userData : data;
+    postCount = 0; postOpen = -1; searchData = [];
 
     view.hidePosts();
-    setTimeout(() => {
-        $(".post").remove();
-        $("#postsView").scrollTop(0);
-
+    setTimeout(async () => {
+        resetPosts();
+        $("#postsView").scrollTop(0).css("overflow", "auto");
         for (let i = 0; i < matches.length; i++) {
-            let post = posts[matches[i]];
-            view.addPost(i, post.title, post.date, post.categories, post.description, post.images[0]);
-            view.makePostAppear(i);
+            // let post = dat[matches[i]].post;
+            // view.addPost(i, post.title, post.date, post.categories, post.description, post.images[0], dat[matches[i]].status);
+            // view.makePostAppear(i);
+            searchData.push(dat[matches[i]]);
         }
+        await addPosts(myPostsActive ? "user" : "published");
     }, 500);
 
-    for (let i = 0; i < posts.length; i++) {
+    for (let i = 0; i < dat.length; i++) {
         let regexp = new RegExp(`${query}`, "i");
-        if (regexp.test(posts[i].title)) {
+        if (regexp.test(dat[i].post.title)) {
             matches.push(i);
             continue;
-        } else if (regexp.test(posts[i].description)) {
+        } else if (regexp.test(dat[i].post.description)) {
             matches.push(i);
             continue;
         } else {
-            for (let c = 0; c < posts[i].categories.length; c++) {
-                if (regexp.test(posts[i].categories[c])) {
+            for (let c = 0; c < dat[i].post.categories.length; c++) {
+                if (regexp.test(dat[i].post.categories[c])) {
                     matches.push(i);
                     continue;
                 }
