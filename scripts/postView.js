@@ -395,20 +395,20 @@ const postView = {
     addImage    : async (i, imgSrc, type) => {
         $(".imageText").css("opacity", 0);
         $(".postImages").append(`
-            <div id="pImg_${i}" class="${type} postImgContainer">
+            <div id="pImg_${i}_${type}" class="${type} postImgContainer">
                 <img src="${imgSrc}">
                 <img src="icons/whiteX.png" class="remImage" onclick="removeImage(${i}, '${type}')">
             </div>
         `);
     },
-    removeImage : async (i) => {
-        $(`#pImg_${i}`).remove();
+    removeImage : async (i, type) => {
+        $(`#pImg_${i}_${type}`).remove();
         
         // Reset indexes.
         let types = ["existing", "new"];
         for (let i = 0; i < types.length; i++) {
             $(`.${types[i]}`).each(function(index) {
-                $(this).attr("id", `pImg_${index}`);
+                $(this).attr("id", `pImg_${index}_${types[i]}`);
                 $(this).find(".remImage").attr("onclick", `removeImage(${index}, '${types[i]}')`);
             })
         }

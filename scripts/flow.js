@@ -82,7 +82,7 @@ const handleInitialEvents = async () => {
                         <div class="dot-bricks"></div>
                     </div>`
                 );
-                await timeout (2000);
+
                 await addPosts(myPostsActive ? "user" : "published");
                 loading = false;
                 $(".stage").remove();
@@ -92,8 +92,8 @@ const handleInitialEvents = async () => {
 }
 
 const resetPosts = async () => {
-    posts = [];
-    postCount = 0;
+    posts       = [];
+    postCount   = 0;
     $(".post").remove();
 }
 
@@ -403,15 +403,16 @@ const addImage = async (dragFiles) => {
 }
 
 const removeImage = async (i, type) => {
-    post.images.splice(i, 1);
     if (type == "new") {
+        post.images.splice(($(".existing").length - 1) + i, 1);
         filesToAdd.splice(i, 1);
     } else if (postImageNames[i] !== undefined) {
+        post.images.splice(i, 1);
         imagesToRemove.push(postImageNames[i]);
         postImageNames.splice(i, 1);
     }
 
-    postView.removeImage(i);
+    postView.removeImage(i, type);
     if (post.images.length > 0) postView.enableBtn("right");
     else                        postView.disableBtn("right");
 }
@@ -440,7 +441,6 @@ const editPost = async () => {
 
 const toggleMyPosts = async () => {
     $("#postsView").css("overflow", "auto");
-    postCount = 0; postOpen = -1;
     if (!myPostsActive) {
         $("#postButton p").text("All Posts");
         await view.closePostsView();
@@ -457,16 +457,19 @@ const toggleMyPosts = async () => {
         await view.openPostsView();
     }
 
+    postOpen = -1;
     myPostsActive = !myPostsActive;
 }
 
 const search = async () => {
     let query = $("#search").val();
     let matches = [];
+    postCount = 0; postOpen = -1;
 
     view.hidePosts();
     setTimeout(() => {
         $(".post").remove();
+        $("#postsView").scrollTop(0);
 
         for (let i = 0; i < matches.length; i++) {
             let post = posts[matches[i]];
