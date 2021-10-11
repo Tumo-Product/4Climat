@@ -1,4 +1,4 @@
-let data, userData, searchData = [];
+let data, userData, queryData = [];
 let categories, posts   = [];
 let loading = false, editing = false;
 let post                = { categories: [], longitude: -1, latitude: -1, title: "",  description: "", images: [] };
@@ -46,7 +46,7 @@ const onLoad = async () => {
     for (let i = 0; i < userData.length; i++)   { userData[i].imageNames    = userData[i].post.images;  }
 
     network.getNewToken();
-    await addPosts("published");
+    await addPosts("all");
 
     for (let i = 0; i < categories.length; i++) {
         view.addCategory(i, categories[i]);
@@ -74,8 +74,8 @@ const handleInitialEvents = async () => {
     $('#postsView').on('scroll', async function(e) {
         if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight && postOpen == -1) {
             let length = myPostsActive === true ? userData.length : data.length;
-            if (searchData.length > 0) {
-                length = searchData.length;
+            if (queryData.length > 0) {
+                length = queryData.length;
             }
 
             if ($(".stage").length == 0 && $(".post").length > 0 && !loading && postCount < length) {
@@ -86,8 +86,7 @@ const handleInitialEvents = async () => {
                     </div>`
                 );
 
-                await timeout(2000);
-                await addPosts(myPostsActive ? "user" : "published");
+                await addPosts(myPostsActive ? "user" : "all");
                 loading = false;
                 $(".stage").remove();
             }
@@ -96,14 +95,14 @@ const handleInitialEvents = async () => {
 }
 
 const resetPosts = async () => {
-    posts       = []; searchData = [];
+    posts       = []; queryData = [];
     postCount   = 0;
     $(".post").remove();
 }
 
 const addPosts = async (type) => {
     let dat     = type === "user" ? userData : data;
-    if (searchData.length > 0) dat = searchData;
+    if (queryData.length > 0) dat = queryData;
     let length  = 10;
     
     for (let p = postCount; p < postCount + length; p++) {
@@ -123,8 +122,10 @@ const addPosts = async (type) => {
 }
 
 const toggleCategory = async (index) => {
+    let dat = myPostsActive ? userData : data;
     view.toggleCategory(index, categoriesStates[index]);
     categoriesStates[index] = !categoriesStates[index];
+    postCount = 0; postOpen = -1; queryData = [];
 
     let queries = [], matches = [];
     for (let i = 0; i < categoriesStates.length; i++) {
@@ -132,29 +133,27 @@ const toggleCategory = async (index) => {
             queries.push(categories[i]);
         }
     }
-
     view.hidePosts();
-    setTimeout(() => {
-        $(".post").remove();
-
+    setTimeout(async () => {
+        resetPosts();
         for (let i = 0; i < matches.length; i++) {
-            let post = posts[matches[i]];
-            view.addPost(i, post.title, post.date, post.categories, post.description, post.images[0]);
-            view.makePostAppear(i);
+            queryData.push(dat[matches[i]]);
         }
+
+        if (queryData.length > 0)
+            await addPosts(myPostsActive ? "user" : "all");
     }, 500);
 
     if (!categoriesStates.includes(true)) {
-        for (let i = 0; i < posts.length; i++) { matches[i] = i;}
+        for (let i = 0; i < dat.length; i++) { matches[i] = i;}
         return;
     }
     for (let q = 0; q < queries.length; q++) {
-        for (let p = 0; p < posts.length; p++) {
+        for (let p = 0; p < dat.length; p++) {
             let regexp = new RegExp(`${queries[q]}`, "i");
             
-            for (let c = 0; c < posts[p].categories.length; c++) {
-                console.log();
-                if (regexp.test(posts[p].categories[c]) && !matches.includes(p)) {
+            for (let c = 0; c < dat[p].post.categories.length; c++) {
+                if (regexp.test(dat[p].post.categories[c]) && !matches.includes(p)) {
                     matches.push(p);
                     continue;
                 }
@@ -446,7 +445,7 @@ const editPost = async () => {
 }
 
 const toggleMyPosts = async () => {
-    searchData = [];
+    queryData = [];
     $("#postsView").css("overflow", "auto"); postOpen = 1;
     if (!myPostsActive) {
         $("#postButton p").text("All Posts");
@@ -460,7 +459,7 @@ const toggleMyPosts = async () => {
         await view.closePostsView();
         view.enableCategories();
         resetPosts();
-        await addPosts("published");
+        await addPosts("all");
         await view.openPostsView();
     }
 
@@ -472,19 +471,17 @@ const search = async () => {
     let query = $("#search").val();
     let matches = [];
     let dat = myPostsActive ? userData : data;
-    postCount = 0; postOpen = -1; searchData = [];
+    postCount = 0; postOpen = -1; queryData = [];
 
     view.hidePosts();
     setTimeout(async () => {
         resetPosts();
         $("#postsView").scrollTop(0).css("overflow", "auto");
         for (let i = 0; i < matches.length; i++) {
-            // let post = dat[matches[i]].post;
-            // view.addPost(i, post.title, post.date, post.categories, post.description, post.images[0], dat[matches[i]].status);
-            // view.makePostAppear(i);
-            searchData.push(dat[matches[i]]);
+            queryData.push(dat[matches[i]]);
         }
-        await addPosts(myPostsActive ? "user" : "published");
+        if (queryData.length > 0)
+            await addPosts(myPostsActive ? "user" : "all");
     }, 500);
 
     for (let i = 0; i < dat.length; i++) {
