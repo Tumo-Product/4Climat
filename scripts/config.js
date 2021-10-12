@@ -1,4 +1,4 @@
-axios.defaults.baseURL = "http://40.74.57.201:4000";
+axios.defaults.baseURL = "https://content-tools.tumo.world:4010";
 
 const config = {
     generateToken   : "4climat/users",
