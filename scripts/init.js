@@ -23,4 +23,5 @@ window.addEventListener("message", event => {
     }
 
     console.log(event.data);
+    document.querySelector(".confirm").innerHTML = JSON.stringify(event.data);
 });
