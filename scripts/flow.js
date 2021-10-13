@@ -41,6 +41,7 @@ const dataInit = async () => {
 }
 
 const onLoad = async () => {
+    if (currUid == null) return;
     await dataInit();
     for (let i = 0; i < data.length; i++)       { data[i].imageNames        = data[i].post.images;      }
     for (let i = 0; i < userData.length; i++)   { userData[i].imageNames    = userData[i].post.images;  }
