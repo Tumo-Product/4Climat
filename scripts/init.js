@@ -10,7 +10,7 @@ window.parent[0].postMessage({
 
 window.addEventListener("message", event => {
     evnt = event;
-    uid = evnt.target["0"].localStorage.tumoid || "";
+    uid = evnt.currentTarget.localStorage.uuid || "";
 
     if (uid != "") {
         document.getElementById("launch").onclick = () => {
