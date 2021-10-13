@@ -3,7 +3,12 @@ let evnt;
 
 // document.querySelector(".confirm").innerHTML = window.parent.;
 
-window.parent.addEventListener("message", event => {
+window.parent.postMessage({
+    application: "activity-manager",
+    message: "init"
+}, 'https://tumo-product.github.io/4Climat/activityView.html');
+
+window.addEventListener("message", event => {
     evnt = event;
     uid = evnt.target["0"].localStorage.tumoid || "";
 
@@ -18,8 +23,3 @@ window.parent.addEventListener("message", event => {
     document.getElementById("response").innerHTML               = evnt;
     document.getElementById("stringifiedResponse").innerHTML    = JSON.stringify(evnt);
 });
-
-window.parent.postMessage({
-    application: "activity-manager",
-    message: "init"
-}, '*');
