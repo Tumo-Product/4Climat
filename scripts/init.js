@@ -1,30 +1,25 @@
 let uid = "";
+let evnt;
 
 // document.querySelector(".confirm").innerHTML = window.parent.;
+
+window.parent.addEventListener("message", event => {
+    evnt = event;
+    uid = evnt.target["0"].localStorage.tumoid || "";
+
+    if (uid != "") {
+        document.getElementById("launch").onclick = () => {
+            window.open(`index.html?uid=${uid}`, "_blank");
+        };
+    }
+    document.querySelector(".confirm").innerHTML = uid;
+
+    console.log(evnt);
+    document.getElementById("response").innerHTML               = evnt;
+    document.getElementById("stringifiedResponse").innerHTML    = JSON.stringify(evnt);
+});
 
 window.parent.postMessage({
     application: "activity-manager",
     message: "init"
 }, '*');
-
-
-window.addEventListener("message", event => {
-    if(event.data.application !== "activity-manager") return;
-
-    switch(event.data.message) {
-        case 'init-response':
-            uid = event.data.data.id || "";
-
-            if (uid != "") {
-                document.getElementById("launch").onclick = () => {
-                    window.open(`index.html?uid=${uid}`, "_blank");
-                };
-            }
-            document.querySelector(".confirm").innerHTML = uid;
-        break;
-    }
-
-    console.log(event.data);
-    document.getElementById("response").innerHTML               = event.data;
-    document.getElementById("stringifiedResponse").innerHTML    = JSON.stringify(event.data);
-});
