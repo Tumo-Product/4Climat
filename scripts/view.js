@@ -284,13 +284,6 @@ const view      = {
     scrollToMiddle  : (elem) => {
         $(elem).scrollTop($(elem).width() / 2);
     },
-    resize          : () => {
-        $(".subContainer").css("width", parseFloat($(".subContainer").height()) * 1.11);
-
-        $(window).resize(function() {
-            $(".subContainer").css("width", parseFloat($(".subContainer").height()) * 1.11);
-        });
-    },
     closePostsView  : async () => {
         $("#postsView").css( {marginTop: "50%", height: 0} );
         await timeout(500);

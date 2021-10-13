@@ -2,7 +2,7 @@ let data, userData, queryData = [];
 let categories, posts   = [];
 let loading = false, editing = false;
 let post                = { categories: [], longitude: -1, latitude: -1, title: "",  description: "", images: [] };
-let currUid             = "1";
+let currUid             = parser.getUid();
 let postStage           = -1;
 let filesToAdd          = [];
 let myPostsActive       = false;
@@ -56,7 +56,6 @@ const onLoad = async () => {
     await handleInitialEvents();
 
     view.scrollToMiddle("#categories");
-    view.resize();
     await timeout(100);
     view.toggleLoader();
 }

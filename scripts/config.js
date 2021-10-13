@@ -1,8 +1,7 @@
 axios.defaults.baseURL = "https://content-tools.tumo.world:4010";
 
 const config = {
-    generateToken   : "4climat/users",
-    login           : "4climat/users",
+    users           : "4climat/users",
     listPosts       : "4climat/posts/list",
     userListPosts   : "4climat/posts/user_list",
     uploadImages    : "4climat/images/upload",

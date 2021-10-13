@@ -1,9 +1,9 @@
 const network   = {
     getNewToken         : async () => {
         categories  = await network.getCategories();
-        let token   = await axios.put(config.generateToken, { uid: currUid });
+        let token   = await axios.put(config.users, { uid: currUid });
         token       = token.data.data;
-        let allowed = await axios.post(config.login, {uid: token.uid, token: token.token});
+        let allowed = await axios.post(config.users, {uid: token.uid, token: token.token});
         console.log(token, allowed);
     },
 

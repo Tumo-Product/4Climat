@@ -209,8 +209,9 @@ input:focus, textarea:focus
 
 .subContainer {
     margin-top: 5vh;
-    width   : 900px;
+    /* width   : 900px; */
     height: 90.2%;
+    width: 100vh;
 }
 
 .main {
@@ -364,9 +365,28 @@ button:active p, button:active img {
     right: 12.66%;
 }
 
+#launch {
+    width: 400px;
+    height: 100px;
+    border-radius: 36px;
+}
+
+#launch p {
+    font-size: 20px !important;
+}
+
+#launch .inside {
+    width: 98%;
+    border-radius: 32px !important;
+}
+
+#launch p {
+    font-size: 30px !important;
+}
+
 .wideBtn {
-    height: 75.2%;
-    width: 16.22%;
+    height: 8.111vh;
+    width: 16.222vh;
     cursor: pointer;
 
     border-radius: 4.05vh;
@@ -374,6 +394,7 @@ button:active p, button:active img {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 .wideBtn p {
@@ -413,7 +434,7 @@ button:active p, button:active img {
     position: absolute;
     top: 2%;
     right: 2%;
-    border-radius: 12px;
+    border-radius: 1.333vh;
     width: 4.444vh;
     height: 3.333vh;
     display: flex;
@@ -613,7 +634,7 @@ button:active p, button:active img {
     justify-content: center;
     align-items: center;
     padding: 1%;
-    margin-left: 2%;
+    margin-left: 3.6%;
 }
 
 .picture img, .picture div {
@@ -731,8 +752,8 @@ button:active p, button:active img {
 .popup #publishButton, .popup #draftButton {
     position: absolute;
     bottom: 5.447%;
-    height: 28.4%;
-    width: 34.27%;
+    /* height: 28.4%;
+    width: 34.27%; */
 }
 
 .popup #draftButton {
