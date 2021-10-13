@@ -3,7 +3,7 @@ let evnt;
 
 // document.querySelector(".confirm").innerHTML = window.parent.;
 
-window.parent.addEventListener("message", event => {
+window.addEventListener("message", event => {
     evnt = event;
     uid = evnt.target["0"].localStorage.tumoid || "";
 
