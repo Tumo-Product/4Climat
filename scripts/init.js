@@ -3,10 +3,10 @@ let evnt;
 
 // document.querySelector(".confirm").innerHTML = window.parent.;
 
-window.parent.postMessage({
+window.parent[0].postMessage({
     application: "activity-manager",
     message: "init"
-}, 'https://tumo-product.github.io/4Climat/activityView.html');
+}, '*');
 
 window.addEventListener("message", event => {
     evnt = event;
