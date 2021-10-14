@@ -10,8 +10,9 @@ window.parent[0].postMessage({
 
 window.addEventListener("message", event => {
     evnt = event;
-    if (evnt.data.data.id !== undefined)
+    if (evnt.data.data)
         uid = evnt.data.data.id || "";
+    else uid = "1";
 
     if (uid != "") {
         document.getElementById("launch").onclick = () => {
