@@ -37,7 +37,6 @@ const network   = {
             await network.removeImages(filesToRemove, pid);
         }
         
-        let pid = request.data.data.pid;
         window.parent.postMessage({
             application: 'activity-manager',
             message: 'set-answers',
