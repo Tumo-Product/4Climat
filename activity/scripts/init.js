@@ -1,8 +1,6 @@
 let uid = "";
 let evnt;
 
-// document.querySelector(".confirm").innerHTML = window.parent.;
-
 window.parent[0].postMessage({
     application: "activity-manager",
     message: "init"
@@ -10,9 +8,9 @@ window.parent[0].postMessage({
 
 window.addEventListener("message", event => {
     evnt = event;
-    if (evnt.data.data)
+    if (evnt.data.data.id)
         uid = evnt.data.data.id || "";
-    else uid = "1";
+    else uid = null;
 
     if (uid != "") {
         document.getElementById("launch").onclick = () => {
@@ -22,6 +20,10 @@ window.addEventListener("message", event => {
     document.querySelector(".confirm").innerHTML = uid;
 
     console.log(evnt);
-    document.getElementById("response").innerHTML               = evnt;
-    document.getElementById("stringifiedResponse").innerHTML    = JSON.stringify(evnt);
 });
+
+window.parent.postMessage({
+    application: 'activity-manager',
+    message: 'set-iframe-height',
+    data: { iframeHeight: 300 }
+}, '*');
