@@ -1,12 +1,12 @@
 let uid = "";
 
-window.parent[0].postMessage({
+window.parent.postMessage({
     application: "activity-manager",
     message: "init"
 }, '*');
 
 window.addEventListener("message", event => {
-    if (evnt.data.application !== "activity-manager") {
+    if (event.data.application !== "activity-manager") {
         return;
     }
 
@@ -27,7 +27,7 @@ window.addEventListener("message", event => {
     }
 });
 
-window.parent[0].postMessage({
+window.parent.postMessage({
     application: 'activity-manager',
     message: 'set-iframe-height',
     data: { iframeHeight: 300 }
