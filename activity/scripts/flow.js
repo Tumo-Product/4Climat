@@ -261,6 +261,7 @@ const deletePost = async () => {
 }
 
 const discardPost = async () => {
+    $("#addBtn").attr("onclick", "addPost(1)");
     $("#postsView").css("overflow", "auto");
     postView.enableDraftBtn();
     view.closePopupContainer();

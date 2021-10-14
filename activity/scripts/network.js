@@ -37,13 +37,14 @@ const network   = {
             await network.removeImages(filesToRemove, pid);
         }
         
-        window.parent.postMessage({
-            application: 'activity-manager',
-            message: 'set-answers',
-            data: { answers: pid }
-        }, '*');
-        if (status === "published")
+        if (status === "published") {
+            window.parent.postMessage({
+                application: 'activity-manager',
+                message: 'set-answers',
+                data: { answers: pid }
+            }, '*');
             $("#addBtn").attr("disabled", "true").addClass("disableApproveBtn");
+        }
     },
     
     approvePost         : async (pid, post, imageNames) => {
@@ -69,11 +70,13 @@ const network   = {
             await network.addImages(renamedFiles, request.data.data.pid);
         
         let pid = request.data.data.pid;
-        window.parent.postMessage({
-            application: 'activity-manager',
-            message: 'set-answers',
-            data: { answers: pid }
-        }, '*');
+        if (status === "published") {
+            window.parent.postMessage({
+                application: 'activity-manager',
+                message: 'set-answers',
+                data: { answers: pid }
+            }, '*');
+        }
         $("#addBtn").attr("disabled", "true").addClass("disableApproveBtn");
     },
 

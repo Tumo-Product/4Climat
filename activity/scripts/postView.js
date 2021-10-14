@@ -131,6 +131,7 @@ const postView = {
     },
     firstSetup      : async () => {
         postView.disableDraftBtn();
+        $("#addBtn").removeAttr("disabled").removeClass("disableApproveBtn");
 
         $("#postButton p").text("Save Draft");
         if (editing) $("#postButton").attr("onclick", "popups.createPopup('edit')");
