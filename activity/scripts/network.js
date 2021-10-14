@@ -36,6 +36,15 @@ const network   = {
         if (filesToRemove.length > 0) {
             await network.removeImages(filesToRemove, pid);
         }
+        
+        let pid = request.data.data.pid;
+        window.parent.postMessage({
+            application: 'activity-manager',
+            message: 'set-answers',
+            data: { answers: pid }
+        }, '*');
+        if (status === "published")
+            $("#addBtn").attr("disabled", "true").addClass("disableApproveBtn");
     },
     
     approvePost         : async (pid, post, imageNames) => {
