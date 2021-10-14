@@ -1,5 +1,4 @@
 let uid = "";
-let evnt;
 
 window.parent[0].postMessage({
     application: "activity-manager",
@@ -7,23 +6,25 @@ window.parent[0].postMessage({
 }, '*');
 
 window.addEventListener("message", event => {
-    evnt = event;
-
     if (evnt.data.application !== "activity-manager") {
         return;
     }
-    if (evnt.data.data)
-        uid = evnt.data.data.id || "";
-    else uid = null;
 
-    if (uid != "") {
-        document.getElementById("launch").onclick = () => {
-            window.open(`index.html?uid=${uid}`, "_blank");
-        };
+    console.log(event.data.message);
+
+    switch(event.data.message) {
+        case 'init-response':
+            const { data } = event.data;
+            console.log(event.data);
+            uid = data.id;
+
+            document.getElementById("launch").onclick = () => {
+                window.open(`index.html?uid=${uid}`, "_blank");
+            };
+
+            document.querySelector(".confirm").innerHTML = uid;
+        break;
     }
-    document.querySelector(".confirm").innerHTML = uid;
-
-    console.log(evnt);
 });
 
 window.parent[0].postMessage({
