@@ -40,9 +40,9 @@ const parser = {
         let isMod = url.searchParams.get("isMod");
         return isMod == "a01acc7c015" ? true : false;
     },
-    getUid              : () => {
+    getParams           : (param) => {
         let url = new URL(document.location.href);
-        let uid = url.searchParams.get("uid");
+        let uid = url.searchParams.get(param);
         return uid;
     }
 }

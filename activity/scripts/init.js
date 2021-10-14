@@ -1,4 +1,4 @@
-let uid = "";
+let uid = "1";
 
 window.parent.postMessage({
     application: "activity-manager",
@@ -15,14 +15,14 @@ window.addEventListener("message", event => {
     switch(event.data.message) {
         case 'init-response':
             const { data } = event.data;
-            console.log(event.data);
-            uid = data.id;
+            uid = data.studentId ? data.studentId : data.id;
 
-            document.getElementById("launch").onclick = () => {
-                window.open(`index.html?uid=${uid}`, "_blank");
-            };
-
-            document.querySelector(".confirm").innerHTML = uid;
+            if (window.location.href.includes("viewer")) {
+                $(onLoad(false, uid));
+            } else if (window.location.href.includes("examiner")) {
+                let pid = data.answers;
+                $(onLoad(true, undefined, pid));
+            }
         break;
     }
 });
@@ -30,5 +30,5 @@ window.addEventListener("message", event => {
 window.parent.postMessage({
     application: 'activity-manager',
     message: 'set-iframe-height',
-    data: { iframeHeight: 300 }
+    data: { iframeHeight: 800 }
 }, '*');

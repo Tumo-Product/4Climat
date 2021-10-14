@@ -2,22 +2,21 @@ let data, userData, queryData = [];
 let categories, posts   = [];
 let loading = false, editing = false;
 let post                = { categories: [], longitude: -1, latitude: -1, title: "",  description: "", images: [] };
-let currUid             = parser.getUid();
+let currUid             = "1";
 let postStage           = -1;
 let filesToAdd          = [];
 let myPostsActive       = false;
 let categoriesStates    = [];
 let postCount           = 0;
 let postOpen            = -1;
+let mod                 = parser.isMod();
 let postImageNames = [], imagesToRemove = [];
-
-const mod = parser.isMod();
 
 const timeout = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const dataInit = async () => {
+const dataInit = async (pid) => {
     userData = await network.getUserPosts(currUid);
     data = await network.getPosts();
     data = data.data.data; userData = userData.data.data;
@@ -31,6 +30,17 @@ const dataInit = async () => {
             underModeration.push(data[i]);
         }
     }
+    
+    if (pid) {
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].pid === pid) {
+                data = [data[i]];
+
+                if (mod) view.setupModView();
+                return;
+            }
+        }
+    }
 
     if (!mod) {
         data = publishedData;
@@ -40,10 +50,10 @@ const dataInit = async () => {
     }
 }
 
-const onLoad = async () => {
-    if (currUid == null && !mod)
-        return;
-    await dataInit();
+const onLoad = async (isMod, uid, pid) => {
+    mod     = isMod;
+    currUid = uid;
+    await dataInit(pid);
     for (let i = 0; i < data.length; i++)       { data[i].imageNames        = data[i].post.images;      }
     for (let i = 0; i < userData.length; i++)   { userData[i].imageNames    = userData[i].post.images;  }
 
@@ -425,8 +435,10 @@ const removeImage = async (i, type) => {
 
 const openPost = async (i) => {
     let mapSrc = parser.getMapLink(posts[i].longitude, posts[i].latitude);
-    if (userData[i].status === "draft" && myPostsActive) {
-        view.enableEditButton("editPost()");
+    if (userData.length > 0) {
+        if (userData[i].status === "draft" && myPostsActive) {
+            view.enableEditButton("editPost()");
+        }
     }
     await view.openPost(i, posts[i].categories, posts[i].images, mapSrc, posts[i].mapLink);
     if (mod) view.enableApproveBtn();
@@ -504,4 +516,4 @@ const search = async () => {
     }
 }
 
-$(onLoad);
+// $(onLoad());
