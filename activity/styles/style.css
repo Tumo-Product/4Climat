@@ -801,11 +801,11 @@ button:active p, button:active img {
 }
 
 #rightBigArrow {
-    right: 10vh;
+    right: 3vh;
 }
 
 #leftBigArrow {
-    left: 10vh;
+    left: 3vh;
     transform: scaleX(-1) rotate(360deg);
 }
 
