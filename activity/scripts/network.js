@@ -66,6 +66,7 @@ const network   = {
             message: 'set-answers',
             data: { answers: pid }
         }, '*');
+        $("#addBtn").attr("disabled", "true").addClass("disableApproveBtn");
     },
 
     renameFiles         : async (files, fileNames) => {
