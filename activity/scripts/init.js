@@ -22,7 +22,7 @@ window.addEventListener("message", event => {
     console.log(evnt);
 });
 
-window.parent.postMessage({
+window.parent[0].postMessage({
     application: 'activity-manager',
     message: 'set-iframe-height',
     data: { iframeHeight: 300 }
