@@ -265,7 +265,8 @@ const discardPost = async () => {
     postView.enableDraftBtn();
     view.closePopupContainer();
     await postView.discardPost();
-    location.reload();
+    // location.reload();
+    await addPosts("all");
 }
 
 const openImage = async (i, imgIndex) => {
