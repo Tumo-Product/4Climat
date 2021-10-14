@@ -38,6 +38,7 @@ const parser = {
     isMod               : () => {
         let url = new URL(document.location.href);
         let isMod = url.searchParams.get("isMod");
+        console.log(isMod);
         return isMod == "a01acc7c015" ? true : false;
     },
     getUid              : () => {
