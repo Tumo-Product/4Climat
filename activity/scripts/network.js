@@ -37,7 +37,7 @@ const network   = {
             await network.removeImages(filesToRemove, pid);
         }
         
-        if (status === "published") {
+        if (status === "moderation") {
             window.parent.postMessage({
                 application: 'activity-manager',
                 message: 'set-answers',
@@ -70,7 +70,7 @@ const network   = {
             await network.addImages(renamedFiles, request.data.data.pid);
         
         let pid = request.data.data.pid;
-        if (status === "published") {
+        if (status === "moderation") {
             window.parent.postMessage({
                 application: 'activity-manager',
                 message: 'set-answers',
