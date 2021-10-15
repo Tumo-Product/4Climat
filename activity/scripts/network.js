@@ -49,11 +49,10 @@ const network   = {
         }
     },
     
-    changeStatus         : async (pid, post, imageNames, status) => {
+    changeStatus         : async (uid, pid, post, imageNames, status) => {
         post.images = imageNames;
         let postString      = JSON.stringify(post);
-        let request         = await axios.post(config.updatePost, {uid: currUid, pid: pid, post: postString, status: status});
-        console.log(status, request);
+        let request         = await axios.post(config.updatePost, {uid: uid, pid: pid, post: postString, status: status});
         if (status === "published") {
             window.parent.postMessage({
                 application: 'activity-manager',
