@@ -64,6 +64,7 @@ const view      = {
 
         let msg = "";
         if (status === "draft") msg = "Draft";
+        else if (status === "rejected") msg = "Rejected";
         else if (status === "moderation") msg = "Under Moderation";
         $(`#p_${index}`).append(`<p class="statusText">${msg}</p>`);
     },

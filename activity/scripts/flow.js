@@ -226,10 +226,10 @@ const addPost = async (dir) => {
     }
 }
 
-const approve = async () => {
+const changeStatus = async (status) => {
     data[postOpen].post.images = data[postOpen].imageNames;
-    await network.approvePost(data[postOpen].pid, data[postOpen].post, data[postOpen].imageNames);
-    await postView.postComplete("This post has been approved!");
+    await network.changeStatus(data[postOpen].pid, data[postOpen].post, data[postOpen].imageNames, status);
+    await postView.postComplete(status === "published" ? "This post has been awarded!" : "This post has been rejected!");
     closePost(postOpen);
     view.hidePosts(postOpen);
     data.splice(postOpen, 1);
@@ -251,7 +251,9 @@ const saveDraft = async () => {
 
 const updatePost = async (status) => {
     await network.updatePost(userData[postOpen].pid, post, filesToAdd, imagesToRemove, status);
-    let msg = status === "draft" ? "Your draft has been updated" : "Your post is waiting to approved by a moderator!";
+    let msg;
+    if (status === "draft" || status === "rejected") msg = "Your draft has been updated";
+    else                                             msg = "Your post is waiting to approved by a moderator!";
     await postView.postComplete(msg);
     await dataInit();
     await discardPost();
@@ -443,7 +445,7 @@ const removeImage = async (i, type) => {
 const openPost = async (i) => {
     let mapSrc = parser.getMapLink(posts[i].longitude, posts[i].latitude);
     if (userData.length > 0) {
-        if (userData[i].status === "draft" && myPostsActive) {
+        if (userData[i].status === "draft" || userData[i].status === "rejected" && myPostsActive) {
             view.enableEditButton("editPost()");
         }
     }

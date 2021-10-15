@@ -47,10 +47,10 @@ const network   = {
         }
     },
     
-    approvePost         : async (pid, post, imageNames) => {
+    changeStatus         : async (pid, post, imageNames, status) => {
         post.images = imageNames;
         let postString      = JSON.stringify(post);
-        let request         = await axios.post(config.updatePost, {uid: currUid, pid: pid, post: postString, status: "published"});
+        let request         = await axios.post(config.updatePost, {uid: currUid, pid: pid, post: postString, status: status});
         console.log(request);
     },
 

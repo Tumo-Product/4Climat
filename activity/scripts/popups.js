@@ -71,11 +71,11 @@ const popups = {
         } else if (type == "approve") {
             $(".popup").append(`
                 <p class="mainMsg">Do you want to approve this post?</p>
-                <button onclick="view.closePopupContainer()" id="draftButton" class="wideBtn">
+                <button onclick="changeStatus('rejected')" id="draftButton" class="wideBtn">
                     <div class="inside"></div>
                     <p>Cancel</p>
                 </button>
-                <button onclick="approve()" id="publishButton" class="wideBtn">
+                <button onclick="changeStatus('published')" id="publishButton" class="wideBtn">
                     <div class="inside"></div>
                     <p>Approve</p>
                 </button>
