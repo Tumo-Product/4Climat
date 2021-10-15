@@ -48,15 +48,16 @@ const dataInit = async (pid) => {
         data = underModeration;
         view.setupModView();
     }
+
+    for (let i = 0; i < data.length; i++)       { data[i].imageNames        = data[i].post.images;      }
+    for (let i = 0; i < userData.length; i++)   { userData[i].imageNames    = userData[i].post.images;  }
 }
 
 const onLoad = async (isMod, uid, pid) => {
     mod     = isMod;
     currUid = uid;
     await dataInit(pid);
-    for (let i = 0; i < data.length; i++)       { data[i].imageNames        = data[i].post.images;      }
-    for (let i = 0; i < userData.length; i++)   { userData[i].imageNames    = userData[i].post.images;  }
-
+    
     network.getNewToken();
     await addPosts("all");
 
@@ -237,12 +238,14 @@ const approve = async () => {
 const publishPost = async () => {
     await network.createPost(post, filesToAdd, 'moderation');
     await postView.postComplete("Your post is waiting to approved by a moderator");
+    await dataInit();
     await discardPost();
 }
 
 const saveDraft = async () => {
     await network.createPost(post, filesToAdd, 'draft');
     await postView.postComplete("Your draft has been saved");
+    await dataInit();
     await discardPost();
 }
 
@@ -250,6 +253,7 @@ const updatePost = async (status) => {
     await network.updatePost(userData[postOpen].pid, post, filesToAdd, imagesToRemove, status);
     let msg = status === "draft" ? "Your draft has been updated" : "Your post is waiting to approved by a moderator!";
     await postView.postComplete(msg);
+    await dataInit();
     await discardPost();
 }
 
@@ -257,6 +261,7 @@ const deletePost = async () => {
     imagesToRemove = userData[postOpen].imageNames;
     await network.deletePost(userData[postOpen].pid, imagesToRemove);
     await postView.postComplete("Your draft has been deleted!");
+    await dataInit();
     await discardPost();
 }
 
