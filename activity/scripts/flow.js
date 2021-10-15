@@ -314,10 +314,16 @@ const postHandlers = {
     },
     addCategory : async (i) => {
         post.categories.push(categories[i]);
+        if (post.categories.length > 0) {
+            postView.disablePlusIcons();
+        }
         postView.addCategory(i);
     },
     removeCategory : async (i) => {
         post.categories.splice(post.categories.indexOf(categories[i]), 1);
+        if (post.categories.length < 1) {
+            postView.enablePlusIcons();
+        }
         postView.removeCategory(i);
     },
     handleCategories : async() => {

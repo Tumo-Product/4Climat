@@ -452,4 +452,10 @@ const postView = {
             $(".selector").css("height", "8.677vh").animate({"height": `${height}vh`}, 500);
         }
     },
+    enablePlusIcons : async () => {
+        $(".categories span").css({"opacity": 1, "pointer-events": "all"});
+    },
+    disablePlusIcons : async () => {
+        $(".categories span").css({"opacity": 0, "pointer-events": "none"});
+    }
 }
