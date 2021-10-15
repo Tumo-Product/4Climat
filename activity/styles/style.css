@@ -400,7 +400,7 @@ button:active p, button:active img {
 .wideBtn p {
     color: #5C7CA6;
     font-family: FedraDemi;
-    font-size: 2.22vh;
+    font-size: 1.8vh;
 }
 
 .wideBtn .inside {
@@ -879,8 +879,12 @@ button:active p, button:active img {
     left: 22vh;
 }
 
-.draft .statusText, .rejected .statusText {
+.draft .statusText{
     left: 33vh;
+}
+
+.rejected .statusText {
+    left: 30vh;
 }
 
 .disableApproveBtn img {

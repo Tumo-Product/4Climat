@@ -10,74 +10,74 @@ const popups = {
 
         if (type == "complete") {
             $(".popup").append(`
-                <p class="mainMsg">Do you want to publish or save this post?</p>
+                <p class="mainMsg">Veux-tu publier ta publication ou bien le sauvegarder comme brouillon ?</p>
                 <button onclick="saveDraft()" id="draftButton" class="wideBtn">
                     <div class="inside"></div>
-                    <p>Save Draft</p>
+                    <p>Enregistrer le brouillon</p>
                 </button>
                 <button onclick="publishPost()" id="publishButton" class="wideBtn">
                     <div class="inside"></div>
-                    <p class="confirm">Publish</p>
+                    <p class="confirm">Publie</p>
                 </button>
             `);
         } else if (type == "draft") {
             $(".popup").append(`
-                <p class="mainMsg">Are you want sure you want save this post as a draft?</p>
+                <p class="mainMsg">Es-tu sûr·e d'enregistrer cette publication en tant que brouillon ?</p>
                 <button onclick="discardPost()" id="draftButton" class="wideBtn">
                     <div class="inside"></div>
-                    <p>Discard</p>
+                    <p>Annule</p>
                 </button>
                 <button onclick="saveDraft()" id="publishButton" class="wideBtn">
                     <div class="inside"></div>
-                    <p>Save draft</p>
+                    <p>Enregistrer le brouillon</p>
                 </button>
             `);
         } else if (type == "edit") {
             $(".popup").append(`
-                <p class="mainMsg">Do you want to edit your draft or delete it?</p>
+                <p class="mainMsg">Veux-tu sauvegarder ta publication ou bien continuer à la modifier ?</p>
                 <button onclick="view.closePopupContainer()" id="draftButton" class="wideBtn">
                     <div class="inside"></div>
                     <p>Cancel</p>
                 </button>
                 <button onclick="updatePost('draft')" id="publishButton" class="wideBtn">
                     <div class="inside"></div>
-                    <p>Edit</p>
+                    <p>Modifie</p>
                 </button>
             `);
         } else if (type == "publishDraft") {
             $(".popup").append(`
-                <p class="mainMsg">Are you sure you want to publish your draft or delete it?</p>
+                <p class="mainMsg">Es-tu sûr·e de vouloir publier ton brouillon ?</p>
                 <button onclick="deletePost()" id="draftButton" class="wideBtn">
                     <div class="inside"></div>
-                    <p>Delete</p>
+                    <p>Supprime</p>
                 </button>
                 <button onclick="updatePost('moderation')" id="publishButton" class="wideBtn">
                     <div class="inside"></div>
-                    <p class="confirm">Publish</p>
+                    <p class="confirm">Publie</p>
                 </button>
             `);
         } else if (type == "discard") {
             $(".popup").append(`
-                <p class="mainMsg">Do you want to discard your or delete your post?</p>
+                <p class="mainMsg">Veux-tu annuler ta publication ou bien la supprimer ?</p>
                 <button onclick="deletePost()" id="draftButton" class="wideBtn">
                     <div class="inside"></div>
-                    <p>Delete</p>
+                    <p>Supprime</p>
                 </button>
                 <button onclick="discardPost()" id="publishButton" class="wideBtn">
                     <div class="inside"></div>
-                    <p>Discard</p>
+                    <p>Annule</p>
                 </button>
             `);
         } else if (type == "approve") {
             $(".popup").append(`
-                <p class="mainMsg">Do you want to approve this post?</p>
+                <p class="mainMsg">Évaluez le travail de l'étudiant·e </p>
                 <button onclick="changeStatus('rejected')" id="draftButton" class="wideBtn">
                     <div class="inside"></div>
                     <p>Reject</p>
                 </button>
                 <button onclick="changeStatus('published')" id="publishButton" class="wideBtn">
                     <div class="inside"></div>
-                    <p>Approve</p>
+                    <p>Acquis</p>
                 </button>
             `);
         }

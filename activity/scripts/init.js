@@ -1,4 +1,5 @@
 let uid = "1";
+let actvtId;
 
 window.parent.postMessage({
     application: "activity-manager",
@@ -17,9 +18,10 @@ window.addEventListener("message", event => {
         case 'init-response':
             const { data } = event.data;
             uid = data.studentId ? data.studentId : data.id;
+            actvtId = data.activityId;
 
             if (window.location.href.includes("viewer")) {
-                $(onLoad(false, uid));
+                $(onLoad(false, uid, undefined, actvtId));
             } else if (window.location.href.includes("examiner")) {
                 let pid = data.answers[0];
                 $(onLoad(true, "1", pid));

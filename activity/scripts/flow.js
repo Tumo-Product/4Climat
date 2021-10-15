@@ -1,7 +1,7 @@
 let data, userData, queryData = [];
 let categories, posts   = [];
 let loading = false, editing = false;
-let post                = { categories: [], longitude: -1, latitude: -1, title: "",  description: "", images: [] };
+let post                = { categories: [], longitude: -1, latitude: -1, title: "",  description: "", images: [], mapLink: undefined, activityId: undefined };
 let currUid             = "1";
 let postStage           = -1;
 let filesToAdd          = [];
@@ -11,6 +11,7 @@ let postCount           = 0;
 let postOpen            = -1;
 let mod                 = parser.isMod();
 let postImageNames = [], imagesToRemove = [];
+let activityId;
 
 const timeout = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -24,10 +25,16 @@ const dataInit = async (pid) => {
     let publishedData = [];
     let underModeration = [];
     for (let i = data.length - 1; i >= 0; i--) {
+
         if (data[i].status === "published") {
             publishedData.push(data[i]);
+
+            
         } else if (data[i].status === "moderation") {
             underModeration.push(data[i]);
+            if (data.post.activityId === activityId){
+                view.disableApproveBtn();
+            }
         }
     }
     
@@ -55,9 +62,10 @@ const dataInit = async (pid) => {
     for (let i = 0; i < userData.length; i++)   { userData[i].imageNames    = userData[i].post.images;  }
 }
 
-const onLoad = async (isMod, uid, pid) => {
+const onLoad = async (isMod, uid, pid, actvtId) => {
     mod     = isMod;
     currUid = uid;
+    activityId = actvtId;
     await dataInit(pid);
     
     network.getNewToken();
@@ -231,29 +239,31 @@ const addPost = async (dir) => {
 const changeStatus = async (status) => {
     data[postOpen].post.images = data[postOpen].imageNames;
     await network.changeStatus(data[postOpen].uid, data[postOpen].pid, data[postOpen].post, data[postOpen].imageNames, status);
-    await postView.postComplete(status === "published" ? "This post has been awarded!" : "This post has been rejected!");
+    await postView.postComplete(status === "published" ? "Ce post a été accepté" : "Ce post a été rejeté");
     closePost(postOpen);
     view.hidePosts(postOpen);
     data.splice(postOpen, 1);
 }
 
 const publishPost = async () => {
+    post.activityId = activityId;
     await network.createPost(post, filesToAdd, 'moderation');
-    await postView.postComplete("Your post is waiting to approved by a moderator");
+    await postView.postComplete("Ta publication est envoyée à l'approbation.");
     await discardPost();
 }
 
 const saveDraft = async () => {
+    post.activityId = activityId;
     await network.createPost(post, filesToAdd, 'draft');
-    await postView.postComplete("Your draft has been saved");
+    await postView.postComplete("Ton brouillon a été enregistré");
     await discardPost();
 }
 
 const updatePost = async (status) => {
     await network.updatePost(userData[postOpen].pid, post, filesToAdd, imagesToRemove, status);
     let msg;
-    if (status === "draft" || status === "rejected") msg = "Your draft has been updated";
-    else                                             msg = "Your post is waiting to approved by a moderator!";
+    if (status === "draft" || status === "rejected") msg = "Ton brouillon a été enregistré";
+    else                                             msg = "Ta publication est envoyée à l'approbation.";
     await postView.postComplete(msg);
     await discardPost();
 }
@@ -261,7 +271,7 @@ const updatePost = async (status) => {
 const deletePost = async () => {
     imagesToRemove = userData[postOpen].imageNames;
     await network.deletePost(userData[postOpen].pid, imagesToRemove);
-    await postView.postComplete("Your draft has been deleted!");
+    await postView.postComplete("Ton brouillon a été supprimé.been deleted!");
     await discardPost();
 }
 
@@ -467,14 +477,14 @@ const toggleMyPosts = async () => {
     queryData = [];
     $("#postsView").css("overflow", "auto"); postOpen = 1;
     if (!myPostsActive) {
-        $("#postButton p").text("All Posts");
+        $("#postButton p").text("Toutes les publications");
         await view.closePostsView();
         view.disableCategories();
         resetPosts();
         await addPosts("user");
         await view.openPostsView();
     } else {
-        $("#postButton p").text("My Posts");
+        $("#postButton p").text("Mes publications");
         await view.closePostsView();
         view.enableCategories();
         resetPosts();

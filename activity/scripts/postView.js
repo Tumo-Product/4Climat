@@ -108,7 +108,7 @@ const postView = {
         $("#addBtn").attr("onclick", "addPost(1)");
         $("#addBtn img").attr("src", "icons/plus.png");
         $("#postButton").attr("onclick", "toggleMyPosts()");
-        $("#postButton p").text("My posts");
+        $("#postButton p").text("Mes publications");
 
         $("#categories").children().each(function () {
             if (!$(this).hasClass("category")) {
@@ -133,7 +133,7 @@ const postView = {
         postView.disableDraftBtn();
         $("#addBtn").removeAttr("disabled").removeClass("disableApproveBtn");
 
-        $("#postButton p").text("Save Draft");
+        $("#postButton p").text("Enregistrer le brouillon");
         if (editing) $("#postButton").attr("onclick", "popups.createPopup('edit')");
         else $("#postButton").attr("onclick", `popups.createPopup('draft');`);
 
@@ -148,8 +148,8 @@ const postView = {
         $("#categories").addClass("postView");
 
         $(".postView").append(`
-            <h1 class="postTitle">Title for this page</h1>
-            <p class="postStageExpl">Explanatory title for this page</p>
+            <h1 class="postTitle">Ton nouveau post</h1>
+            <p class="postStageExpl">Ajoute les informations ci-dessous</p>
             <button onclick="addPost(-1)" class="leftButton button disabled"  disabled></button>
             <button onclick="addPost(1)"  class="rightButton button disabled" disabled></button>
             <div id="stages">
@@ -165,7 +165,7 @@ const postView = {
         $("#addBtn img").attr("src", "icons/bigX.png");
     },
     setupTitleView  : async (title) => {
-        $(".postView").append(`<input autocomplete="off" class="postInput" id="titleInput" placeholder="Write your title here …">`);
+        $(".postView").append(`<input autocomplete="off" class="postInput" id="titleInput" placeholder="Écris ton titre ici">`);
         $("#titleInput").val(title);
         if (title.length !== 0) postView.enableBtn("right");
         return $("#titleInput");
@@ -173,7 +173,7 @@ const postView = {
     setupCategoryView   : async (postCategories) => {
         $(".postView").append(`
             <div class="selector">
-                <p class="chooseCategories">Choose categories...</p>
+                <p class="chooseCategories">Choisis les catégories</p>
                 <div class="categoriesInPost"></div>
             </div>
             <div class="dropdown" onclick="postView.toggleDropdown()">
@@ -274,8 +274,8 @@ const postView = {
             <div class="postMapContainer">
                 <div class="postMap"><iframe src=""></iframe></div>
             </div>
-            <input autocomplete="off" type="url" class="postInput closed" id="linkInput" placeholder="Paste your link here …">
-            <p class="wrongLink">Wrong link</p>
+            <input autocomplete="off" type="url" class="postInput closed" id="linkInput" placeholder="Colle ton lien ici">
+            <p class="wrongLink">Le lien est invalide.</p>
         `); await timeout(50);
         $("#linkInput").removeClass("closed");
 
@@ -311,7 +311,7 @@ const postView = {
             <div id="chars">
                 <span id="charCount">0</span> <span>/</span> <span>${limit}</span>
             </div>
-            <textarea class="postDescription" placeholder="Write your text here …">
+            <textarea class="postDescription" placeholder="Écris ton texte ici">
         `);
 
         await timeout(50); $(".postDescription").addClass("openPostDescription");
@@ -323,7 +323,7 @@ const postView = {
     setupImageView  : async (images) => {
         $(".postView").append(`
             <div class="postImages">
-                <p class="imageText">Press upload button or drag and drop images here</p>
+                <p class="imageText">Télécharge ou bien glisse et dépose les images ici</p>
             </div>
             <input autocomplete="off" type="file" accept="image/*" id="downloadInput" onchange="addImage()" multiple/>
             <div class="bigBtn goUnder" id="download">
@@ -359,7 +359,7 @@ const postView = {
         date = date.substring(date.indexOf(" ") + 1, date.length); // Remove weekday
         $(".postView").append(`
         <div class="post openedPost">
-            <p id="previewText">Post Preview</p>
+            <p id="previewText">Aperçu de publication</p>
             <span class="date openedDate">${date}</span>
             <div class="content">
                 <p class="title">${post.title}</p>

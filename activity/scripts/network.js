@@ -15,6 +15,11 @@ const network   = {
         }
 
         let request = await axios.post(config.removePost, {uid: currUid, pid: pid});
+        window.parent.postMessage({
+            application: 'activity-manager',
+            message: 'set-answers',
+            data: { answers: [] }
+        }, '*');
     },
 
     updatePost          : async (pid, post, files, filesToRemove, status) => {
@@ -45,7 +50,6 @@ const network   = {
                 message: 'set-answers',
                 data: { answers: [pid] }
             }, '*');
-            $("#addBtn").attr("disabled", "true").addClass("disableApproveBtn");
         }
     },
     
@@ -90,7 +94,6 @@ const network   = {
                 message: 'set-answers',
                 data: { answers: [pid] }
             }, '*');
-            $("#addBtn").attr("disabled", "true").addClass("disableApproveBtn");
         }
     },
 
@@ -138,11 +141,10 @@ const network   = {
 
     getCategories   : async () => {
         return [
-            "Category 1",
-            "Category 2",
-            "Category 3 ………………………",
-            "Category 4",
-            "Category 5 ………………………",
+            "Architecture écologique",
+            "Gaspillage alimentaire",
+            "Le recyclage",
+            "Les jardins de Paris"
         ];
     },
 

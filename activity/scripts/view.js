@@ -13,11 +13,11 @@ const view      = {
         else                    $("#loadingScreen").hide();
     },
     enableEditButton: (func) => {
-        $("#postButton p").text("Edit");
+        $("#postButton p").text("Modifie");
         $("#postButton").attr("onclick", func);
     },
     disableEditButton: () => {
-        $("#postButton p").text("My Posts");
+        $("#postButton p").text("Mes publications");
         $("#postButton").attr("onclick", "toggleMyPosts()");
     },
     makeMap         : (src, parent) => {
@@ -63,9 +63,9 @@ const view      = {
         }
 
         let msg = "";
-        if (status === "draft") msg = "Draft";
+        if (status === "draft") msg = "Brouillon";
         else if (status === "rejected") msg = "Rejected";
-        else if (status === "moderation") msg = "Under Moderation";
+        else if (status === "moderation") msg = "En cours d'examen";
         $(`#p_${index}`).append(`<p class="statusText">${msg}</p>`);
     },
 
