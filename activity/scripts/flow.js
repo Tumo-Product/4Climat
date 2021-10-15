@@ -238,14 +238,12 @@ const changeStatus = async (status) => {
 const publishPost = async () => {
     await network.createPost(post, filesToAdd, 'moderation');
     await postView.postComplete("Your post is waiting to approved by a moderator");
-    await dataInit();
     await discardPost();
 }
 
 const saveDraft = async () => {
     await network.createPost(post, filesToAdd, 'draft');
     await postView.postComplete("Your draft has been saved");
-    await dataInit();
     await discardPost();
 }
 
@@ -255,7 +253,6 @@ const updatePost = async (status) => {
     if (status === "draft" || status === "rejected") msg = "Your draft has been updated";
     else                                             msg = "Your post is waiting to approved by a moderator!";
     await postView.postComplete(msg);
-    await dataInit();
     await discardPost();
 }
 
@@ -263,7 +260,6 @@ const deletePost = async () => {
     imagesToRemove = userData[postOpen].imageNames;
     await network.deletePost(userData[postOpen].pid, imagesToRemove);
     await postView.postComplete("Your draft has been deleted!");
-    await dataInit();
     await discardPost();
 }
 
@@ -274,8 +270,10 @@ const discardPost = async () => {
     view.closePopupContainer();
     await postView.discardPost();
     // location.reload();
-    postStage = -1;
+    post = { categories: [], longitude: -1, latitude: -1, title: "",  description: "", mapLink: undefined, images: [] };
+    postStage = -1; filesToAdd = []; imagesToRemove = [];
     resetPosts();
+    await dataInit();
     await addPosts("all");
 }
 
