@@ -149,7 +149,7 @@ const network   = {
     getImages      : async (pid, images, size) => {
         if (images === undefined) images = [];
         let imagesData = await axios.post(config.getImages, {pid: pid, images: JSON.stringify(images), type: size});
-        if (imagesData.data.data === null) return [];
+        if (imagesData.data.data === undefined || imagesData.data.data === null) return [];
 
         let currImages = imagesData.data.data.images;
         for (let i = 0; i < currImages.length; i++) {
