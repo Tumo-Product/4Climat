@@ -41,7 +41,7 @@ const network   = {
             window.parent.postMessage({
                 application: 'activity-manager',
                 message: 'set-answers',
-                data: { answers: pid }
+                data: { answers: [pid] }
             }, '*');
             $("#addBtn").attr("disabled", "true").addClass("disableApproveBtn");
         }
@@ -74,7 +74,7 @@ const network   = {
             window.parent.postMessage({
                 application: 'activity-manager',
                 message: 'set-answers',
-                data: { answers: pid }
+                data: { answers: [pid] }
             }, '*');
         }
         $("#addBtn").attr("disabled", "true").addClass("disableApproveBtn");

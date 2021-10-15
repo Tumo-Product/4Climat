@@ -21,7 +21,7 @@ window.addEventListener("message", event => {
             if (window.location.href.includes("viewer")) {
                 $(onLoad(false, uid));
             } else if (window.location.href.includes("examiner")) {
-                let pid = data.answers;
+                let pid = data.answers[0];
                 $(onLoad(true, "1", pid));
             }
         break;
