@@ -32,7 +32,7 @@ const dataInit = async (pid) => {
             
         } else if (data[i].status === "moderation") {
             underModeration.push(data[i]);
-            if (data.post.activityId === activityId){
+            if (data[i].post.activityId === activityId){
                 view.disableApproveBtn();
             }
         }
