@@ -194,6 +194,8 @@ const postView = {
             }
         }
 
+        if (postCategories.length > 0) postView.disablePlusIcons();
+
         if ($(".categoriesInPost").children().length != 0) {
             let scrollAmount = $(".categoriesInPost").prop("scrollWidth");
             $(".categoriesInPost").animate({ scrollLeft: scrollAmount }, 700);
