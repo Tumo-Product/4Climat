@@ -271,7 +271,7 @@ const updatePost = async (status) => {
 const deletePost = async () => {
     imagesToRemove = userData[postOpen].imageNames;
     await network.deletePost(userData[postOpen].pid, imagesToRemove);
-    await postView.postComplete("Ton brouillon a été supprimé.been deleted!");
+    await postView.postComplete("Ton brouillon a été supprimé.");
     await discardPost();
 }
 

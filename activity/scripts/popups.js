@@ -37,11 +37,11 @@ const popups = {
                 <p class="mainMsg">Veux-tu sauvegarder ta publication ou bien continuer à la modifier ?</p>
                 <button onclick="view.closePopupContainer()" id="draftButton" class="wideBtn">
                     <div class="inside"></div>
-                    <p>Cancel</p>
+                    <p>Modifie</p>
                 </button>
                 <button onclick="updatePost('draft')" id="publishButton" class="wideBtn">
                     <div class="inside"></div>
-                    <p>Modifie</p>
+                    <p>Enregistrer</p>
                 </button>
             `);
         } else if (type == "publishDraft") {
