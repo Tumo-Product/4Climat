@@ -51,7 +51,19 @@ const network   = {
         post.images = imageNames;
         let postString      = JSON.stringify(post);
         let request         = await axios.post(config.updatePost, {uid: currUid, pid: pid, post: postString, status: status});
-        console.log(request);
+        if (status === "published") {
+            window.parent.postMessage({
+                application: 'activity-manager',
+                message: 'auto-examine',
+                data: { status: true }
+            }, '*');
+        } else {
+            window.parent.postMessage({
+                application: 'activity-manager',
+                message: 'auto-examine',
+                data: { status: false }
+            }, '*');
+        }
     },
 
     createPost         : async (post, files, status) => {
