@@ -1,10 +1,5 @@
 let uid = "1";
 
-if (window.location.href.includes("examiner")) {
-    let pid = "17c179c16c3";
-    $(onLoad(true, "1", pid));
-}
-
 window.parent.postMessage({
     application: "activity-manager",
     message: "init"
