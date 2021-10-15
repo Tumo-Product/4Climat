@@ -8,8 +8,10 @@ const network   = {
     },
 
     deletePost          : async (pid, images) => {
-        if (images.length > 0) {
-            await network.removeImages(images, pid);
+        if (images !== undefined) {
+            if (images.length > 0) {
+                await network.removeImages(images, pid);
+            }
         }
 
         let request = await axios.post(config.removePost, {uid: currUid, pid: pid});
@@ -145,6 +147,7 @@ const network   = {
     },
 
     getImages      : async (pid, images, size) => {
+        if (images === undefined) images = [];
         let imagesData = await axios.post(config.getImages, {pid: pid, images: JSON.stringify(images), type: size});
         if (imagesData.data.data === null) return [];
 
