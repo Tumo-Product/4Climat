@@ -274,6 +274,8 @@ const discardPost = async () => {
     view.closePopupContainer();
     await postView.discardPost();
     // location.reload();
+    postStage = -1;
+    resetPosts();
     await addPosts("all");
 }
 
