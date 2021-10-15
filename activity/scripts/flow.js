@@ -230,6 +230,7 @@ const addPost = async (dir) => {
 
 const changeStatus = async (status) => {
     data[postOpen].post.images = data[postOpen].imageNames;
+    console.log(status);
     await network.changeStatus(data[postOpen].pid, data[postOpen].post, data[postOpen].imageNames, status);
     await postView.postComplete(status === "published" ? "This post has been awarded!" : "This post has been rejected!");
     closePost(postOpen);

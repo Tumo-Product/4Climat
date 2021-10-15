@@ -879,7 +879,7 @@ button:active p, button:active img {
     left: 22vh;
 }
 
-.draft .statusText {
+.draft .statusText, .rejected .statusText {
     left: 33vh;
 }
 

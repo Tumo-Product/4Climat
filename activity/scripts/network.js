@@ -53,6 +53,7 @@ const network   = {
         post.images = imageNames;
         let postString      = JSON.stringify(post);
         let request         = await axios.post(config.updatePost, {uid: currUid, pid: pid, post: postString, status: status});
+        console.log(status, request);
         if (status === "published") {
             window.parent.postMessage({
                 application: 'activity-manager',
