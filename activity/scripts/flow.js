@@ -271,12 +271,7 @@ const discardPost = async () => {
     postView.enableDraftBtn();
     view.closePopupContainer();
     await postView.discardPost();
-    // location.reload();
-    post = { categories: [], longitude: -1, latitude: -1, title: "",  description: "", mapLink: undefined, images: [] };
-    postStage = -1; filesToAdd = []; imagesToRemove = [];
-    resetPosts();
-    await dataInit();
-    await addPosts("all");
+    location.reload();
 }
 
 const openImage = async (i, imgIndex) => {
