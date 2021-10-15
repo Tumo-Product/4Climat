@@ -11,6 +11,7 @@ window.addEventListener("message", event => {
     }
 
     console.log(event.data.message);
+    console.log(eent.data);
 
     switch(event.data.message) {
         case 'init-response':
