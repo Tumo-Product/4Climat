@@ -37,6 +37,8 @@ const dataInit = async (pid) => {
                 data = [data[i]];
 
                 if (mod) view.setupModView();
+                for (let i = 0; i < data.length; i++)       { data[i].imageNames        = data[i].post.images;      }
+                for (let i = 0; i < userData.length; i++)   { userData[i].imageNames    = userData[i].post.images;  }
                 return;
             }
         }

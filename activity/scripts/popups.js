@@ -73,7 +73,7 @@ const popups = {
                 <p class="mainMsg">Do you want to approve this post?</p>
                 <button onclick="changeStatus('rejected')" id="draftButton" class="wideBtn">
                     <div class="inside"></div>
-                    <p>Cancel</p>
+                    <p>Reject</p>
                 </button>
                 <button onclick="changeStatus('published')" id="publishButton" class="wideBtn">
                     <div class="inside"></div>
