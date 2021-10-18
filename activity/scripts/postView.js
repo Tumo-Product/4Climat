@@ -6,7 +6,6 @@ const postView = {
     disableBtn : async (which) => {
         $(`.${which}Button`).addClass("disabled");
         $(`.${which}Button`).prop("disabled", true);
-
     },
     enableBtn : async (which) => {
         $(`.${which}Button`).removeClass("disabled");

@@ -64,7 +64,7 @@ const view      = {
 
         let msg = "";
         if (status === "draft") msg = "Brouillon";
-        else if (status === "rejected") msg = "Rejected";
+        else if (status === "rejected") msg = "Rejeté";
         else if (status === "moderation") msg = "En cours d'examen";
         $(`#p_${index}`).append(`<p class="statusText">${msg}</p>`);
     },
