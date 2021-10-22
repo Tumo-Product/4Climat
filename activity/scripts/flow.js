@@ -238,6 +238,7 @@ const addPost = async (dir) => {
 
 const changeStatus = async (status) => {
     data[postOpen].post.images = data[postOpen].imageNames;
+    view.openLoading();
     await network.changeStatus(data[postOpen].uid, data[postOpen].pid, data[postOpen].post, data[postOpen].imageNames, status);
     await postView.postComplete(status === "published" ? "Ce post a été accepté" : "Ce post a été rejeté");
     closePost(postOpen);
@@ -247,6 +248,7 @@ const changeStatus = async (status) => {
 
 const publishPost = async () => {
     post.activityId = activityId;
+    view.openLoading();
     await network.createPost(post, filesToAdd, 'moderation');
     await postView.postComplete("Ta publication est envoyée à l'approbation.");
     await discardPost();
@@ -254,12 +256,14 @@ const publishPost = async () => {
 
 const saveDraft = async () => {
     post.activityId = activityId;
+    view.openLoading();
     await network.createPost(post, filesToAdd, 'draft');
     await postView.postComplete("Ton brouillon a été enregistré");
     await discardPost();
 }
 
 const updatePost = async (status) => {
+    view.openLoading();
     await network.updatePost(userData[postOpen].pid, post, filesToAdd, imagesToRemove, status);
     let msg;
     if (status === "draft" || status === "rejected") msg = "Ton brouillon a été enregistré";
@@ -270,6 +274,7 @@ const updatePost = async (status) => {
 
 const deletePost = async () => {
     imagesToRemove = userData[postOpen].imageNames;
+    view.openLoading();
     await network.deletePost(userData[postOpen].pid, imagesToRemove);
     await postView.postComplete("Ton brouillon a été supprimé.");
     await discardPost();

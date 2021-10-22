@@ -779,6 +779,7 @@ button:active p, button:active img {
 }
 
 .imagePopup {
+    pointer-events: none;
     transition: 0.3s;
     width: fit-content;
     height: fit-content;

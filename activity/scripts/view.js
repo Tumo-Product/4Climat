@@ -70,6 +70,8 @@ const view      = {
     },
 
     openLoading     : async () => {
+        $(".popup").hide();
+
         $(".popupContainer").append(`
             <div class="stage">
                 <div class="dot-bricks"></div>
